@@ -148,7 +148,7 @@ watch(() => props.wxid, async (newVal, oldVal) => {
     <el-main style="overflow-y: auto; height: calc(100vh - 65px);padding: 0">
       <el-scrollbar ref="scrollbarRef" @scroll="handleScroll">
 
-        <ChatExportMain v-if="is_export" :userData="userinfo"/>
+        <ChatExportMain v-if="is_export" :wxid="userinfo.wxid"/>
         <ChatRecordsMain v-else
             ref="chatRecordsMainRef"
             :userData="userinfo"

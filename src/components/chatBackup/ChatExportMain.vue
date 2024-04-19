@@ -1,171 +1,63 @@
 <script setup lang="ts">
-import {ref, defineProps, nextTick, watch} from 'vue';
+import {ref, defineProps, nextTick, watch, type Ref} from 'vue';
 import ChatRecprdsHeader from "@/components/messages/ChatRecprdsHeader.vue";
 import DateTimeSelect from "@/components/utils/DateTimeSelect.vue";
 import http from '@/router/axios.js';
 import {type Action, ElMessage, ElMessageBox} from "element-plus";
-
-interface User {
-  wxid: string
-  nickname: string
-  remark: string
-  account: string
-  describe: string
-  headImgUrl: string
-  msg_count: number
-}
+import ExportENDB from "@/components/chatBackup/ExportENDB.vue";
+import ExportDEDB from "@/components/chatBackup/ExportDEDB.vue";
+import ExportCSV from "@/components/chatBackup/ExportCSV.vue";
+import ExportJSON from "@/components/chatBackup/ExportJSON.vue";
+import ExportHTML from "@/components/chatBackup/ExportHTML.vue";
+import ExportPDF from "@/components/chatBackup/ExportPDF.vue";
+import ExportDOCX from "@/components/chatBackup/ExportDOCX.vue";
 
 const props = defineProps({
-  userData: {
-    type: Object as () => User,
+  wxid: {
+    type: String,
     required: true,
   }
 });
 
-// 这是传递给服务端的参数
-const exportType = ref('');
-const datetime = ref([]);
-const chatType = ref(['文本']);
-const key = ref('');
-const wx_path = ref('');
+watch(() => props.wxid, (newVal: string, oldVal: String) => {
+  console.log(newVal);
+});
 
-const Result = ref(''); // 用于显示返回值
-// END 这是传递的参数
+const exportType: Ref<string> = ref(''); // 导出类型
+const result = ref(''); // 用于显示返回值
+
 
 const setting = {
   'endb': {
-    brief: '加密文件',
-    detail: "导出的内容为微信加密数据库（）。\n可还原回微信,但会覆盖微信后续消息。",
-    userShow: false,
-    timeShow: false,
-    chatTypeShow: false,
-    keyShow: false,
-    wxPathShow: true,
+    brief: '加密文件-测试中',
+    detail: "导出的内容为微信加密数据库。可还原回微信,但会覆盖微信后续消息。",
   },
   'dedb': {
-    brief: '解密文件',
+    brief: '解密文件-测试中',
     detail: "导出的文件为解密后的sqlite数据库，并且会自动合并msg和media数据库为同一个，但是无法还原回微信。",
-    userShow: false,
-    timeShow: true,
-    chatTypeShow: false,
-    keyShow: false,
-    wxPathShow: false,
   },
   'csv': {
-    brief: 'csv',
+    brief: 'csv-测试中',
     detail: "只包含文本，但是可以用excel软件（wps，office）打开。",
-    userShow: true,
-    timeShow: false,
-    chatTypeShow: false,
-    keyShow: false,
-    wxPathShow: false,
   },
   'json': {
-    brief: 'json',
+    brief: 'json-测试中',
     detail: "只包含文本，可用于数据分析，情感分析等方面。",
-    userShow: true,
-    timeShow: false,
-    chatTypeShow: false,
-    keyShow: false,
-    wxPathShow: false,
   },
   'html': {
     brief: 'html-测试中',
     detail: "主要用于浏览器可视化查看。",
-    userShow: true,
-    timeShow: false,
-    chatTypeShow: false,
-    keyShow: false,
-    wxPathShow: false,
   },
   'pdf': {
     brief: 'pdf-开发中',
     detail: "就是html的pdf版本。",
-    userShow: true,
-    timeShow: true,
-    chatTypeShow: true,
-    keyShow: false,
-    wxPathShow: true,
   },
   'docx': {
     brief: 'docx-开发中',
     detail: "就是html的docx版本。",
-    userShow: true,
-    timeShow: true,
-    chatTypeShow: true,
-    keyShow: false,
-    wxPathShow: true,
   },
 };
 
-// 用于显示chat选项
-const chatTypeAll = ['文本', '图片', '语音', '视频', '动画表情', '文件', '卡片式链接', '用户上传的GIF表情',
-  '转账消息', '赠送红包封面', '语音通话', '系统通知', '拍一拍', '系统通知', '其他'];
-const checkAll = ref(false)
-const isIndeterminate = ref(true)
-
-const handleCheckAllChange = (val: boolean) => {
-  chatType.value = val ? chatTypeAll : [] // 全选
-  isIndeterminate.value = false // 全选后不显示半选状态
-}
-const handleCheckedCitiesChange = (value: string[]) => {
-  const checkedCount = value.length // 选中的个数
-  checkAll.value = checkedCount === chatTypeAll.length // 全选
-  isIndeterminate.value = checkedCount > 0 && checkedCount < chatTypeAll.length // 半选
-}
-// END 用于显示选项
-
-// 用于获取子组件的时间返回值
-const handDatetimeChildData = (val: any) => {
-  datetime.value = val;
-}
-// END 用于获取子组件的时间返回值
-
-// 监听导出类型,用于确定某些选项是否显示
-const userShow = ref(false);
-const timeShow = ref(false);
-const chatTypeShow = ref(false);
-const keyShow = ref(false);
-const wxPathShow = ref(false);
-// 各个选项的说明
-watch(exportType, (val: string) => {
-  userShow.value = setting[val].userShow;
-  timeShow.value = setting[val].timeShow;
-  chatTypeShow.value = setting[val].chatTypeShow;
-  keyShow.value = setting[val].keyShow;
-  wxPathShow.value = setting[val].wxPathShow;
-  Result.value = setting[val].detail;
-})
-
-// 导出数据
-const exportData = async () => {
-  try {
-    if (exportType.value === '') {
-      Result.value = '导出类型不能为空';
-      return;
-    }
-    const body_data = await http.post('/api/export', {
-      'export_type': exportType.value,
-      'start_time': datetime.value[0],
-      'end_time': datetime.value[1],
-      'chat_type': chatType.value,
-      'username': props.userData.wxid,
-      'wx_path': wx_path.value,
-    });
-    Result.value = body_data;
-  } catch (error) {
-    ElMessageBox.alert(error, 'error', {
-      confirmButtonText: '确认',
-      callback: (action: Action) => {
-        ElMessage({
-          type: 'error',
-          message: `action: ${action}`,
-        })
-      },
-    })
-    Result.value = String(error) + "\n更多信息请查看控制台；";
-  }
-}
 </script>
 
 <template>
@@ -184,70 +76,24 @@ const exportData = async () => {
           </div>
           <div style="margin-top: 20px;">
             导出类型:
-            <el-select placeholder="请选择导出类型" style="width: 50%;"
-                       v-model="exportType">
+            <el-select placeholder="请选择导出类型" style="width: 50%;" v-model="exportType">
               <el-option :label="value.brief" :value="index" v-for="(value,index) in setting" :key="index">
                 {{ value.brief }}
               </el-option>
             </el-select>
-            <br><br>
-            <div>
-              选项:<br>
-              <div v-if="userShow">
-                ** 用户(默认全部，从左边选择具体用户)：
-                <el-row :gutter="5" style="width: 100%;">
-                  <el-col :span="6" style="white-space: nowrap;">
-                    <el-text class="label_color mx-1" truncated>原始id:</el-text>&ensp;
-                    <el-text class="data_color mx-1" truncated>{{ userData.wxid }}
-                    </el-text>
-                  </el-col>
-                  <el-col :span="6" style="white-space: nowrap;">
-                    <el-text class="label_color mx-1" truncated>账号:</el-text>&ensp;
-                    <el-text class="data_color mx-1" truncated>{{ userData.account }}
-                    </el-text>
-                  </el-col>
-                  <el-col :span="6" style="white-space: nowrap;">
-                    <el-text class="label_color mx-1" truncated>昵称:</el-text>&ensp;
-                    <el-text class="data_color mx-1" truncated>{{ userData.nickname }}</el-text>
-                  </el-col>
-                  <el-col :span="6" style="white-space: nowrap;">
-                    <el-text class="label_color mx-1" truncated>备注:</el-text>&ensp;
-                    <el-text class="data_color mx-1" truncated>{{ userData.remark }}</el-text>
-                  </el-col>
-
-                </el-row>
-
-              </div>
-              <div v-if="timeShow">
-                <strong>** 时间(默认全部)：</strong>
-                <DateTimeSelect @datetime="handDatetimeChildData"/>
-              </div>
-              <div v-if="chatTypeShow">
-                ** 消息类型：
-                <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选
-                </el-checkbox>
-                <el-checkbox-group v-model="chatType" @change="handleCheckedCitiesChange">
-                  <el-checkbox v-for="typeName in chatTypeAll" :key="typeName" :label="typeName">{{ typeName }}
-                  </el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div v-if="keyShow">
-                ** 微信文件夹路径：
-                <el-input placeholder="密钥key[可为空]" v-model="key"
-                          style="width: 50%;"></el-input>
-              </div>
-              <div v-if="wxPathShow">
-                ** 微信文件夹路径：
-                <el-input placeholder="微信文件夹路径[可为空](eg: C:\****\WeChat Files\wxid_**** )" v-model="wx_path"
-                          style="width: 50%;"></el-input>
-              </div>
-            </div>
-
-            <el-button style="margin-top: 10px;width: 50%;" type="success" @click="exportData">导出</el-button>
-            <el-divider></el-divider>  <!--    分割线    -->
-            <el-input type="textarea" :rows="6" readonly placeholder="" v-model="Result"
-                      style="width: 100%;"></el-input>
+            <br/><br/>
+            <span v-if="exportType">
+              {{ setting[exportType].detail }}
+            </span>
           </div>
+          <el-divider/>
+          <ExportENDB v-if="exportType=='endb'" :wxid="props.wxid"/>
+          <ExportDEDB v-if="exportType=='dedb'" :wxid="props.wxid"/>
+          <ExportCSV v-if="exportType=='csv'" :wxid="props.wxid"/>
+          <ExportJSON v-if="exportType=='json'" :wxid="props.wxid"/>
+          <ExportHTML v-if="exportType=='html'" :wxid="props.wxid"/>
+          <ExportPDF v-if="exportType=='pdf'" :wxid="props.wxid"/>
+          <ExportDOCX v-if="exportType=='docx'" :wxid="props.wxid"/>
         </div>
       </div>
     </el-main>
