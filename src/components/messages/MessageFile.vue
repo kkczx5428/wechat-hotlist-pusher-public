@@ -70,7 +70,7 @@ const file_info = reactive({
 onMounted(async () => {
     console.log('文件加载中')
     const file_info_resp = await get_file_info(props.src);
-    console.log(file_info_resp)
+    // console.log(file_info_resp)
     file_info.file_name = file_info_resp.file_name;
     file_info.file_size = Number(file_info_resp.file_size) / 1024;
     if (file_info.file_size < 1024) {

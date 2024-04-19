@@ -10,11 +10,11 @@
         <div class="demo-image__preview">
           <el-image
               style="max-width: 150px; max-height: 150px"
-              :src=imgSrc
+              :src=src
               :zoom-rate="1.2"
               :max-scale="7"
               :min-scale="0.2"
-              :preview-src-list="[imgSrc]"
+              :preview-src-list="[src]"
               :initial-index="4"
               fit="cover"
           />
@@ -28,20 +28,20 @@
         <p class="time">{{ direction }}</p>
 
         <div class="demo-image__preview">
-            <!-- <image :src="imgSrc"></image> -->
+            <!-- <image :src="src"></image> -->
           <el-image
               style="max-width: 150px; max-height: 150px"
-              :src=imgSrc
+              :src=src
               :zoom-rate="1.2"
               :max-scale="7"
               :min-scale="0.2"
-              :preview-src-list="[imgSrc]"
+              :preview-src-list="[src]"
               :initial-index="4"
               fit="cover"
           />
         </div>
 
-        <!--        <img class="chat_img" :src="imgSrc" alt="">-->
+        <!--        <img class="chat_img" :src="src" alt="">-->
       </div>
       <img :src="headUrl">
     </div>
@@ -73,14 +73,6 @@ const props = defineProps({
     default: ''
   }
 })
-const imgSrc = ref("");
-
-onMounted(() => {
-    // console.log('load emoji')
-    // console.log(props.src)
-  imgSrc.value = props.src;
-});
-
 </script>
 
 <style scoped lang="scss">

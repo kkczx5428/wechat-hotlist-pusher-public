@@ -8,7 +8,7 @@
         <p class="time">{{ direction }}</p>
         <div class="demo-video__preview">
           <video controls width="30%">
-              <source :src=videoSrc type="video/mp4" />
+              <source :src=src type="video/mp4" />
           </video>
         </div>
       </div>
@@ -20,7 +20,7 @@
 
         <div class="demo-video__preview">
             <video controls width="50%">
-              <source :src=videoSrc type="video/mp4" />
+              <source :src=src type="video/mp4" />
             </video>
         </div>
       </div>
@@ -57,11 +57,6 @@ const props = defineProps({
     default: ''
   }
 })
-const videoSrc = ref("");
-
-onMounted(async () => {
-  videoSrc.value = `/api/video/${props.src}`;
-});
 
 </script>
 
