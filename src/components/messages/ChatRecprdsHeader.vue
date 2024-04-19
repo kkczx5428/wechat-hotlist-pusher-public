@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import {defineProps} from 'vue';
+import {defineEmits, defineProps, ref} from 'vue';
+import http from "@/router/axios.js";
+import {ElTable, ElNotification, ElMessage, ElMessageBox} from "element-plus";
 
 interface User {
   account: string
@@ -7,8 +9,8 @@ interface User {
   headImgUrl: string
   nickname: string
   remark: string
-  username: string
-  chat_count: number
+  wxid: string
+  msg_count: number
 }
 
 const props = defineProps({
@@ -17,30 +19,87 @@ const props = defineProps({
     required: true,
   }
 });
-const userDict = [
-  {
-    wxid: 'username',
-    账号: 'account',
-    昵称: 'nickname',
-  },
-  {
-    备注: 'remark',
-    描述: 'describe',
-    数量: 'chat_count',
+
+const getting_real_time_msg = ref(false);
+
+const get_real_time_msg = async () => {
+  if (getting_real_time_msg.value) {
+    console.log("正在获取实时消息，请稍后再试!")
+    return;
   }
-];
+  getting_real_time_msg.value = true;
+  try {
+    const body_data = await http.post('/api/realtimemsg', {});
+    getting_real_time_msg.value = false;
+
+    // 滚动消息提醒
+    ElNotification({
+      title: 'Success',
+      message: '获取实时消息成功!',
+      type: 'success',
+    })
+
+    return body_data;
+  } catch (error) {
+    getting_real_time_msg.value = false;
+    ElNotification({
+      title: 'Error',
+      message: '获取实时消息失败!',
+      type: 'error',
+    })
+    console.error('Error fetching data:', error);
+    return [];
+  }
+}
+
+const emits = defineEmits(['exporting']);
+const export_button = () => {
+// 提交参数 is_export 给父组件
+  emits('exporting', true);
+}
 
 </script>
 
 <template>
-  <el-row :gutter="5" style="width: 100%;" v-for="(dict, index) in userDict" :key="index">
-    <template v-for="(value, key) in dict" :key="key">
-      <el-col :span="8" style="white-space: nowrap;">
-        <el-text class="label_color mx-1" truncated>{{ key }}:</el-text>&ensp;
-        <el-text class="data_color mx-1" truncated :title="userData[value]">{{ userData[value] }}</el-text>
-      </el-col>
-    </template>
+
+  <el-row :gutter="5" style="width: 100%;">
+    <el-col :span="6" style="white-space: nowrap;">
+      <el-text class="label_color mx-1" truncated>wxid:</el-text>&ensp;
+      <el-text class="data_color mx-1" truncated :title="userData.wxid">{{ userData.wxid }}</el-text>
+    </el-col>
+    <el-col :span="6" style="white-space: nowrap;">
+      <el-text class="label_color mx-1" truncated>账号:</el-text>&ensp;
+      <el-text class="data_color mx-1" truncated :title="userData.account">{{ userData.account }}</el-text>
+    </el-col>
+    <el-col :span="6" style="white-space: nowrap;">
+      <el-text class="label_color mx-1" truncated>昵称:</el-text>&ensp;
+      <el-text class="data_color mx-1" truncated :title="userData.nickname">{{ userData.nickname }}</el-text>
+    </el-col>
+    <el-col :span="6" style="white-space: nowrap;">
+      <el-text class="label_color mx-1" truncated>备注:</el-text>&ensp;
+      <el-text class="data_color mx-1" truncated :title="userData.remark">{{ userData.remark }}</el-text>
+    </el-col>
   </el-row>
+
+  <el-row :gutter="5" style="width: 100%;">
+    <el-col :span="3" style="white-space: nowrap;">
+      <el-text class="label_color mx-1" truncated>数量:</el-text>&ensp;
+      <el-text class="data_color mx-1" truncated :title="userData.msg_count">{{ userData.msg_count }}</el-text>
+    </el-col>
+    <el-col :span="15" style="white-space: nowrap;">
+      <el-text class="label_color mx-1" truncated>描述:</el-text>&ensp;
+      <el-text class="data_color mx-1" truncated :title="userData.describe">{{ userData.describe }}</el-text>
+    </el-col>
+    <el-col :span="3" style="white-space: nowrap;">
+      <el-text class="button_color mx-1 underline" truncated @click="get_real_time_msg();">实时消息
+        <template v-if="getting_real_time_msg" style="color: #00bd7e">(获取中)</template>
+      </el-text>
+    </el-col>
+    <el-col :span="3" style="white-space: nowrap;">
+      <el-text class="button_color mx-1 underline" truncated @click="export_button();">导出</el-text>
+    </el-col>
+  </el-row>
+
 </template>
 
 <style scoped>
@@ -62,4 +121,13 @@ const userDict = [
   white-space: nowrap;
   max-width: 80%;
 }
+
+.button_color {
+  color: #0048ff; /* 调整字体颜色 */
+  font-size: 15px;
+  padding-left: 15px;
+  padding-right: 0;
+  text-decoration: underline;
+}
+
 </style>

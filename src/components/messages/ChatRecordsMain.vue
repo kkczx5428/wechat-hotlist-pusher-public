@@ -15,8 +15,8 @@ interface User {
   headImgUrl: string
   nickname: string
   remark: string
-  username: string
-  chat_count: number
+  wxid: string
+  msg_count: number
 }
 
 interface UserList {
@@ -57,34 +57,77 @@ const props = defineProps({
 // 定义变量
 const messages = ref<msg[]>([]);
 const userlist = ref<UserList>({});
+const msg_loading = ref(false);
 const my_wxid = ref('');
-const limit = ref(50);
 const start = ref(0);
+const limit = ref(100);
+const msg_count = ref(0);
 const hasScrolledToTop = ref(false);
 
 // 获取聊天记录
-const req = async (start: number, limit: number, username: string) => {
+const req_msgs = async (start: number, limit: number, wxid: string) => {
+  if (msg_loading.value) {
+    console.log("正在获取消息，请稍后再试!")
+    return;
+  }
+  if (wxid == '') {
+    console.log("wxid 为空, 请检查!")
+    return;
+  }
   try {
+    msg_loading.value = true;
+    if (start < 0) {
+      start = 0;
+    }
+    // console.log('req_msgs', start, limit, wxid)
     const body_data = await http.post('/api/msgs', {
       'start': start,
       'limit': limit,
-      'wxid': username,
+      'wxid': wxid,
     });
     messages.value = body_data.msg_list;
-    userlist.value = body_data.user_list;
-    my_wxid.value = body_data.my_wxid;
-
+    userlist.value = Object.assign(userlist.value, body_data.user_list);
+    msg_loading.value = false;
     return body_data;
   } catch (error) {
+    msg_loading.value = false;
     console.error('Error fetching data:', error);
     return [];
   }
 }
+const req_msg_count = async (wxid: String) => {
+  try {
+    const body_data = await http.post('/api/msg_count', {
+      'wxid': wxid,
+    });
+    return body_data[wxid];
+  } catch (error) {
+    console.error('Error fetching data msg_count:', error);
+    return [];
+  }
+}
+const get_my_wxid = async () => {
+  try {
+    const body_data = await http.get('/api/mywxid');
+    return body_data.my_wxid;
+  } catch (error) {
+    console.error('Error fetching data my_wxid:', error);
+    return [];
+  }
+}
+// 上述为网络请求部分
 
+// 初始加载数据
 const fetchData = async () => {
   try {
-    start.value = props.userData.chat_count - limit.value;
-    await req(start.value, limit.value, props.userData.username);
+    my_wxid.value = await get_my_wxid();
+    msg_count.value = await req_msg_count(props.userData.wxid);
+    start.value = msg_count.value - limit.value;
+    if (start.value < 0) {
+      start.value = 0;
+    }
+    await req_msgs(start.value, limit.value, props.userData.wxid);
+
     if (!hasScrolledToTop.value) {
       await nextTick(() => {
         props.setScrollTop();
@@ -98,20 +141,50 @@ const fetchData = async () => {
 };
 // END 获取聊天记录
 
-onMounted(fetchData); // 初始化时获取数据
-
 // 监听 userData 中 username 的变化
-watch(() => props.userData.username, (newUsername, oldUsername) => {
-  // 执行你的函数
-  // 调用你想执行的函数
-  console.log('username changed', newUsername, oldUsername)
+watch(() => props.userData.wxid, (newUsername, oldUsername) => {
+  console.log('username changed： ', oldUsername, newUsername)
   messages.value = [];
+  userlist.value = {};
   hasScrolledToTop.value = false;
+  msg_count.value = 0;
+  start.value = 0;
+
   fetchData();
 });
 
+//  循环请求获取全部数据
+const loadMore = async () => {
+  my_wxid.value = await get_my_wxid();
+  msg_count.value = await req_msg_count(props.userData.wxid);
+
+  let limit1 = limit.value;
+  let start1 = start.value - limit1;
+  const body_data = await req_msgs(start1, limit1, props.userData.wxid);
+  start.value = start1;
+  console.log('loadMore', start1,start.value, limit1, props.userData.wxid)
+  messages.value = body_data.msg_list.concat(messages.value);
+  // 排序
+  messages.value.sort((a, b) => {
+    return a.id - b.id;
+  });
+  // 去重
+  messages.value = messages.value.filter((item, index, array) => {
+    return index === 0 || item.id !== array[index - 1].id;
+  });
+  userlist.value = Object.assign(userlist.value, body_data.user_list);
+
+  await nextTick(() => {
+    props.updateScrollTop()
+  })
+};
+defineExpose({
+  loadMore
+})
+
 // 这部分为构造消息的发送时间和头像
 const _direction = (msg: any) => {
+
   if (msg.talker == '我') {
     msg.talker = my_wxid.value;
   }
@@ -140,68 +213,12 @@ const get_head_url = (msg: any) => {
   if (!userlist.value.hasOwnProperty(msg.talker)) {
     return '';
   }
-  return userlist.value[msg.talker].headImgUrl;
+  return "/api/imgsrc/" + userlist.value[msg.talker].headImgUrl;
 }
 
 // END 这部分为构造消息的发送时间和头像
 
-// type_name_dict = {
-//         (1, 0): "文本",
-//         (3, 0): "图片",
-//         (34, 0): "语音",
-//         (43, 0): "视频",
-//         (47, 0): "动画表情",
-//
-//         (49, 0): "文件",
-//         (49, 1): "类似文字消息而不一样的消息",
-//         (49, 5): "卡片式链接",
-//         (49, 6): "文件",
-//         (49, 8): "用户上传的 GIF 表情",
-//         (49, 19): "合并转发的聊天记录",
-//         (49, 33): "分享的小程序",
-//         (49, 36): "分享的小程序",
-//         (49, 57): "带有引用的文本消息",
-//         (49, 63): "视频号直播或直播回放等",
-//         (49, 87): "群公告",
-//         (49, 88): "视频号直播或直播回放等",
-//         (49, 2000): "转账消息",
-//         (49, 2003): "赠送红包封面",
-//
-//         (50, 0): "语音通话",
-//         (10000, 0): "系统通知",
-//         (10000, 4): "拍一拍",
-//         (10000, 8000): "系统通知"
-//     }
-//     # row_data = {"MsgSvrID": MsgSvrID, "type_name": type_name, "is_sender": IsSender, "talker": talker,
-//     #             "room_name": StrTalker, "content": {"src": "", "msg": StrContent}, "CreateTime": CreateTime}
-//  循环请求获取全部数据
-const loadMore = async () => {
-  let limit1 = limit.value;
-  let start1 = start.value - limit1;
-  const body_data = await http.post('/api/msgs', {
-    start: start1,
-    limit: limit1,
-    wxid: props.userData.username,
-  });
-  start.value = start1;
-  messages.value = body_data.msg_list.concat(messages.value);
-  // 排序
-  messages.value.sort((a, b) => {
-    return a.id - b.id;
-  });
-  // 去重
-  messages.value = messages.value.filter((item, index, array) => {
-    return index === 0 || item.id !== array[index - 1].id;
-  });
-  userlist.value = Object.assign(userlist.value, body_data.user_list);
 
-  await nextTick(() => {
-    props.updateScrollTop()
-  })
-};
-defineExpose({
-  loadMore
-})
 </script>
 
 <template>
@@ -209,7 +226,7 @@ defineExpose({
     <div class="chat_body">
       <div class="chat_window" ref="chatWindow">
         <!--    加载更多    -->
-        <div class="load_more" v-if="messages.length<userData.chat_count"
+        <div class="load_more" v-if="messages.length<msg_count"
              style="display: flex; justify-content: center; margin-top: 10px;margin-bottom: 10px;">
           <el-button type="primary" @click="loadMore">查看更多消息</el-button>
         </div>
@@ -220,19 +237,20 @@ defineExpose({
                        :headUrl="get_head_url(msg)" :content="msg.content.msg"></MessageText>
           <!-- 图片消息 -->
           <MessageImg v-else-if="msg.type_name == '图片'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                      :headUrl="get_head_url(msg)" :src="'/api/img?img_path='+msg.content.src"></MessageImg>
-           <!-- 表情消息 -->
-           <MessageEmoji v-else-if="msg.type_name == '动画表情'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                      :headUrl="get_head_url(msg)" :src="msg.content.src"></MessageEmoji>
+                      :headUrl="get_head_url(msg)" :src="'/api/img/'+msg.content.src"></MessageImg>
+          <!-- 表情消息 -->
+          <MessageEmoji v-else-if="msg.type_name == '动画表情'" :is_sender="msg.is_sender" :direction="_direction(msg)"
+                        :headUrl="get_head_url(msg)" :src="'/api/imgsrc/'+msg.content.src"></MessageEmoji>
           <!-- 视频消息 -->
           <MessageVideo v-else-if="msg.type_name == '视频'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                      :headUrl="get_head_url(msg)" :src="msg.content.src"></MessageVideo>
-           <!-- 文件消息 -->
+                        :headUrl="get_head_url(msg)" :src="'/api/video/'+msg.content.src"></MessageVideo>
+          <!-- 文件消息 -->
           <MessageFile v-else-if="msg.type_name == '文件'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                      :headUrl="get_head_url(msg)" :src="msg.content.src"></MessageFile>
+                       :headUrl="get_head_url(msg)" :src="msg.content.src"></MessageFile>
           <!-- 语音消息 -->
           <MessageAudio v-else-if="msg.type_name == '语音'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                        :headUrl="get_head_url(msg)" :src="'/api/'+msg.content.src" :msg="msg.content.msg"></MessageAudio>
+                        :headUrl="get_head_url(msg)" :src="'/api/'+msg.content.src"
+                        :msg="msg.content.msg"></MessageAudio>
           <!-- 其他消息 -->
           <MessageOther v-else :is_sender="msg.is_sender" :direction="_direction(msg)" :headUrl="get_head_url(msg)"
                         :content="msg.content.msg"></MessageOther>
