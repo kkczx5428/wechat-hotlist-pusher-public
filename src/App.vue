@@ -112,8 +112,8 @@ const handleClose = (key: string, keyPath: string[]) => {
               </template>
               <el-menu-item index='/wxinfo'>账号信息</el-menu-item>
               <el-menu-item index='/bias'>基址偏移</el-menu-item>
-              <el-menu-item index='/merge'>数据库合并</el-menu-item>
               <el-menu-item index='/decrypt'>解密数据</el-menu-item>
+              <el-menu-item index='/merge'>数据库合并</el-menu-item>
             </el-sub-menu>
           </el-menu>
           <el-menu default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen"
