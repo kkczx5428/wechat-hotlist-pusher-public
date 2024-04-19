@@ -120,7 +120,12 @@ onMounted(() => {
 const is_export = ref(false);
 const onExport = (exporting: boolean) => {
   is_export.value = exporting;
-  // console.log('is_export:', is_export.value)
+  if (is_export.value === false) {
+    // 修改wxid后，重新请求数据
+    userinfo.value.wxid = '';
+    req_user_info();
+  }
+
 }
 // end 导出聊天记录页面是否显示
 
@@ -150,10 +155,10 @@ watch(() => props.wxid, async (newVal, oldVal) => {
 
         <ChatExportMain v-if="is_export" :wxid="userinfo.wxid"/>
         <ChatRecordsMain v-else
-            ref="chatRecordsMainRef"
-            :userData="userinfo"
-            :setScrollTop="scrollToBottom"
-            :updateScrollTop="updateScrollTop"
+                         ref="chatRecordsMainRef"
+                         :userData="userinfo"
+                         :setScrollTop="scrollToBottom"
+                         :updateScrollTop="updateScrollTop"
         />
       </el-scrollbar>
     </el-main>

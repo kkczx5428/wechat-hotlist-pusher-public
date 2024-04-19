@@ -52,10 +52,19 @@ const get_real_time_msg = async () => {
   }
 }
 
+const is_export = ref(false);
+
 const emits = defineEmits(['exporting']);
 const export_button = () => {
 // 提交参数 is_export 给父组件
   emits('exporting', true);
+  is_export.value = true;
+}
+
+const chatview_button = () => {
+// 提交参数 is_export 给父组件
+  emits('exporting', false);
+  is_export.value = false;
 }
 
 </script>
@@ -96,7 +105,8 @@ const export_button = () => {
       </el-text>
     </el-col>
     <el-col :span="3" style="white-space: nowrap;">
-      <el-text class="button_color mx-1 underline" truncated @click="export_button();">导出</el-text>
+      <el-text v-if="!is_export" class="button_color mx-1 underline" truncated @click="export_button();">导出备份</el-text>
+      <el-text v-if="is_export" class="button_color mx-1 underline" truncated @click="chatview_button();">聊天查看</el-text>
     </el-col>
   </el-row>
 
