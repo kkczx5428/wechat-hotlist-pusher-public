@@ -149,7 +149,7 @@ const exportData = async () => {
       'start_time': datetime.value[0],
       'end_time': datetime.value[1],
       'chat_type': chatType.value,
-      'username': props.userData.username,
+      'username': props.userData.wxid,
       'wx_path': wx_path.value,
     });
     Result.value = body_data;

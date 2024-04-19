@@ -245,7 +245,7 @@ watch(init_type, (val) => {
           <el-divider></el-divider>  <!-- 分割线-->
           <div v-if="isUseKey=='false'">
             <label>merge_all.db 路径: </label>
-            <el-input placeholder="MediaMSG.db" v-model="merge_path" style="width: 80%;"></el-input>
+            <el-input placeholder="(MediaMSG.db,MSG.db,MicroMsg.db,OpenIMMsg.db)合并后的数据库" v-model="merge_path" style="width: 80%;"></el-input>
             <br>
           </div>
           <label>微信文件夹路径: </label>
