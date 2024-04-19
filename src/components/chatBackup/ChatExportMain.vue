@@ -6,13 +6,13 @@ import http from '@/router/axios.js';
 import {type Action, ElMessage, ElMessageBox} from "element-plus";
 
 interface User {
+  wxid: string
+  nickname: string
+  remark: string
   account: string
   describe: string
   headImgUrl: string
-  nickname: string
-  remark: string
-  username: string
-  chat_count: number
+  msg_count: number
 }
 
 const props = defineProps({
@@ -170,9 +170,7 @@ const exportData = async () => {
 
 <template>
   <div id="chat_export" style="background-color: #d2d2fa;padding:0;">
-    <el-header style="height: 65px; max-height: 65px; width: 100%;padding-top: 5px;">
-      <ChatRecprdsHeader :userData="userData"/>
-    </el-header>
+
     <!--      分割线 -->
     <el-main style="overflow-y: auto; height: calc(100vh - 65px);padding: 0">
       <div style="background-color: #d2d2fa;height: calc(100vh - 65px); display: grid; place-items: center; ">
@@ -200,7 +198,7 @@ const exportData = async () => {
                 <el-row :gutter="5" style="width: 100%;">
                   <el-col :span="6" style="white-space: nowrap;">
                     <el-text class="label_color mx-1" truncated>原始id:</el-text>&ensp;
-                    <el-text class="data_color mx-1" truncated>{{ userData.username }}
+                    <el-text class="data_color mx-1" truncated>{{ userData.wxid }}
                     </el-text>
                   </el-col>
                   <el-col :span="6" style="white-space: nowrap;">

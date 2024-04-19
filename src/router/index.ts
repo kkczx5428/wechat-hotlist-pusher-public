@@ -19,9 +19,9 @@ const router = createRouter({
             component: () => import((`@/views/ChatView.vue`))
         },
         {
-            path: '/export',
-            name: 'export',
-            component: () => import((`@/views/ExportView.vue`))
+            path: '/cleanup',
+            name: 'cleanup',
+            component: () => import((`@/views/CleanupView.vue`))
         },
         {
             path: '/statistics',
