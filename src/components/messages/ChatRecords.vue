@@ -120,7 +120,7 @@ onMounted(() => {
 const is_export = ref(false);
 const onExport = (exporting: boolean) => {
   is_export.value = exporting;
-  console.log('is_export:', is_export.value)
+  // console.log('is_export:', is_export.value)
 }
 // end 导出聊天记录页面是否显示
 
