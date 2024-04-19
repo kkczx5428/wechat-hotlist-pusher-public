@@ -236,28 +236,28 @@ watch(init_type, (val) => {
           <input type="radio" v-model="isUseKey" value="true"/> 使用 KEY &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <input type="radio" v-model="isUseKey" value="false"/> 不使用 KEY
           <div v-if="isUseKey=='false'">
-            说明：1、表示数据库已解密 &nbsp; &nbsp;2、若使用导出后的merge数据库，则db路径写这个即可
+            说明：1、表示数据库已解密并合并<br>2、合并后的数据库需要包含(MediaMSG,MSG,MicroMsg,OpenIMMsg)这些数据库合并的内容<br>
           </div>
           <div v-if="isUseKey=='true'">
-            说明：自动根据key解密微信文件夹下的数据库
+            说明：1、自动根据key解密微信文件夹下的数据库<br>2、必须保证key正确，否则解密失败<br>
           </div>
 
           <el-divider></el-divider>  <!-- 分割线-->
 
           <div v-if="isUseKey=='true'">
-            <label>密钥key(可空): </label>
+            <label>密钥key(必填): </label>
             <el-input placeholder="密钥key (64位)" v-model="key" style="width: 80%;"></el-input>
             <br>
           </div>
           <div v-if="isUseKey=='false'">
-            <label>merge_all.db 路径: </label>
+            <label>merge_all.db 路径(必填): </label>
             <el-input placeholder="(MediaMSG.db,MSG.db,MicroMsg.db,OpenIMMsg.db)合并后的数据库" v-model="merge_path" style="width: 80%;"></el-input>
             <br>
           </div>
-          <label>微信文件夹路径: </label>
+          <label>微信文件夹路径(必填): </label>
           <el-input placeholder="C:\***\WeChat Files\wxid_*******" v-model="wx_path" style="width: 80%;"></el-input>
           <br>
-          <label>微信原始id: </label>
+          <label>微信原始id(必填): </label>
           <el-input placeholder="wxid_*******" v-model="my_wxid" style="width: 80%;"></el-input>
           <br>
 
