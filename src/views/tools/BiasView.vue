@@ -26,6 +26,7 @@ const decrypt = async () => {
     });
     result.value = "{版本号:昵称,账号,手机号,邮箱,KEY}\n"+result.value;
   } catch (error) {
+    result.value = 'Error fetching data: \n' + error;
     console.error('Error fetching data:', error);
     return [];
   }

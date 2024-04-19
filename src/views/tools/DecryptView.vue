@@ -15,6 +15,7 @@ const decrypt = async () => {
       outPath: outPath.value
     });
   } catch (error) {
+    decryptResult.value = 'Error fetching data: \n' + error;
     console.error('Error fetching data:', error);
     return [];
   }
