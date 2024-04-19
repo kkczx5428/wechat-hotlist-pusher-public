@@ -70,26 +70,6 @@ const handleClose = (key: string, keyPath: string[]) => {
               <template #title>聊天查看</template>
             </el-menu-item>
 
-            <el-menu-item index='/export'>
-              <el-icon>
-                <svg t="1704180897235" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                     xmlns="http://www.w3.org/2000/svg" p-id="2706" width="200" height="200">
-                  <path
-                      d="M909.5 671.4h-625c-17.7 0-32-14.3-32-32s14.3-32 32-32h625c17.7 0 32 14.3 32 32s-14.3 32-32 32z"
-                      p-id="2707"></path>
-                  <path
-                      d="M904.8 662.7c-8.2 0-16.4-3.1-22.6-9.4l-225-225c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l225 225c12.5 12.5 12.5 32.8 0 45.3-6.3 6.3-14.5 9.4-22.7 9.4z"
-                      p-id="2708"></path>
-                  <path
-                      d="M679.5 905.2c-8.2 0-16.4-3.1-22.6-9.4-12.5-12.5-12.5-32.8 0-45.3l225-225c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-225 225c-6.3 6.3-14.5 9.4-22.7 9.4z"
-                      p-id="2709"></path>
-                  <path
-                      d="M448.2 958.3H229.7c-89.3 0-162-72.7-162-162V228.2c0-89.3 72.7-162 162-162h568.1c89.3 0 162 72.7 162 162v208.1c0 17.7-14.3 32-32 32s-32-14.3-32-32V228.2c0-54-44-98-98-98H229.7c-54 0-98 44-98 98v568.1c0 54 44 98 98 98h218.5c17.7 0 32 14.3 32 32s-14.3 32-32 32z"
-                      p-id="2710"></path>
-                </svg>
-              </el-icon>
-              <template #title>聊天备份</template>
-            </el-menu-item>
 
             <el-menu-item index='/statistics'>
               <el-icon>
@@ -104,6 +84,18 @@ const handleClose = (key: string, keyPath: string[]) => {
                 </svg>
               </el-icon>
               <template #title>统计分析</template>
+            </el-menu-item>
+
+            <el-menu-item index='/cleanup'>
+              <el-icon>
+                <svg t="1713444801401" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg" p-id="4641" width="200" height="200">
+                  <path
+                      d="M426.688 94.144a32 32 0 0 0-32 32v138.688h-288a32 32 0 0 0-32 32v170.688a32 32 0 0 0 32 32h32v353.792a32 32 0 0 0 32 32h682.624a32 32 0 0 0 32-32V499.52h32a32 32 0 0 0 32-32V296.832a32 32 0 0 0-32-32h-288V126.144a32 32 0 0 0-32-32H426.688z m394.624 727.168h-106.624v-97.792a32 32 0 1 0-64 0v97.792H544V723.2a32 32 0 1 0-64 0v98.176H373.312v-97.792a32 32 0 1 0-64 0v97.792H202.688v-320h618.624v320zM458.688 296.832V158.144h106.624v138.688a32 32 0 0 0 32 32h288v106.688H138.688V328.832h288a32 32 0 0 0 32-32z"
+                      fill="#333333" p-id="4642"></path>
+                </svg>
+              </el-icon>
+              <template #title>文件清理</template>
             </el-menu-item>
 
             <el-sub-menu index='/tools'>
@@ -253,6 +245,7 @@ header {
   height: 100%;
   right: 0px;
 }
+
 .sidebar-container {
   flex-direction: column;
   justify-content: space-between;
