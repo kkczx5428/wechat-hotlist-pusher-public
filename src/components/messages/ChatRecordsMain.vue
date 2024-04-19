@@ -160,6 +160,9 @@ const loadMore = async () => {
 
   let limit1 = limit.value;
   let start1 = start.value - limit1;
+  if (start1 < 0) {
+    start1 = 0;
+  }
   const body_data = await req_msgs(start1, limit1, props.userData.wxid);
   start.value = start1;
   console.log('loadMore', start1,start.value, limit1, props.userData.wxid)
