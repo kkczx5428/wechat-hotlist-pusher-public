@@ -243,6 +243,12 @@ watch(init_type, (val) => {
           </div>
 
           <el-divider></el-divider>  <!-- 分割线-->
+
+          <div v-if="isUseKey=='true'">
+            <label>密钥key(可空): </label>
+            <el-input placeholder="密钥key (64位)" v-model="key" style="width: 80%;"></el-input>
+            <br>
+          </div>
           <div v-if="isUseKey=='false'">
             <label>merge_all.db 路径: </label>
             <el-input placeholder="(MediaMSG.db,MSG.db,MicroMsg.db,OpenIMMsg.db)合并后的数据库" v-model="merge_path" style="width: 80%;"></el-input>
@@ -254,11 +260,6 @@ watch(init_type, (val) => {
           <label>微信原始id: </label>
           <el-input placeholder="wxid_*******" v-model="my_wxid" style="width: 80%;"></el-input>
           <br>
-          <div v-if="isUseKey=='true'">
-            <label>密钥key(可空): </label>
-            <el-input placeholder="密钥key (64位)" v-model="key" style="width: 80%;"></el-input>
-            <br>
-          </div>
 
           <el-button v-if="isUseKey=='true'" style="margin-top: 10px;width: 100%;" type="success" @click="init_key">
             确定
