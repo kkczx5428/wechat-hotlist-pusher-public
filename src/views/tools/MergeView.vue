@@ -41,7 +41,7 @@ const decrypt = async () => {
         <!--    分割线    -->
         <el-divider></el-divider>
         <!--    分割线    -->
-        <el-input type="textarea" :rows="10" readonly placeholder="解密后数据库路径" v-model="Result"
+        <el-input type="textarea" :rows="10" readonly placeholder="合并后数据库路径" v-model="Result"
                   style="width: 100%;"></el-input>
       </div>
     </div>
