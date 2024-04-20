@@ -15,7 +15,7 @@ watch(() => props.wxid, (newVal: string, oldVal: String) => {
 });
 // 上述代码是监听props.wxid的变化，当props.wxid变化时，会打印新值。
 
-const datetime = ref([]);
+// const datetime = ref([]);
 const Result = ref("");
 
 const requestExport = async () => {
@@ -23,7 +23,7 @@ const requestExport = async () => {
   try {
     Result.value = await http.post('/api/export_csv', {
       'wxid': props.wxid,
-      'datetime': datetime.value,
+      // 'datetime': datetime.value,
     });
   } catch (error) {
     console.error('Error fetching data msg_count:', error);
@@ -33,18 +33,18 @@ const requestExport = async () => {
 }
 
 // 处理时间选择器的数据
-const handDatetimeChildData = (val: any) => {
-  datetime.value = val;
-}
+// const handDatetimeChildData = (val: any) => {
+//   datetime.value = val;
+// }
 
 </script>
 
 <template>
   <div>
-    <div>
-      <strong>时间(默认全部)：</strong>
-      <DateTimeSelect @datetime="handDatetimeChildData"/>
-    </div>
+<!--    <div>-->
+<!--      <strong>时间(默认全部)：</strong>-->
+<!--      <DateTimeSelect @datetime="handDatetimeChildData"/>-->
+<!--    </div>-->
 
     <div style="position: relative;">
       <el-button type="primary" @click="requestExport()">导出</el-button>

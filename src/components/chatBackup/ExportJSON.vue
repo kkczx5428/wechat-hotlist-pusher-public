@@ -23,7 +23,7 @@ const requestExport = async () => {
   try {
     Result.value = await http.post('/api/export_json', {
       'wxid': props.wxid,
-      'datetime': datetime.value,
+      // 'datetime': datetime.value,
     });
   } catch (error) {
     console.error('Error fetching data msg_count:', error);
@@ -41,10 +41,10 @@ const handDatetimeChildData = (val: any) => {
 
 <template>
   <div>
-    <div>
-      <strong>时间(默认全部)：</strong>
-      <DateTimeSelect @datetime="handDatetimeChildData"/>
-    </div>
+<!--    <div>-->
+<!--      <strong>时间(默认全部)：</strong>-->
+<!--      <DateTimeSelect @datetime="handDatetimeChildData"/>-->
+<!--    </div>-->
 
     <div style="position: relative;">
       <el-button type="primary" @click="requestExport()">导出</el-button>
