@@ -50,11 +50,11 @@ const setting = {
   },
   'pdf': {
     brief: 'pdf-开发中',
-    detail: "就是html的pdf版本。",
+    detail: "pdf版本。",
   },
   'docx': {
     brief: 'docx-开发中',
-    detail: "就是html的docx版本。",
+    detail: "docx版本。",
   },
 };
 
