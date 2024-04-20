@@ -214,7 +214,6 @@ const exportData = async () => {
                     <el-text class="label_color mx-1" truncated>备注:</el-text>&ensp;
                     <el-text class="data_color mx-1" truncated>{{ userData.remark }}</el-text>
                   </el-col>
-
                 </el-row>
 
               </div>
