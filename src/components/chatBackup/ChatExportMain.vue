@@ -29,19 +29,19 @@ const result = ref(''); // 用于显示返回值
 
 const setting = {
   'endb': {
-    brief: '加密文件-测试中',
+    brief: '加密文件',
     detail: "导出的内容为微信加密数据库。可还原回微信,但会覆盖微信后续消息。(全程不解密，所以数据安全)",
   },
   'dedb': {
-    brief: '解密文件-测试中',
+    brief: '解密文件',
     detail: "导出的文件为解密后的sqlite数据库，并且会自动合并msg和media数据库为同一个，但是无法还原回微信。",
   },
   'csv': {
-    brief: 'csv-测试中',
+    brief: 'csv',
     detail: "只包含文本，但是可以用excel软件（wps，office）打开。",
   },
   'json': {
-    brief: 'json-测试中',
+    brief: 'json',
     detail: "只包含文本，可用于数据分析，情感分析等方面。",
   },
   'html': {
