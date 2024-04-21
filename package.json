@@ -14,9 +14,11 @@
     "@types/axios": "^0.14.0",
     "axios": "^1.6.3",
     "cors": "^2.8.5",
+    "echarts": "^5.5.0",
     "element-plus": "^2.4.4",
     "markdown-it": "^14.0.0",
     "vue": "^3.3.11",
+    "vue-echarts": "^6.6.9",
     "vue-router": "^4.2.5",
     "vue3-markdown-it": "^1.0.10"
   },
