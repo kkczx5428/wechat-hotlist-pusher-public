@@ -35,13 +35,13 @@ const decrypt = async () => {
       </div>
       <div style="margin-top: 20px;">
         <label>密钥（key）: </label>
-        <el-input placeholder="请输入密钥（key）" v-model="key" style="width: 50%;"></el-input>
+        <el-input placeholder="请输入密钥（key）" v-model="key" style="width: 82%;"></el-input>
         <br>
         <label>微信数据库路径: </label>
-        <el-input placeholder="请输入微信数据库路径" v-model="wxdbPath" style="width: 50%;"></el-input>
+        <el-input placeholder="请输入微信数据库路径" v-model="wxdbPath" style="width: 80%;"></el-input>
         <br>
         <label>解密后输出文件夹路径: </label>
-        <el-input placeholder="请输入解密后输出文件夹路径" v-model="outPath" style="width: 50%;"></el-input>
+        <el-input placeholder="请输入解密后输出文件夹路径" v-model="outPath" style="width: 75%;"></el-input>
         <br>
 
         <el-button style="margin-top: 10px;width: 50%;" type="success" @click="decrypt">解密</el-button>

@@ -45,19 +45,19 @@ const decrypt = async () => {
       </div>
       <div style="margin-top: 20px;">
         <label>手机号: </label>
-        <el-input placeholder="请输入手机号" v-model="mobile" style="width: 50%;"></el-input>
+        <el-input placeholder="请输入手机号" v-model="mobile" style="width: 80%;"></el-input>
         <br>
         <label>昵称: </label>
-        <el-input placeholder="请输入昵称" v-model="name" style="width: 50%;"></el-input>
+        <el-input placeholder="请输入昵称" v-model="name" style="width: 80%;"></el-input>
         <br>
         <label>微信账号: </label>
-        <el-input placeholder="请输入微信号" v-model="account" style="width: 50%;"></el-input>
+        <el-input placeholder="请输入微信号" v-model="account" style="width: 80%;"></el-input>
         <br>
         <label>密钥（key）: </label>
-        <el-input placeholder="请输入密钥（key）（可选）" v-model="key" style="width: 50%;"></el-input>
+        <el-input placeholder="请输入密钥（key）（可选）" v-model="key" style="width: 80%;"></el-input>
         <br>
         <label>微信数据库路径: </label>
-        <el-input placeholder="请输入微信数据库路径（可选）" v-model="wxdbPath" style="width: 50%;"></el-input>
+        <el-input placeholder="请输入微信数据库路径（可选）" v-model="wxdbPath" style="width: 75%;"></el-input>
         <br>
         <el-button style="margin-top: 10px;width: 50%;" type="success" @click="decrypt">偏移</el-button>
         <!--    分割线    -->
