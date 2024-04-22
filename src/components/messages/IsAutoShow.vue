@@ -4,6 +4,7 @@ import ProgressBar from "@/components/utils/ProgressBar.vue";
 import {defineEmits, onMounted, ref, watch} from "vue";
 import {ElTable, ElTableColumn, ElMessage, ElMessageBox} from "element-plus";
 import type {Action} from 'element-plus'
+import {log} from "echarts/types/src/util/log";
 
 interface wxinfo {
   pid: string;
@@ -63,21 +64,25 @@ const selectWx = async (row: wxinfo) => {
 
 const okWx = () => {
   if (wx_path.value === '' && key.value === '' && my_wxid.value === '') {
+    console.log("请填写完整信息! ")
     return;
   }
   if (decryping.value) {
+    console.log("正在解密...，请稍后再试！")
     return;
   }
-  decryping.value = true;
   init_key();
+  decryping.value = false;
 }
 
 // END 查看有多少个微信正在登录 ， 并调用init_key解密初始化
 
 const init_key = async () => {
   if (decryping.value) {
+    console.log("正在解密中，请稍后再试！")
     return;
   }
+  decryping.value = true;
   try {
     decryping.value = true;
     startORstop.value = 0; // 进度条开始
@@ -90,12 +95,13 @@ const init_key = async () => {
     is_init.value = body_data.is_init;
     if (body_data.is_init) {
       percentage.value = 100; // 进度条 100%
-      decryping.value = false;
     }
+    decryping.value = false;
     emits('isAutoShow', body_data.is_init);
   } catch (error) {
     percentage.value = 0; // 进度条 0%
     isErrorShow.value = true;
+    decryping.value = false;
     ElMessageBox.alert(error, 'error', {
       confirmButtonText: '确认',
       callback: (action: Action) => {
@@ -105,9 +111,10 @@ const init_key = async () => {
         })
       },
     })
-    // console.error('Error fetching data:', error);
     return [];
   }
+
+  decryping.value = false;
 }
 
 const init_nokey = async () => {
@@ -121,12 +128,13 @@ const init_nokey = async () => {
     is_init.value = body_data.is_init;
     if (body_data.is_init) {
       percentage.value = 100; // 进度条 100%
-      decryping.value = false;
     }
+    decryping.value = false;
     emits('isAutoShow', body_data.is_init);
   } catch (error) {
     percentage.value = 0; // 进度条 0%
     isErrorShow.value = true;
+    decryping.value = false;
     ElMessageBox.alert(error, 'error', {
       confirmButtonText: '确认',
       callback: (action: Action) => {
@@ -136,6 +144,7 @@ const init_nokey = async () => {
     // console.error('Error fetching data:', error);
     return [];
   }
+  decryping.value = false;
 }
 
 const init_last = async () => {
@@ -153,6 +162,7 @@ const init_last = async () => {
       emits('isAutoShow', body_data.is_init);
     } else {
       isErrorShow.value = true;
+      decryping.value = false;
       ElMessageBox.alert("未发现上次的设置数据！", 'error', {
         confirmButtonText: '确认',
         callback: (action: Action) => {
@@ -160,9 +170,12 @@ const init_last = async () => {
         },
       })
     }
+
+    decryping.value = false;
   } catch (error) {
     // percentage.value = 0; // 进度条 0%
     isErrorShow.value = true;
+    decryping.value = false;
     ElMessageBox.alert(error, 'error', {
       confirmButtonText: '确认',
       callback: (action: Action) => {
@@ -172,6 +185,8 @@ const init_last = async () => {
     // console.error('Error fetching data:', error);
     return [];
   }
+
+  decryping.value = false;
 }
 
 // 监测isAutoShow是否为aoto，如果是则执行get_wxinfo
@@ -193,7 +208,9 @@ watch(init_type, (val) => {
     <div v-if="init_type==='auto'">
 
       <!--      <el-progress v-if="decryping && !isErrorShow" type="dashboard" :percentage="percentage" :color="colors"/>-->
-      <ProgressBar v-if="decryping" :startORstop="startORstop"/>
+      <div v-if="decryping">
+        <ProgressBar v-if="decryping" :startORstop="startORstop"/>
+      </div>
       <div v-else
            style="background-color: #fff; width: 90%;min-width: 800px; height: 80%; border-radius: 10px; padding: 20px; overflow: auto;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -224,7 +241,7 @@ watch(init_type, (val) => {
         <ProgressBar v-if="decryping" :startORstop="startORstop"/>
       </div>
       <div v-else
-          style="background-color: #fff; width: 80%;min-width: 800px; height: 70%; border-radius: 10px; padding: 20px; overflow: auto;">
+           style="background-color: #fff; width: 80%;min-width: 800px; height: 70%; border-radius: 10px; padding: 20px; overflow: auto;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div style="font-size: 20px; font-weight: bold;">自定义-文件位置</div>
           <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -251,7 +268,8 @@ watch(init_type, (val) => {
           </div>
           <div v-if="isUseKey=='false'">
             <label>merge_all.db 路径(必填): </label>
-            <el-input placeholder="(MediaMSG.db,MSG.db,MicroMsg.db,OpenIMMsg.db)合并后的数据库" v-model="merge_path" style="width: 80%;"></el-input>
+            <el-input placeholder="(MediaMSG.db,MSG.db,MicroMsg.db,OpenIMMsg.db)合并后的数据库" v-model="merge_path"
+                      style="width: 80%;"></el-input>
             <br>
           </div>
           <label>微信文件夹路径(必填): </label>
