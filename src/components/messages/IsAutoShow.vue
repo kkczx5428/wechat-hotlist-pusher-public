@@ -4,7 +4,6 @@ import ProgressBar from "@/components/utils/ProgressBar.vue";
 import {defineEmits, onMounted, ref, watch} from "vue";
 import {ElTable, ElTableColumn, ElMessage, ElMessageBox} from "element-plus";
 import type {Action} from 'element-plus'
-import {log} from "echarts/types/src/util/log";
 
 interface wxinfo {
   pid: string;
