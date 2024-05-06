@@ -71,7 +71,6 @@ const okWx = () => {
     return;
   }
   init_key();
-  decryping.value = false;
 }
 
 // END 查看有多少个微信正在登录 ， 并调用init_key解密初始化
@@ -112,7 +111,6 @@ const init_key = async () => {
     })
     return [];
   }
-
   decryping.value = false;
 }
 
