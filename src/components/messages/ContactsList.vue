@@ -2,7 +2,6 @@
 import {defineEmits, defineProps, onMounted, ref} from 'vue';
 import http from '@/router/axios.js';
 
-
 interface User {
   wxid: string
   nickname: string
@@ -15,6 +14,7 @@ interface User {
 }
 
 const tableData = ref([]);
+const userLabelDict = ref({});
 
 // 请求数据
 const req = async () => {
@@ -38,11 +38,35 @@ const search_user = async (word: string = '') => {
   }
 }
 
+const get_user_label_dict = async () => {
+  try {
+    return await http.post('/api/user_labels_dict', {});
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return [];
+  }
+}
+
 // END 请求数据
+
+// 显示tooltip
+const showTooltipValue = (LabelIDList: string[]) => {
+  console.log(LabelIDList)
+  let value = "";
+  if (LabelIDList.length === 0) {
+    return "";
+  }
+  for (let i = 0; i < LabelIDList.length; i++) {
+    value += userLabelDict.value[LabelIDList[i]] + " ";
+  }
+  return value;
+}
+// END 显示tooltip
 
 const fetchData = async () => {
   try {
     tableData.value = await req();
+    userLabelDict.value = await get_user_label_dict();
   } catch (error) {
     console.error('Error fetching data:', error);
     return [];
@@ -101,10 +125,18 @@ const handleCurrentChange = (val: User | undefined) => {
       </el-table-column>
       <el-table-column width="190">
         <template v-slot="{ row }">
-          <span v-if="row.remark !== null && row.remark !== ''">{{ row.remark }}</span>
-          <span v-else>{{ row.nickname }}</span>
+          <el-tooltip class="item" effect="light" v-if="row.LabelIDList.length>0"
+                      :content="showTooltipValue(row.LabelIDList)" placement="right">
+            <span v-if="row.remark !== null && row.remark !== ''">{{ row.remark }}</span>
+            <span v-else>{{ row.nickname }}</span>
+          </el-tooltip>
+          <template v-else>
+            <span v-if="row.remark !== null && row.remark !== ''">{{ row.remark }}</span>
+            <span v-else>{{ row.nickname }}</span>
+          </template>
+
           <br>
-          <span v-if="row.LastReadedCreateTime !== undefined && row.LastReadedCreateTime !== null"
+          <span v-if="row.LastReadedCreateTime"
                 style="color: #909399;font-size: 12px;">{{ row.LastReadedCreateTime }}</span>
         </template>
       </el-table-column>
