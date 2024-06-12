@@ -51,7 +51,7 @@ const get_user_label_dict = async () => {
 
 // 显示tooltip
 const showTooltipValue = (LabelIDList: string[]) => {
-  console.log(LabelIDList)
+  // console.log(LabelIDList)
   let value = "";
   if (LabelIDList.length === 0) {
     return "";
