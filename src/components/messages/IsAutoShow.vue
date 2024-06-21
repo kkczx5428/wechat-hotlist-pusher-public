@@ -35,6 +35,8 @@ const wx_path = ref("");
 const key = ref("");
 const my_wxid = ref("");
 
+const local_wxids = ref([]);
+
 
 const emits = defineEmits(['isAutoShow']); // 用于父组件监听子组件的事件
 
@@ -144,6 +146,31 @@ const init_nokey = async () => {
   decryping.value = false;
 }
 
+const selectLastWx = async (row: wxinfo) => {
+  merge_path.value = "";
+  wx_path.value = row.filePath;
+  key.value = row.key;
+  my_wxid.value = row.wxid;
+}
+
+const get_init_last_local_wxid = async () => {
+  try {
+    const body_data = await http.post('/api/init_last_local_wxid'); //[ 'wx1234567890', 'wx0987654321' ]
+    local_wxids.value = body_data.local_wxid.map((item: string) => {
+      return {originalId: item}
+    });
+
+    if (local_wxids.value.length === 1) {
+      my_wxid.value = local_wxids.value[0];
+      console.log("init_last")
+      init_last();
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return [];
+  }
+}
+
 const init_last = async () => {
   try {
     let reqdata = {
@@ -193,7 +220,8 @@ watch(init_type, (val) => {
   } else if (val === 'custom') {
     // init();
   } else if (val === 'last') {
-    init_last();
+    get_init_last_local_wxid();
+    // init_last();
   }
 })
 
@@ -288,7 +316,23 @@ watch(init_type, (val) => {
     <!-- END -->
 
     <!-- 上次数据 -->
-    <div v-else-if="init_type==='last'"></div>
+    <div v-else-if="init_type==='last'">
+      <div
+          style="background-color: #fff; width: 90%;min-width: 800px; height: 80%; border-radius: 10px; padding: 20px; overflow: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 20px; font-weight: bold;">选择要查看的微信</div>
+        </div>
+        <div style="margin-top: 20px;">
+          <el-table :data="local_wxids" @current-change="selectLastWx" highlight-current-row style="width: 100%">
+            <el-table-column :min-width="50" prop="originalId" label="微信原始id"></el-table-column>
+          </el-table>
+        </div>
+        <div style="margin-top: 20px;">
+          <el-button style="margin-right: 10px;margin-top: 10px;width: 100%;" type="success" @click="init_last">确定
+          </el-button>
+        </div>
+      </div>
+    </div>
     <!-- END -->
 
     <!-- 初始选择界面 -->
@@ -297,7 +341,7 @@ watch(init_type, (val) => {
           style="width: 200px; height: 150px; background-color: #fff; display: flex; flex-direction: column; align-items: center; border-radius: 10px; margin-right: 20px;">
         <input type="radio" v-model="init_type" value="last"/>
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
-          <div>使用上次设置</div>
+          <div>使用本地设置</div>
         </div>
       </label>
       <label
