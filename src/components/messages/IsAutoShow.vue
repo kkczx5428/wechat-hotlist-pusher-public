@@ -156,7 +156,7 @@ const selectLastWx = async (row: wxinfo) => {
 const get_init_last_local_wxid = async () => {
   try {
     const body_data = await http.post('/api/init_last_local_wxid'); //[ 'wx1234567890', 'wx0987654321' ]
-    local_wxids.value = body_data.local_wxid.map((item: string) => {
+    local_wxids.value = body_data.local_wxids.map((item: string) => {
       return {originalId: item}
     });
 
