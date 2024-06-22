@@ -341,7 +341,7 @@ watch(init_type, (val) => {
           style="width: 200px; height: 150px; background-color: #fff; display: flex; flex-direction: column; align-items: center; border-radius: 10px; margin-right: 20px;">
         <input type="radio" v-model="init_type" value="last"/>
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
-          <div>使用本地设置</div>
+          <div>使用历史数据</div>
         </div>
       </label>
       <label
