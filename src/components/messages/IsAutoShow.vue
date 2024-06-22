@@ -147,7 +147,7 @@ const init_nokey = async () => {
 }
 
 const selectLastWx = async (row: wxinfo) => {
-  console.log(row)
+  // console.log(row)
   my_wxid.value = row.wxid;
 }
 
@@ -160,7 +160,7 @@ const get_init_last_local_wxid = async () => {
 
     if (local_wxids.value.length === 1) {
       my_wxid.value = local_wxids.value[0];
-      console.log("init_last")
+      // console.log("init_last")
       init_last();
     }
   } catch (error) {
