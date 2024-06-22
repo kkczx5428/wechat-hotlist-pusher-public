@@ -147,9 +147,7 @@ const init_nokey = async () => {
 }
 
 const selectLastWx = async (row: wxinfo) => {
-  merge_path.value = "";
-  wx_path.value = row.filePath;
-  key.value = row.key;
+  console.log(row)
   my_wxid.value = row.wxid;
 }
 
@@ -157,7 +155,7 @@ const get_init_last_local_wxid = async () => {
   try {
     const body_data = await http.post('/api/init_last_local_wxid'); //[ 'wx1234567890', 'wx0987654321' ]
     local_wxids.value = body_data.local_wxids.map((item: string) => {
-      return {originalId: item}
+      return {wxid: item}
     });
 
     if (local_wxids.value.length === 1) {
@@ -178,6 +176,7 @@ const init_last = async () => {
       "merge_path": merge_path.value,
       "my_wxid": my_wxid.value
     }
+    console.log(reqdata);
     const body_data = await http.post('/api/init_last', reqdata);
     is_init.value = body_data.is_init;
     if (body_data.is_init) {
@@ -324,7 +323,7 @@ watch(init_type, (val) => {
         </div>
         <div style="margin-top: 20px;">
           <el-table :data="local_wxids" @current-change="selectLastWx" highlight-current-row style="width: 100%">
-            <el-table-column :min-width="50" prop="originalId" label="微信原始id"></el-table-column>
+            <el-table-column :min-width="50" prop="wxid" label="微信原始id"></el-table-column>
           </el-table>
         </div>
         <div style="margin-top: 20px;">
