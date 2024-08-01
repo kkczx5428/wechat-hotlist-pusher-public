@@ -18,7 +18,6 @@ const router = createRouter({
             name: 'chat',
             component: () => import((`@/views/ChatView.vue`))
         },
-
         {
             path: '/contacts',
             name: 'contacts',
@@ -34,7 +33,6 @@ const router = createRouter({
             name: 'favorite',
             component: () => import((`@/views/FavoriteView.vue`))
         },
-
         {
             path: '/cleanup',
             name: 'cleanup',
