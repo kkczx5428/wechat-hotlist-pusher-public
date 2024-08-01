@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import http from '@/router/axios.js';
+import http from '@/utils/axios.js';
 
 const mobile = ref<string>('');
 const name = ref<string>('');

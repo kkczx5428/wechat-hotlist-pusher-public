@@ -1,5 +1,5 @@
 <script setup lang="ts" xmlns="http://www.w3.org/1999/html">
-import http from "@/router/axios";
+import http from "@/utils/axios";
 import ProgressBar from "@/components/utils/ProgressBar.vue";
 import {defineEmits, onMounted, ref, watch} from "vue";
 import {ElTable, ElTableColumn, ElMessage, ElMessageBox} from "element-plus";

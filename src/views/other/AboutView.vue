@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import Markdown from 'vue3-markdown-it';
-import http from '@/router/axios.js';
+import http from '@/utils/axios.js';
 import {type Action, ElMessage, ElMessageBox} from "element-plus";
 const check_update = async () => {
   try {

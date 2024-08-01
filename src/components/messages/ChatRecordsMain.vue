@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {defineProps, ref, onMounted, watch, nextTick, defineExpose} from "vue";
-import http from '@/router/axios.js';
+import http from '@/utils/axios.js';
 import MessageText from './MessageText.vue';
 import MessageImg from './MessageImg.vue';
 import MessageVideo from './MessageVideo.vue';

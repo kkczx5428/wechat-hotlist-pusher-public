@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import {defineProps, onMounted, ref} from "vue";
-import http from '@/router/axios.js';
+import http from '@/utils/axios.js';
 
 
 

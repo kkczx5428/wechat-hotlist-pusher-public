@@ -4,7 +4,7 @@ import ChatRecords from '@/components/messages/ChatRecords.vue';
 import IsAutoShow from '@/components/messages/IsAutoShow.vue';
 import {ref} from "vue";
 import HomeView from "@/views/HomeView.vue";
-import http from '@/router/axios.js';
+import http from '@/utils/axios.js';
 
 const is_init = ref(false);
 const init = (child_init: boolean) => {

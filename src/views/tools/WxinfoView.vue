@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {defineComponent, reactive, ref, onMounted, toRefs} from 'vue'
 import {ElTable, ElTableColumn} from 'element-plus'
-import http from '@/router/axios.js';
+import http from '@/utils/axios.js';
 
 interface wxinfo {
   pid: string;

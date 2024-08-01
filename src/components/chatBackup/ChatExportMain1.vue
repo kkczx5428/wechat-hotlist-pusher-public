@@ -2,7 +2,7 @@
 import {ref, defineProps, nextTick, watch} from 'vue';
 import ChatRecprdsHeader from "@/components/messages/ChatRecprdsHeader.vue";
 import DateTimeSelect from "@/components/utils/DateTimeSelect.vue";
-import http from '@/router/axios.js';
+import http from '@/utils/axios.js';
 import {type Action, ElMessage, ElMessageBox} from "element-plus";
 
 interface User {

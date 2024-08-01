@@ -2,7 +2,7 @@
 import ChatRecprdsHeader from '@/components/messages/ChatRecprdsHeader.vue';
 import ChatRecordsMain from '@/components/messages/ChatRecordsMain.vue';
 import {ref, defineProps, nextTick, onMounted, watch} from 'vue';
-import http from "@/router/axios.js";
+import http from "@/utils/axios.js";
 import ChatExportMain from "@/components/chatBackup/ChatExportMain.vue";
 
 // start 关于滚动条的操作

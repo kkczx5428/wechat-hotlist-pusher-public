@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {defineEmits, defineProps, ref} from 'vue';
-import http from "@/router/axios.js";
+import http from "@/utils/axios.js";
 import {ElTable, ElNotification, ElMessage, ElMessageBox} from "element-plus";
 
 interface User {
