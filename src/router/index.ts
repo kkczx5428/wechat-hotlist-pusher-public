@@ -18,6 +18,23 @@ const router = createRouter({
             name: 'chat',
             component: () => import((`@/views/ChatView.vue`))
         },
+
+        {
+            path: '/contacts',
+            name: 'contacts',
+            component: () => import((`@/views/ContactsView.vue`))
+        },
+        {
+            path: '/moments',
+            name: 'moments',
+            component: () => import((`@/views/MomentsView.vue`))
+        },
+        {
+            path: '/favorite',
+            name: 'favorite',
+            component: () => import((`@/views/FavoriteView.vue`))
+        },
+
         {
             path: '/cleanup',
             name: 'cleanup',
