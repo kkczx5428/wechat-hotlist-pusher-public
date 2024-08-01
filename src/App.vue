@@ -9,7 +9,7 @@ import ToolsIcon from "@/assets/icon/ToolsIcon.vue";
 import AboutIcon from "@/assets/icon/AboutIcon.vue";
 import HelpIcon from "@/assets/icon/HelpIcon.vue";
 import SettingIcon from "@/assets/icon/SettingIcon.vue";
-import CollapseIcon from "@/assets/icon/CollapseIcon.vue";
+// import CollapseIcon from "@/assets/icon/CollapseIcon.vue";
 import HomeIcon from "@/assets/icon/HomeIcon.vue";
 import ContactsIcon from "@/assets/icon/ContactsIcon.vue";
 import MomentsIcon from "@/assets/icon/MomentsIcon.vue";
