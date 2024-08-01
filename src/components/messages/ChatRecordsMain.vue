@@ -216,7 +216,7 @@ const get_head_url = (msg: any) => {
   if (!userlist.value.hasOwnProperty(msg.talker)) {
     return '';
   }
-  return "/api/imgsrc/" + userlist.value[msg.talker].headImgUrl;
+  return "/rs_api/imgsrc/" + userlist.value[msg.talker].headImgUrl;
 }
 
 // END 这部分为构造消息的发送时间和头像
@@ -240,19 +240,19 @@ const get_head_url = (msg: any) => {
                        :headUrl="get_head_url(msg)" :content="msg.content.msg"></MessageText>
           <!-- 图片消息 -->
           <MessageImg v-else-if="msg.type_name == '图片'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                      :headUrl="get_head_url(msg)" :src="'/api/img/'+msg.content.src"></MessageImg>
+                      :headUrl="get_head_url(msg)" :src="'/rs_api/img/'+msg.content.src"></MessageImg>
           <!-- 表情消息 -->
           <MessageEmoji v-else-if="msg.type_name == '动画表情'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                        :headUrl="get_head_url(msg)" :src="'/api/imgsrc/'+msg.content.src"></MessageEmoji>
+                        :headUrl="get_head_url(msg)" :src="'/rs_api/imgsrc/'+msg.content.src"></MessageEmoji>
           <!-- 视频消息 -->
           <MessageVideo v-else-if="msg.type_name == '视频'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                        :headUrl="get_head_url(msg)" :src="'/api/video/'+msg.content.src"></MessageVideo>
+                        :headUrl="get_head_url(msg)" :src="'/rs_api/video/'+msg.content.src"></MessageVideo>
           <!-- 文件消息 -->
           <MessageFile v-else-if="msg.type_name == '文件'" :is_sender="msg.is_sender" :direction="_direction(msg)"
                        :headUrl="get_head_url(msg)" :src="msg.content.src"></MessageFile>
           <!-- 语音消息 -->
           <MessageAudio v-else-if="msg.type_name == '语音'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                        :headUrl="get_head_url(msg)" :src="'/api/'+msg.content.src"
+                        :headUrl="get_head_url(msg)" :src="'/rs_api/'+msg.content.src"
                         :msg="msg.content.msg"></MessageAudio>
           <!-- 其他消息 -->
           <MessageOther v-else :is_sender="msg.is_sender" :direction="_direction(msg)" :headUrl="get_head_url(msg)"

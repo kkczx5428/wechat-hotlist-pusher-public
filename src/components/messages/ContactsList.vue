@@ -116,7 +116,7 @@ const handleCurrentChange = (val: User | undefined) => {
               @current-change="handleCurrentChange">
       <el-table-column width="57">
         <template v-slot="{ row }">
-          <el-avatar :size="33" :src="'/api/imgsrc/'+row.headImgUrl" v-if="row.headImgUrl!==''">
+          <el-avatar :size="33" :src="'/rs_api/imgsrc/'+row.headImgUrl" v-if="row.headImgUrl!==''">
           </el-avatar>
           <el-avatar :size="33" v-else>
             群聊

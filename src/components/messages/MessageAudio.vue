@@ -35,7 +35,7 @@ const props = defineProps({
 // const read_audio_base64 = async (src: string) => {
 //
 //   // try {
-//   //   const body_data = await http.post('/api/audio', {
+//   //   const body_data = await http.post('/rs_api/audio', {
 //   //     'savePath': src,
 //   //   });
 //   //   return body_data;
