@@ -3,13 +3,13 @@ import {createRouter, createWebHashHistory} from 'vue-router'
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
     routes: [
-        // {
-        //     path: '/init',
-        //     name: 'init',
-        //     component: () => import((`@/components/messages/IsAutoShow.vue`))
-        // },
         {
             path: '/',
+            name: 'index',
+            component: () => import((`@/views/HomeView.vue`))
+        },
+        {
+            path: '/home',
             name: 'home',
             component: () => import((`@/views/HomeView.vue`))
         },

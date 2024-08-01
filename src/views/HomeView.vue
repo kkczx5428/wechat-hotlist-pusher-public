@@ -6,7 +6,7 @@ const version = ref(''); // 用于显示返回值
 
 const getVersion = async () => {
   try {
-    const body_data = await http.get('/api/version');
+    const body_data = await http.get('/api/rs/version');
     version.value = body_data;
   } catch (e) {
     version.value = '获取版本失败';
