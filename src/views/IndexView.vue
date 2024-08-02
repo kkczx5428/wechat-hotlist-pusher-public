@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import http from '@/utils/axios.js';
 import {onMounted, ref} from "vue";
+import {apiVersion} from "@/api/base";
 
 const version = ref(''); // 用于显示返回值
 
-const getVersion = async () => {
-  try {
-    const body_data = await http.get('/api/rs/version');
-    version.value = body_data;
-  } catch (e) {
-    version.value = '获取版本失败';
-    console.log(e);
-  }
+const getVersion = () => {
+  apiVersion().then((data: string) => {
+    version.value = data;
+  }).catch((error: string) => {
+    console.error('Error fetching API version:', error);
+  });
 }
 
 onMounted(getVersion);

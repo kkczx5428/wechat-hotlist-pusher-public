@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import HomeView from "@/views/HomeView.vue";
-import ContactsList from "@/components/messages/ContactsList.vue";
+import ContactsList from "@/components/chat/ContactsList.vue";
 import ChatExportMain from "@/components/chatBackup/ChatExportMain.vue";
 
 </script>

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import ContactsList from '@/components/messages/ContactsList.vue';
-import ChatRecords from '@/components/messages/ChatRecords.vue';
-import IsAutoShow from '@/components/messages/IsAutoShow.vue';
+import ContactsList from '@/components/chat/ContactsList.vue';
+import ChatRecords from '@/components/chat/ChatRecords.vue';
 import {onMounted, ref} from "vue";
 import HomeView from "@/views/HomeView.vue";
 import IndexView from "@/views/IndexView.vue";
 
 import http from '@/utils/axios.js';
+import {apiVersion} from "@/api/base";
 
 const wxid = ref('');
 const handleChildData = (val: any) => {
@@ -14,11 +14,7 @@ const handleChildData = (val: any) => {
 }
 
 onMounted(() => {
-  http.get('/api/rs/version').then((res: any) => {
-    console.log(res);
-  }).catch((err: any) => {
-    console.log(err);
-  });
+  console.log(apiVersion());
 })
 
 </script>

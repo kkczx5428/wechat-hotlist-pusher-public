@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref, defineProps, nextTick, watch, type Ref} from 'vue';
-import ChatRecprdsHeader from "@/components/messages/ChatRecprdsHeader.vue";
+import ChatRecprdsHeader from "@/components/chat/ChatRecprdsHeader.vue";
 import DateTimeSelect from "@/components/utils/DateTimeSelect.vue";
 import http from '@/utils/axios.js';
 import {type Action, ElMessage, ElMessageBox} from "element-plus";

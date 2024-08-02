@@ -2,8 +2,26 @@
 import {defineEmits, onMounted, ref} from 'vue';
 import http from '@/utils/axios.js';
 
+// "wxid": strUsrName, "nOrder": nOrder, "nUnReadCount": nUnReadCount, "strNickName": strNickName,
+// "nStatus": nStatus, "nIsSend": nIsSend, "strContent": strContent, "nMsgLocalID": nMsgLocalID,
+// "nMsgStatus": nMsgStatus, "nTime": nTime, "nMsgType": nMsgType, "nMsgSubType": nMsgSubType,
+// "nickname": NickName, "remark": Remark, "account": Alias,
+// "describe": describe, "headImgUrl": bigHeadImgUrl if bigHeadImgUrl else "",
+// "ExtraBuf": ExtraBuf, "LabelIDList": tuple(LabelIDList)
+
 interface User {
   wxid: string
+  nOrder: number
+  nUnReadCount: number
+  strNickName: string
+  nStatus: number
+  nIsSend: number
+  strContent: string
+  nMsgLocalID: number
+  nMsgStatus: number
+  nTime: string
+  nMsgType: number
+  nMsgSubType: number
   nickname: string
   remark: string
   account: string
@@ -11,12 +29,9 @@ interface User {
   headImgUrl: string
   ExtraBuf: string
   LabelIDList: string[]
-  LastReadedCreateTime: string
-  LastReadedSvrId: number
 }
 
 const tableData = ref([]);
-const userLabelDict = ref({});
 
 // 请求数据
 const req = async () => {
@@ -27,7 +42,6 @@ const req = async () => {
     return [];
   }
 }
-
 const search_user = async (word: string = '') => {
   try {
     return await http.post('/api/rs/user_list', {
@@ -38,46 +52,22 @@ const search_user = async (word: string = '') => {
     return [];
   }
 }
-
-const get_user_label_dict = async () => {
-  try {
-    return await http.post('/api/rs/user_labels_dict', {});
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return [];
-  }
-}
-
 // END 请求数据
 
-// 显示tooltip
-const showTooltipValue = (LabelIDList: string[]) => {
-  // console.log(LabelIDList)
-  let value = "";
-  if (LabelIDList.length === 0) {
-    return "";
-  }
-  for (let i = 0; i < LabelIDList.length; i++) {
-    value += userLabelDict.value[LabelIDList[i]] + " ";
-  }
-  return value;
-}
-// END 显示tooltip
-
+// 初始化请求session数据 START
 const fetchData = async () => {
   try {
     tableData.value = await req();
-    userLabelDict.value = await get_user_label_dict();
   } catch (error) {
     console.error('Error fetching data:', error);
     return [];
   }
 };
-
 onMounted(fetchData);
+// END 初始化请求session数据 END
 
+// 搜索框以及按钮 START
 const search_word = ref('');
-
 const search = async () => {
   try {
     // console.log(body_data);
@@ -91,7 +81,9 @@ const search = async () => {
     return [];
   }
 }
+// END 搜索框以及按钮 END
 
+// 处理user数据 传递给父组件 START
 const emits = defineEmits(['wxid']);
 
 const handleCurrentChange = (val: User | undefined) => {
@@ -101,6 +93,7 @@ const handleCurrentChange = (val: User | undefined) => {
     emits('wxid', val.wxid);
   }
 }
+// END 处理user数据 传递给父组件 END
 
 </script>
 
@@ -117,7 +110,7 @@ const handleCurrentChange = (val: User | undefined) => {
               @current-change="handleCurrentChange">
       <el-table-column width="57">
         <template v-slot="{ row }">
-          <el-avatar :size="33" :src="'/rs_api/imgsrc/'+row.headImgUrl" v-if="row.headImgUrl!==''">
+          <el-avatar :size="33" :src="'/api/rs/imgsrc/'+row.headImgUrl" v-if="row.headImgUrl!==''">
           </el-avatar>
           <el-avatar :size="33" v-else>
             群聊
@@ -127,7 +120,8 @@ const handleCurrentChange = (val: User | undefined) => {
       <el-table-column width="190">
         <template v-slot="{ row }">
           <el-tooltip class="item" effect="light" v-if="row.LabelIDList.length>0"
-                      :content="showTooltipValue(row.LabelIDList)" placement="right">
+                      :content="row.LabelIDList.join(' ')" placement="right">
+            <!-- 用于显示联系人的微信标签 -->
             <span v-if="row.remark !== null && row.remark !== ''">{{ row.remark }}</span>
             <span v-else>{{ row.nickname }}</span>
           </el-tooltip>
@@ -137,8 +131,8 @@ const handleCurrentChange = (val: User | undefined) => {
           </template>
 
           <br>
-          <span v-if="row.LastReadedCreateTime"
-                style="color: #909399;font-size: 12px;">{{ row.LastReadedCreateTime }}</span>
+          <span v-if="row.nTime"
+                style="color: #909399;font-size: 12px;">{{ row.nTime }}</span>
         </template>
       </el-table-column>
     </el-table>

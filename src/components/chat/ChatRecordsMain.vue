@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import {defineProps, ref, onMounted, watch, nextTick, defineExpose} from "vue";
 import http from '@/utils/axios.js';
-import MessageText from './MessageText.vue';
-import MessageImg from './MessageImg.vue';
-import MessageVideo from './MessageVideo.vue';
-import MessageAudio from './MessageAudio.vue';
-import MessageFile from './MessageFile.vue';
-import MessageEmoji from './MessageEmoji.vue'
-import MessageOther from "./MessageOther.vue";
+import MessageText from './messages/MessageText.vue';
+import MessageImg from './messages/MessageImg.vue';
+import MessageVideo from './messages/MessageVideo.vue';
+import MessageAudio from './messages/MessageAudio.vue';
+import MessageFile from './messages/MessageFile.vue';
+import MessageEmoji from './messages/MessageEmoji.vue'
+import MessageOther from "./messages/MessageOther.vue";
 
 interface User {
   account: string
@@ -39,8 +39,8 @@ interface msg {
 
 // 这里的 props 是从父组件传递过来的
 const props = defineProps({
-  userData: {
-    type: Object as () => User,
+  wxid: {
+    type: String,
     required: true,
   },
   setScrollTop: {
@@ -80,7 +80,7 @@ const req_msgs = async (start: number, limit: number, wxid: string) => {
       start = 0;
     }
     // console.log('req_msgs', start, limit, wxid)
-    const body_data = await http.post('/api/msgs', {
+    const body_data = await http.post('/api/rs/msgs', {
       'start': start,
       'limit': limit,
       'wxid': wxid,
@@ -97,7 +97,7 @@ const req_msgs = async (start: number, limit: number, wxid: string) => {
 }
 const req_msg_count = async (wxid: String) => {
   try {
-    const body_data = await http.post('/api/msg_count', {
+    const body_data = await http.post('/api/rs/msg_count', {
       'wxid': wxid,
     });
     return body_data[wxid];
@@ -108,7 +108,7 @@ const req_msg_count = async (wxid: String) => {
 }
 const get_my_wxid = async () => {
   try {
-    const body_data = await http.get('/api/mywxid');
+    const body_data = await http.get('/api/rs/mywxid');
     return body_data.my_wxid;
   } catch (error) {
     console.error('Error fetching data my_wxid:', error);
@@ -121,12 +121,12 @@ const get_my_wxid = async () => {
 const fetchData = async () => {
   try {
     my_wxid.value = await get_my_wxid();
-    msg_count.value = await req_msg_count(props.userData.wxid);
+    msg_count.value = await req_msg_count(props.wxid);
     start.value = msg_count.value - limit.value;
     if (start.value < 0) {
       start.value = 0;
     }
-    await req_msgs(start.value, limit.value, props.userData.wxid);
+    await req_msgs(start.value, limit.value, props.wxid);
 
     if (!hasScrolledToTop.value) {
       await nextTick(() => {
@@ -142,7 +142,7 @@ const fetchData = async () => {
 // END 获取聊天记录
 
 // 监听 userData 中 username 的变化
-watch(() => props.userData.wxid, (newUsername, oldUsername) => {
+watch(() => props.wxid, (newUsername, oldUsername) => {
   console.log('username changed： ', oldUsername, newUsername)
   messages.value = [];
   userlist.value = {};
@@ -156,16 +156,16 @@ watch(() => props.userData.wxid, (newUsername, oldUsername) => {
 //  循环请求获取全部数据
 const loadMore = async () => {
   my_wxid.value = await get_my_wxid();
-  msg_count.value = await req_msg_count(props.userData.wxid);
+  msg_count.value = await req_msg_count(props.wxid);
 
   let limit1 = limit.value;
   let start1 = start.value - limit1;
   if (start1 < 0) {
     start1 = 0;
   }
-  const body_data = await req_msgs(start1, limit1, props.userData.wxid);
+  const body_data = await req_msgs(start1, limit1, props.wxid);
   start.value = start1;
-  console.log('loadMore', start1,start.value, limit1, props.userData.wxid)
+  console.log('loadMore', start1,start.value, limit1, props.wxid)
   messages.value = body_data.msg_list.concat(messages.value);
   // 排序
   messages.value.sort((a, b) => {
