@@ -87,17 +87,18 @@ const req_msg_count = async () => {
 // 请求数据，赋值 END
 
 // 初始调用函数 START
-onMounted(() => {
+const init = async () => {
   is_export.value = false;
-  req_user_info();
-  req_msg_count();
+  await req_user_info();
+  await req_msg_count();
+}
+onMounted(() => {
+  init();
 });
 
 watch(() => props.wxid, async (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    is_export.value = false;
-    await req_user_info();
-    await req_msg_count();
+    await init();
   }
 });
 // 初始调用函数 END

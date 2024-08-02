@@ -53,15 +53,6 @@ const props = defineProps({
   }
 });
 
-
-// 调用函数请求数据与聊天记录数量
-onMounted(() => {
-//   等待数据加载完成后，再滚动到底部
-  nextTick(() => {
-    scrollToBottom();
-  });
-});
-
 // 导出聊天记录页面是否显示
 const is_export = ref(false);
 const onExport = (exporting: boolean) => {
@@ -69,16 +60,24 @@ const onExport = (exporting: boolean) => {
 }
 // end 导出聊天记录页面是否显示
 
-// start 监测wxid变化
+// start 监测wxid变化，初始化数据
+const init = async () => {
+  is_export.value = false;
+  // 等待数据加载完成后，再滚动到底部
+  await nextTick(() => {
+    scrollToBottom();
+  });
+}
 watch(() => props.wxid, async (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    is_export.value = false;
-    nextTick(() => {
-      scrollToBottom();
-    });
+    await init();
   }
 });
-
+// 调用函数请求数据与聊天记录数量
+onMounted(() => {
+  init();
+});
+// end 监测wxid变化，初始化数据
 </script>
 
 <template>
