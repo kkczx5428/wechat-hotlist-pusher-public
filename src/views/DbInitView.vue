@@ -10,12 +10,13 @@ interface wxinfo {
   version: string;
   account: string;
   mobile: string;
-  name: string;
+  nickname: string;
   mail: string;
   wxid: string;
-  filePath: string;
+  wx_dir: string;
   key: string;
 }
+
 
 const percentage = ref(0);
 const startORstop = ref(-1);  // 用于进度条的开始和停止 0表示0% 1表示100%
@@ -38,42 +39,7 @@ const my_wxid = ref("");
 const local_wxids = ref([]);
 
 
-// 查看有多少个微信正在登录 ， 并调用init_key解密初始化
-const get_wxinfo = async () => {
-  try {
-    wxinfoData.value = await http.post('/api/ls/wxinfo');
-    if (wxinfoData.value.length === 1) {
-      selectWx(wxinfoData.value[0]);
-      oneWx.value = " (检测到只有一个微信，将在5秒后自动选择) ";
-      setTimeout(okWx, 5000);
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return [];
-  }
-}
-
-const selectWx = async (row: wxinfo) => {
-  merge_path.value = "";
-  wx_path.value = row.filePath;
-  key.value = row.key;
-  my_wxid.value = row.wxid;
-}
-
-const okWx = () => {
-  if (wx_path.value === '' && key.value === '' && my_wxid.value === '') {
-    console.log("请填写完整信息! ")
-    return;
-  }
-  if (decryping.value) {
-    console.log("正在解密...，请稍后再试！")
-    return;
-  }
-  init_key();
-}
-
-// END 查看有多少个微信正在登录 ， 并调用init_key解密初始化
-
+// ** 是否使用key的初始化** START
 const init_key = async () => {
   if (decryping.value) {
     console.log("正在解密中，请稍后再试！")
@@ -94,7 +60,7 @@ const init_key = async () => {
       percentage.value = 100; // 进度条 100%
     }
     decryping.value = false;
-    emits('isAutoShow', body_data.is_init);
+    localStorage.setItem('db_init', body_data.is_init);
   } catch (error) {
     percentage.value = 0; // 进度条 0%
     isErrorShow.value = true;
@@ -126,7 +92,8 @@ const init_nokey = async () => {
       percentage.value = 100; // 进度条 100%
     }
     decryping.value = false;
-    emits('isAutoShow', body_data.is_init);
+    localStorage.setItem('db_init', body_data.is_init);
+    // emits('isAutoShow', body_data.is_init);
   } catch (error) {
     percentage.value = 0; // 进度条 0%
     isErrorShow.value = true;
@@ -142,7 +109,9 @@ const init_nokey = async () => {
   }
   decryping.value = false;
 }
+// ** 是否使用key的初始化** END
 
+// ** 使用上次数据部分** START
 const selectLastWx = async (row: wxinfo) => {
   // console.log(row)
   my_wxid.value = row.wxid;
@@ -166,6 +135,7 @@ const get_init_last_local_wxid = async () => {
   }
 }
 
+
 const init_last = async () => {
   try {
     let reqdata = {
@@ -179,7 +149,8 @@ const init_last = async () => {
     if (body_data.is_init) {
       percentage.value = 100; // 进度条 100%
       decryping.value = false;
-      emits('isAutoShow', body_data.is_init);
+      localStorage.setItem('db_init', body_data.is_init);
+      // emits('isAutoShow', body_data.is_init);
     } else {
       isErrorShow.value = true;
       decryping.value = false;
@@ -209,6 +180,45 @@ const init_last = async () => {
   decryping.value = false;
 }
 
+// ** 使用上次数据部分** END
+
+// **自动解密微信部分** START 查看有多少个微信正在登录 ， 并调用init_key解密初始化
+const get_wxinfo = async () => {
+  try {
+    wxinfoData.value = await http.post('/api/ls/wxinfo');
+    if (wxinfoData.value.length === 1) {
+      selectWx(wxinfoData.value[0]);
+      oneWx.value = " (检测到只有一个微信，将在5秒后自动选择) ";
+      setTimeout(okWx, 5000);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return [];
+  }
+}
+
+const selectWx = async (row: wxinfo) => {
+  merge_path.value = "";
+  wx_path.value = row.wx_dir;
+  key.value = row.key;
+  my_wxid.value = row.wxid;
+}
+
+const okWx = () => {
+  if (wx_path.value === '' && key.value === '' && my_wxid.value === '') {
+    console.log("请填写完整信息! ")
+    return;
+  }
+  if (decryping.value) {
+    console.log("正在解密...，请稍后再试！")
+    return;
+  }
+  init_key();
+}
+
+// **自动解密微信部分**  END 查看有多少个微信正在登录 ， 并调用init_key解密初始化
+
+
 // 监测isAutoShow是否为aoto，如果是则执行get_wxinfo
 watch(init_type, (val) => {
   if (val === 'auto') {
@@ -225,8 +235,28 @@ watch(init_type, (val) => {
 
 <template>
   <div style="background-color: #d2d2fa; height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <!-- 上次数据 -->
+    <div v-if="init_type==='last'">
+      <div
+          style="background-color: #fff; width: 90%;min-width: 800px; height: 80%; border-radius: 10px; padding: 20px; overflow: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 20px; font-weight: bold;">选择要查看的微信</div>
+        </div>
+        <div style="margin-top: 20px;">
+          <el-table :data="local_wxids" @current-change="selectLastWx" highlight-current-row style="width: 100%">
+            <el-table-column :min-width="50" prop="wxid" label="微信原始id"></el-table-column>
+          </el-table>
+        </div>
+        <div style="margin-top: 20px;">
+          <el-button style="margin-right: 10px;margin-top: 10px;width: 100%;" type="success" @click="init_last">确定
+          </el-button>
+        </div>
+      </div>
+    </div>
+    <!-- END -->
+
     <!-- 自动解密和显示 -->
-    <div v-if="init_type==='auto'">
+    <div v-else-if="init_type==='auto'">
 
       <!--      <el-progress v-if="decryping && !isErrorShow" type="dashboard" :percentage="percentage" :color="colors"/>-->
       <div v-if="decryping">
@@ -242,7 +272,7 @@ watch(init_type, (val) => {
             <el-table-column :min-width="30" prop="pid" label="进程id"></el-table-column>
             <el-table-column :min-width="40" prop="version" label="微信版本"></el-table-column>
             <el-table-column :min-width="40" prop="account" label="账号"></el-table-column>
-            <el-table-column :min-width="40" prop="name" label="昵称"></el-table-column>
+            <el-table-column :min-width="40" prop="nickname" label="昵称"></el-table-column>
             <el-table-column :min-width="50" prop="wxid" label="微信原始id"></el-table-column>
           </el-table>
         </div>
@@ -311,25 +341,6 @@ watch(init_type, (val) => {
     </div>
     <!-- END -->
 
-    <!-- 上次数据 -->
-    <div v-else-if="init_type==='last'">
-      <div
-          style="background-color: #fff; width: 90%;min-width: 800px; height: 80%; border-radius: 10px; padding: 20px; overflow: auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="font-size: 20px; font-weight: bold;">选择要查看的微信</div>
-        </div>
-        <div style="margin-top: 20px;">
-          <el-table :data="local_wxids" @current-change="selectLastWx" highlight-current-row style="width: 100%">
-            <el-table-column :min-width="50" prop="wxid" label="微信原始id"></el-table-column>
-          </el-table>
-        </div>
-        <div style="margin-top: 20px;">
-          <el-button style="margin-right: 10px;margin-top: 10px;width: 100%;" type="success" @click="init_last">确定
-          </el-button>
-        </div>
-      </div>
-    </div>
-    <!-- END -->
 
     <!-- 初始选择界面 -->
     <div v-else-if="init_type === ''" style="display: flex; justify-content: space-between;">
