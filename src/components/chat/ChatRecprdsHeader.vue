@@ -76,6 +76,7 @@ const req_user_info = async () => {
 
 const req_msg_count = async () => {
   try {
+    msg_count.value = 0;
     const body_data = await apiMsgCountSolo(props.wxid);
     msg_count.value = body_data;
     return body_data;
@@ -87,17 +88,17 @@ const req_msg_count = async () => {
 // 请求数据，赋值 END
 
 // 初始调用函数 START
-const init = async () => {
+const init = () => {
   is_export.value = false;
-  await req_user_info();
-  await req_msg_count();
+  req_user_info();
+  req_msg_count();
 }
 onMounted(() => {
   init();
 });
 watch(() => props.wxid, async (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    await init();
+    init();
   }
 });
 // 初始调用函数 END

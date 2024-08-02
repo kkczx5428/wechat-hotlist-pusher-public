@@ -61,16 +61,16 @@ const onExport = (exporting: boolean) => {
 // end 导出聊天记录页面是否显示
 
 // start 监测wxid变化，初始化数据
-const init = async () => {
+const init = () => {
   is_export.value = false;
   // 等待数据加载完成后，再滚动到底部
-  await nextTick(() => {
+ nextTick(() => {
     scrollToBottom();
   });
 }
 watch(() => props.wxid, async (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    await init();
+    init();
   }
 });
 onMounted(() => {
