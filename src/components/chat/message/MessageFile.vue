@@ -89,7 +89,7 @@ onMounted(async () => {
 const get_file_info = async (src: string) => {
 
     try {
-        const body_data = await http.post('/api/file_info', {
+        const body_data = await http.post('/api/rs/file_info', {
             'file_path': src,
         });
         return body_data;
