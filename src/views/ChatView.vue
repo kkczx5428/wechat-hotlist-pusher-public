@@ -2,10 +2,7 @@
 import ContactsList from '@/components/chat/ContactsList.vue';
 import ChatRecords from '@/components/chat/ChatRecords.vue';
 import {onMounted, ref} from "vue";
-import HomeView from "@/views/HomeView.vue";
 import IndexView from "@/views/IndexView.vue";
-
-import http from '@/utils/axios.js';
 import {apiVersion} from "@/api/base";
 
 const wxid = ref('');
