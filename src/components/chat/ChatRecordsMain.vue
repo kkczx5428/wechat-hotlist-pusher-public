@@ -8,15 +8,28 @@ import MessageAudio from './messages/MessageAudio.vue';
 import MessageFile from './messages/MessageFile.vue';
 import MessageEmoji from './messages/MessageEmoji.vue'
 import MessageOther from "./messages/MessageOther.vue";
+import {apiMsgCountSolo, apiMyWxid} from "@/api/chat";
 
 interface User {
+  wxid: string
+  nOrder: number
+  nUnReadCount: number
+  strNickName: string
+  nStatus: number
+  nIsSend: number
+  strContent: string
+  nMsgLocalID: number
+  nMsgStatus: number
+  nTime: string
+  nMsgType: number
+  nMsgSubType: number
+  nickname: string
+  remark: string
   account: string
   describe: string
   headImgUrl: string
-  nickname: string
-  remark: string
-  wxid: string
-  msg_count: number
+  ExtraBuf: string
+  LabelIDList: string[]
 }
 
 interface UserList {
@@ -95,33 +108,13 @@ const req_msgs = async (start: number, limit: number, wxid: string) => {
     return [];
   }
 }
-const req_msg_count = async (wxid: String) => {
-  try {
-    const body_data = await http.post('/api/rs/msg_count', {
-      'wxid': wxid,
-    });
-    return body_data[wxid];
-  } catch (error) {
-    console.error('Error fetching data msg_count:', error);
-    return [];
-  }
-}
-const get_my_wxid = async () => {
-  try {
-    const body_data = await http.get('/api/rs/mywxid');
-    return body_data.my_wxid;
-  } catch (error) {
-    console.error('Error fetching data my_wxid:', error);
-    return [];
-  }
-}
 // 上述为网络请求部分
 
 // 初始加载数据
 const fetchData = async () => {
   try {
-    my_wxid.value = await get_my_wxid();
-    msg_count.value = await req_msg_count(props.wxid);
+    my_wxid.value = await apiMyWxid();
+    msg_count.value = await apiMsgCountSolo(props.wxid);
     start.value = msg_count.value - limit.value;
     if (start.value < 0) {
       start.value = 0;
@@ -155,8 +148,8 @@ watch(() => props.wxid, (newUsername, oldUsername) => {
 
 //  循环请求获取全部数据
 const loadMore = async () => {
-  my_wxid.value = await get_my_wxid();
-  msg_count.value = await req_msg_count(props.wxid);
+  my_wxid.value = await apiMyWxid();
+  msg_count.value = await apiMsgCountSolo(props.wxid);
 
   let limit1 = limit.value;
   let start1 = start.value - limit1;
@@ -165,7 +158,7 @@ const loadMore = async () => {
   }
   const body_data = await req_msgs(start1, limit1, props.wxid);
   start.value = start1;
-  console.log('loadMore', start1,start.value, limit1, props.wxid)
+  console.log('loadMore', start1, start.value, limit1, props.wxid)
   messages.value = body_data.msg_list.concat(messages.value);
   // 排序
   messages.value.sort((a, b) => {

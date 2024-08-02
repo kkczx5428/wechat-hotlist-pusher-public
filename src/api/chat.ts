@@ -25,6 +25,14 @@ export const apiUserSessionList = () => {
             return [];
         })
 }
+export const apiMyWxid = () => {
+    return http.get('/api/rs/mywxid').then((res: any) => {
+        return res.my_wxid;
+    }).catch((err: any) => {
+        console.log(err);
+        return '';
+    })
+}
 
 // 消息部分
 
@@ -59,14 +67,12 @@ export const apiMsgCount = (wxids: string[]) => {
         return '';
     })
 }
-export const apiMsgCountSolo = (wxids: string[]) => {
-    return http.post('/api/rs/msg_count', {
-        "wxids": wxids
-    }).then((res: any) => {
-        return res;
+export const apiMsgCountSolo = (wxid: string) => {
+    return apiMsgCount([wxid]).then((res: any) => {
+        return res[wxid];
     }).catch((err: any) => {
         console.log(err);
-        return '';
+        return 0;
     })
 }
 

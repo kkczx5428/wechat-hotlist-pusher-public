@@ -2,7 +2,7 @@
 import {defineEmits, defineProps, nextTick, onMounted, ref, watch} from 'vue';
 import http from "@/utils/axios.js";
 import {ElTable, ElNotification, ElMessage, ElMessageBox} from "element-plus";
-import {apiMsgCount, apiRealTime, apiUserList} from "@/api/chat";
+import {apiMsgCount, apiMsgCountSolo, apiRealTime, apiUserList} from "@/api/chat";
 
 interface User {
   wxid: string
@@ -76,8 +76,8 @@ const req_user_info = async () => {
 
 const req_msg_count = async () => {
   try {
-    const body_data = await apiMsgCount([props.wxid]);
-    msg_count.value = body_data[props.wxid];
+    const body_data = await apiMsgCountSolo(props.wxid);
+    msg_count.value = body_data;
     return body_data;
   } catch (error) {
     console.error('Error fetching data msg_count:', error);
