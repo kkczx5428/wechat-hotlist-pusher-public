@@ -20,7 +20,7 @@ const Result = ref("");
 const requestExport = async () => {
   Result.value = "请求中...";
   try {
-    Result.value = await http.post('/api/export_endb', {
+    Result.value = await http.post('/api/rs/export_endb', {
       'wx_path': wx_path.value,
     });
   } catch (error) {

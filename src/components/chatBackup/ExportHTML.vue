@@ -21,7 +21,7 @@ const Result = ref("");
 const requestExport = async () => {
   Result.value = "正在处理中...";
   try {
-    Result.value = await http.post('/api/export_html', {
+    Result.value = await http.post('/api/rs/export_html', {
       'wxid': props.wxid,
       // 'datetime': datetime.value,
     });
