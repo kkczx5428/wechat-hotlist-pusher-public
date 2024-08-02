@@ -2,28 +2,27 @@
 import ContactsList from '@/components/messages/ContactsList.vue';
 import ChatRecords from '@/components/messages/ChatRecords.vue';
 import IsAutoShow from '@/components/messages/IsAutoShow.vue';
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import HomeView from "@/views/HomeView.vue";
 import http from '@/utils/axios.js';
-
-const is_init = ref(false);
-const init = (child_init: boolean) => {
-  is_init.value = child_init;
-}
-
 
 const wxid = ref('');
 const handleChildData = (val: any) => {
   wxid.value = val;
 }
 
+onMounted(() => {
+  http.get('/api/rs/version').then(res => {
+    console.log(res);
+  }).catch(err => {
+    console.log(err);
+  });
+})
+
 </script>
 <template>
   <div id="chat_view" class="common-layout">
-    <div v-if="!is_init">
-      <IsAutoShow @isAutoShow="init"/>
-    </div>
-    <div v-else>
+    <div>
       <el-container>
         <!--  这是左边的list    -->
         <el-aside width="auto" style="overflow-y: auto; height: calc(100vh);">
@@ -41,7 +40,6 @@ const handleChildData = (val: any) => {
         </div>
         <!-- END 这是右边的具体聊天记录 -->
       </el-container>
-
     </div>
   </div>
 </template>
