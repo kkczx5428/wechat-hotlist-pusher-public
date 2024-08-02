@@ -46,29 +46,6 @@ function handleScroll({scrollTop}) {
 
 // end 关于滚动条的操作
 
-interface User {
-  wxid: string
-  nOrder: number
-  nUnReadCount: number
-  strNickName: string
-  nStatus: number
-  nIsSend: number
-  strContent: string
-  nMsgLocalID: number
-  nMsgStatus: number
-  nTime: string
-  nMsgType: number
-  nMsgSubType: number
-  nickname: string
-  remark: string
-  account: string
-  describe: string
-  headImgUrl: string
-  ExtraBuf: string
-  LabelIDList: string[]
-  msg_count: number
-}
-
 const props = defineProps({
   wxid: {
     type: String,
@@ -77,22 +54,8 @@ const props = defineProps({
 });
 
 
-const msg_count = ref(0);
-// 请求数据 聊天记录数量
-const req_msg_count = async () => {
-  try {
-    const body_data = await apiMsgCount([props.wxid]);
-    msg_count.value = body_data[props.wxid];
-    return body_data;
-  } catch (error) {
-    console.error('Error fetching data msg_count:', error);
-    return [];
-  }
-}
-
 // 调用函数请求数据与聊天记录数量
 onMounted(() => {
-  req_msg_count();
 //   等待数据加载完成后，再滚动到底部
   nextTick(() => {
     scrollToBottom();
@@ -109,7 +72,6 @@ const onExport = (exporting: boolean) => {
 // start 监测wxid变化
 watch(() => props.wxid, async (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    req_msg_count();
     is_export.value = false;
     nextTick(() => {
       scrollToBottom();
@@ -122,7 +84,7 @@ watch(() => props.wxid, async (newVal, oldVal) => {
 <template>
   <el-container>
     <el-header style="height: 65px; max-height: 65px; width: 100%;background-color: #d2d2fa;padding-top: 5px;">
-      <ChatRecprdsHeader :wxid="wxid" :msg_count="msg_count" @exporting="onExport"/>
+      <ChatRecprdsHeader :wxid="wxid" @exporting="onExport"/>
     </el-header>
 
     <el-main style="overflow-y: auto; height: calc(100vh - 65px);padding: 0">

@@ -37,6 +37,16 @@ export const apiMsgCount = (wxids: string[]) => {
         return '';
     })
 }
+export const apiMsgCountSolo = (wxids: string[]) => {
+    return http.post('/api/rs/msg_count', {
+        "wxids": wxids
+    }).then((res: any) => {
+        return res;
+    }).catch((err: any) => {
+        console.log(err);
+        return '';
+    })
+}
 
 
 export const apiMsgs = (msgid: string) => {

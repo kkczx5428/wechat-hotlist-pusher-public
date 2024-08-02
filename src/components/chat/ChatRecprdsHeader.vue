@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import {defineEmits, defineProps, onMounted, ref} from 'vue';
+import {defineEmits, defineProps, nextTick, onMounted, ref, watch} from 'vue';
 import http from "@/utils/axios.js";
 import {ElTable, ElNotification, ElMessage, ElMessageBox} from "element-plus";
+import {apiMsgCount, apiUserList} from "@/api/chat";
 
 interface User {
   wxid: string
@@ -29,10 +30,6 @@ const props = defineProps({
   wxid: {
     type: String,
     required: true,
-  },
-  msg_count: {
-    type: Number,
-    required: true,
   }
 });
 
@@ -57,13 +54,12 @@ const userinfo = ref<User>({
   ExtraBuf: '',
   LabelIDList: []
 });
+const msg_count = ref<number>(0);
 
 const req_user_info = async () => {
   // 请求数据 用户信息
   try {
-    const body_data = await http.post('/api/rs/user_list', {
-      'wxids': props.wxid,
-    });
+    const body_data = await apiUserList("", [props.wxid]);
     userinfo.value.wxid = props.wxid;
     userinfo.value.account = body_data[props.wxid].account;
     userinfo.value.describe = body_data[props.wxid].describe;
@@ -76,9 +72,28 @@ const req_user_info = async () => {
     return [];
   }
 }
+const req_msg_count = async () => {
+  try {
+    const body_data = await apiMsgCount([props.wxid]);
+    msg_count.value = body_data[props.wxid];
+    return body_data;
+  } catch (error) {
+    console.error('Error fetching data msg_count:', error);
+    return [];
+  }
+}
 
 onMounted(() => {
   req_user_info();
+  req_msg_count();
+});
+
+watch(() => props.wxid, async (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    req_user_info();
+    req_msg_count();
+    is_export.value = false;
+  }
 });
 
 
