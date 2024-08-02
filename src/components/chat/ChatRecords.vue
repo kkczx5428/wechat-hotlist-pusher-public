@@ -73,7 +73,6 @@ watch(() => props.wxid, async (newVal, oldVal) => {
     await init();
   }
 });
-// 调用函数请求数据与聊天记录数量
 onMounted(() => {
   init();
 });
