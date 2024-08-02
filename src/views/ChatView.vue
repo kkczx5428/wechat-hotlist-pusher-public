@@ -4,6 +4,8 @@ import ChatRecords from '@/components/messages/ChatRecords.vue';
 import IsAutoShow from '@/components/messages/IsAutoShow.vue';
 import {onMounted, ref} from "vue";
 import HomeView from "@/views/HomeView.vue";
+import IndexView from "@/views/IndexView.vue";
+
 import http from '@/utils/axios.js';
 
 const wxid = ref('');
@@ -12,9 +14,9 @@ const handleChildData = (val: any) => {
 }
 
 onMounted(() => {
-  http.get('/api/rs/version').then(res => {
+  http.get('/api/rs/version').then((res: any) => {
     console.log(res);
-  }).catch(err => {
+  }).catch((err: any) => {
     console.log(err);
   });
 })
@@ -36,7 +38,7 @@ onMounted(() => {
         </div>
 
         <div v-else style="width: 100%;height: 100%">
-          <HomeView/>
+          <IndexView/>
         </div>
         <!-- END 这是右边的具体聊天记录 -->
       </el-container>
