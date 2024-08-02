@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import {defineProps, ref, onMounted, watch, nextTick, defineExpose} from "vue";
 import http from '@/utils/axios.js';
-import MessageText from './messages/MessageText.vue';
-import MessageImg from './messages/MessageImg.vue';
-import MessageVideo from './messages/MessageVideo.vue';
-import MessageAudio from './messages/MessageAudio.vue';
-import MessageFile from './messages/MessageFile.vue';
-import MessageEmoji from './messages/MessageEmoji.vue'
-import MessageOther from "./messages/MessageOther.vue";
+import MessageText from '@/components/chat/message/MessageText.vue';
+import MessageImg from '@/components/chat/message/MessageImg.vue';
+import MessageVideo from '@/components/chat/message/MessageVideo.vue';
+import MessageAudio from '@/components/chat/message/MessageAudio.vue';
+import MessageFile from '@/components/chat/message/MessageFile.vue';
+import MessageEmoji from '@/components/chat/message/MessageEmoji.vue'
+import MessageOther from "@/components/chat/message/MessageOther.vue";
 import {apiMsgCountSolo, apiMyWxid} from "@/api/chat";
 
 interface User {
