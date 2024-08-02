@@ -56,6 +56,7 @@ const userinfo = ref<User>({
 });
 const msg_count = ref<number>(0);
 
+// 请求数据，赋值 START
 const req_user_info = async () => {
   // 请求数据 用户信息
   try {
@@ -83,7 +84,9 @@ const req_msg_count = async () => {
     return [];
   }
 }
+// 请求数据，赋值 END
 
+// 初始调用函数 START
 onMounted(() => {
   is_export.value = false;
   req_user_info();
@@ -97,7 +100,7 @@ watch(() => props.wxid, async (newVal, oldVal) => {
     await req_msg_count();
   }
 });
-
+// 初始调用函数 END
 
 // 获取实时消息 START
 const is_getting_real_time_msg = ref(false);
@@ -183,7 +186,6 @@ const export_button = (val: boolean) => {
   padding-left: 15px;
   padding-right: 0;
 }
-
 
 .data_color {
   color: #08488c;
