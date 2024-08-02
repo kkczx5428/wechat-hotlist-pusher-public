@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {defineEmits, onMounted, ref} from 'vue';
 import http from '@/utils/axios.js';
+import {apiUserList, apiUserSessionList} from "@/api/chat";
 
 // "wxid": strUsrName, "nOrder": nOrder, "nUnReadCount": nUnReadCount, "strNickName": strNickName,
 // "nStatus": nStatus, "nIsSend": nIsSend, "strContent": strContent, "nMsgLocalID": nMsgLocalID,
@@ -36,7 +37,7 @@ const tableData = ref([]);
 // 请求数据
 const req = async () => {
   try {
-    return await http.post('/api/rs/user_session_list', {});
+    return await apiUserSessionList();
   } catch (error) {
     console.error('Error fetching data:', error);
     return [];
@@ -44,9 +45,7 @@ const req = async () => {
 }
 const search_user = async (word: string = '') => {
   try {
-    return await http.post('/api/rs/user_list', {
-      'word': word,
-    });
+    return await apiUserList(word);
   } catch (error) {
     console.error('Error fetching data:', error);
     return [];
