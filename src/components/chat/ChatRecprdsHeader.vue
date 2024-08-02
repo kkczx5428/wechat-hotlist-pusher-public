@@ -95,7 +95,6 @@ const init = async () => {
 onMounted(() => {
   init();
 });
-
 watch(() => props.wxid, async (newVal, oldVal) => {
   if (newVal !== oldVal) {
     await init();
