@@ -42,12 +42,11 @@ interface msg {
   is_sender: number
   talker: string
   room_name: string
-  content: {
-    src: string
-    msg: string
-  }
+  src: string
+  msg: string
   CreateTime: string
   MsgSvrID: string
+  extra: {}
 }
 
 // 这里的 props 是从父组件传递过来的
@@ -93,7 +92,7 @@ const req_msgs = async (start: number, limit: number, wxid: string) => {
       start = 0;
     }
     // console.log('req_msgs', start, limit, wxid)
-    const body_data = await http.post('/api/rs/msgs', {
+    const body_data = await http.post('/api/rs/msg_list', {
       'start': start,
       'limit': limit,
       'wxid': wxid,
@@ -202,14 +201,14 @@ const _direction = (msg: any) => {
   return `${sendname(msg)} [${msg.type_name}] ${msg.CreateTime}`;
 }
 
-const get_head_url = (msg: any) => {
-  if (msg.talker == '我') {
-    msg.talker = my_wxid.value;
+const get_head_url = (message: any) => {
+  if (message.talker == '我') {
+    message.talker = my_wxid.value;
   }
-  if (!userlist.value.hasOwnProperty(msg.talker)) {
+  if (!userlist.value.hasOwnProperty(message.talker)) {
     return '';
   }
-  return "/rs_api/imgsrc/" + userlist.value[msg.talker].headImgUrl;
+  return "/api/rs/imgsrc/" + userlist.value[message.talker].headImgUrl;
 }
 
 // END 这部分为构造消息的发送时间和头像
@@ -227,32 +226,31 @@ const get_head_url = (msg: any) => {
           <el-button type="primary" @click="loadMore">查看更多消息</el-button>
         </div>
 
-        <div class="message" v-for="(msg,index) in messages" :key="index">
+        <div class="message" v-for="(message,index) in messages" :key="index">
           <!-- 文字消息 -->
-          <MessageText v-if="msg.type_name == '文本'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                       :headUrl="get_head_url(msg)" :content="msg.content.msg"></MessageText>
+          <MessageText v-if="message.type_name == '文本'" :is_sender="message.is_sender" :direction="_direction(message)"
+                       :headUrl="get_head_url(message)" :content="message.msg"></MessageText>
           <!-- 图片消息 -->
-          <MessageImg v-else-if="msg.type_name == '图片'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                      :headUrl="get_head_url(msg)" :src="'/rs_api/img/'+msg.content.src"></MessageImg>
+          <MessageImg v-else-if="message.type_name == '图片'" :is_sender="message.is_sender" :direction="_direction(message)"
+                      :headUrl="get_head_url(message)" :src="'/rs_api/img/'+message.src"></MessageImg>
           <!-- 表情消息 -->
-          <MessageEmoji v-else-if="msg.type_name == '动画表情'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                        :headUrl="get_head_url(msg)" :src="'/rs_api/imgsrc/'+msg.content.src"></MessageEmoji>
+          <MessageEmoji v-else-if="message.type_name == '动画表情'" :is_sender="message.is_sender" :direction="_direction(message)"
+                        :headUrl="get_head_url(message)" :src="'/rs_api/imgsrc/'+message.src"></MessageEmoji>
           <!-- 视频消息 -->
-          <MessageVideo v-else-if="msg.type_name == '视频'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                        :headUrl="get_head_url(msg)" :src="'/rs_api/video/'+msg.content.src"></MessageVideo>
+          <MessageVideo v-else-if="message.type_name == '视频'" :is_sender="message.is_sender" :direction="_direction(message)"
+                        :headUrl="get_head_url(message)" :src="'/rs_api/video/'+message.src"></MessageVideo>
           <!-- 文件消息 -->
-          <MessageFile v-else-if="msg.type_name == '文件'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                       :headUrl="get_head_url(msg)" :src="msg.content.src"></MessageFile>
+          <MessageFile v-else-if="message.type_name == '文件'" :is_sender="message.is_sender" :direction="_direction(message)"
+                       :headUrl="get_head_url(message)" :src="message.src"></MessageFile>
           <!-- 语音消息 -->
-          <MessageAudio v-else-if="msg.type_name == '语音'" :is_sender="msg.is_sender" :direction="_direction(msg)"
-                        :headUrl="get_head_url(msg)" :src="'/rs_api/'+msg.content.src"
-                        :msg="msg.content.msg"></MessageAudio>
+          <MessageAudio v-else-if="message.type_name == '语音'" :is_sender="message.is_sender" :direction="_direction(message)"
+                        :headUrl="get_head_url(message)" :src="'/rs_api/'+message.src"
+                        :msg="message.msg"></MessageAudio>
           <!-- 其他消息 -->
-          <MessageOther v-else :is_sender="msg.is_sender" :direction="_direction(msg)" :headUrl="get_head_url(msg)"
-                        :content="msg.content.msg"></MessageOther>
+          <MessageOther v-else :is_sender="message.is_sender" :direction="_direction(message)" :headUrl="get_head_url(message)"
+                        :content="message.msg"></MessageOther>
 
         </div>
-
       </div>
     </div>
   </div>
