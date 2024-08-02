@@ -34,29 +34,11 @@ interface User {
 
 const tableData = ref([]);
 
-// 请求数据
-const req = async () => {
-  try {
-    return await apiUserSessionList();
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return [];
-  }
-}
-const search_user = async (word: string = '') => {
-  try {
-    return await apiUserList(word);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return [];
-  }
-}
-// END 请求数据
 
 // 初始化请求session数据 START
 const fetchData = async () => {
   try {
-    tableData.value = await req();
+    tableData.value = await apiUserSessionList();
   } catch (error) {
     console.error('Error fetching data:', error);
     return [];
@@ -71,10 +53,21 @@ const search = async () => {
   try {
     // console.log(body_data);
     if (search_word.value === '') {
-      tableData.value = await req();
+      tableData.value = await apiUserSessionList();
       return;
     }
-    tableData.value = await search_user(search_word.value);
+    tableData.value = []
+    const ret = await apiUserList(search_word.value);
+    if (ret !== null && typeof ret === 'object') {
+      Object.entries(ret).forEach(([key, value]) => {
+        tableData.value.push(value);
+      });
+    }
+    // for (const key in ret) {
+    //   if (ret.hasOwnProperty(key)) {
+    //     tableData.value.push(ret[key]);
+    //   }
+    // }
   } catch (error) {
     console.error('Error fetching data:', error);
     return [];

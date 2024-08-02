@@ -7,7 +7,6 @@ export const apiUserList = (word: string = '', wxids: string = '', labels: strin
         'wxids': wxids,
         'labels': labels
     }).then((res: any) => {
-        console.log(res);
         return res;
     }).catch((err: any) => {
         console.log(err);
@@ -18,7 +17,6 @@ export const apiUserList = (word: string = '', wxids: string = '', labels: strin
 export const apiUserSessionList = () => {
     return http.post('/api/rs/user_session_list', {})
         .then((res: any) => {
-            console.log(res);
             return res;
         })
         .catch((err: any) => {
