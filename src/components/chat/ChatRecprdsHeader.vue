@@ -2,7 +2,7 @@
 import {defineEmits, defineProps, nextTick, onMounted, ref, watch} from 'vue';
 import http from "@/utils/axios.js";
 import {ElTable, ElNotification, ElMessage, ElMessageBox} from "element-plus";
-import {apiMsgCount, apiUserList} from "@/api/chat";
+import {apiMsgCount, apiRealTime, apiUserList} from "@/api/chat";
 
 interface User {
   wxid: string
@@ -106,25 +106,11 @@ const get_real_time_msg = async () => {
   }
   is_getting_real_time_msg.value = true;
   try {
-    const body_data = await http.post('/api/ls/realtimemsg', {});
+    const body_data = await apiRealTime();
     is_getting_real_time_msg.value = false;
-
-    // 滚动消息提醒
-    ElNotification({
-      title: 'Success',
-      message: '获取实时消息成功!',
-      type: 'success',
-    })
-
     return body_data;
   } catch (error) {
     is_getting_real_time_msg.value = false;
-    ElNotification({
-      title: 'Error',
-      message: '获取实时消息失败!',
-      type: 'error',
-    })
-    console.error('Error fetching data:', error);
     return [];
   }
 }
