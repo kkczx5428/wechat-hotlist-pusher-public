@@ -4,6 +4,7 @@ import ProgressBar from "@/components/utils/ProgressBar.vue";
 import {defineEmits, onMounted, ref, watch} from "vue";
 import {ElTable, ElTableColumn, ElMessage, ElMessageBox} from "element-plus";
 import type {Action} from 'element-plus'
+import router from "@/router";
 
 interface wxinfo {
   pid: string;
@@ -16,7 +17,6 @@ interface wxinfo {
   wx_dir: string;
   key: string;
 }
-
 
 const percentage = ref(0);
 const startORstop = ref(-1);  // 用于进度条的开始和停止 0表示0% 1表示100%
@@ -38,6 +38,16 @@ const my_wxid = ref("");
 
 const local_wxids = ref([]);
 
+const db_init = (init: boolean) => {
+  if (init) {
+    localStorage.setItem('isDbInit', "t");
+    ElMessage({
+      type: 'success',
+      message: '初始化成功！',
+    })
+    router.push('/');
+  }
+}
 
 // ** 是否使用key的初始化** START
 const init_key = async () => {
@@ -60,7 +70,7 @@ const init_key = async () => {
       percentage.value = 100; // 进度条 100%
     }
     decryping.value = false;
-    localStorage.setItem('db_init', body_data.is_init);
+    db_init(body_data.is_init);
   } catch (error) {
     percentage.value = 0; // 进度条 0%
     isErrorShow.value = true;
@@ -92,7 +102,7 @@ const init_nokey = async () => {
       percentage.value = 100; // 进度条 100%
     }
     decryping.value = false;
-    localStorage.setItem('db_init', body_data.is_init);
+    db_init(body_data.is_init);
     // emits('isAutoShow', body_data.is_init);
   } catch (error) {
     percentage.value = 0; // 进度条 0%
@@ -149,7 +159,7 @@ const init_last = async () => {
     if (body_data.is_init) {
       percentage.value = 100; // 进度条 100%
       decryping.value = false;
-      localStorage.setItem('db_init', body_data.is_init);
+      db_init(body_data.is_init);
       // emits('isAutoShow', body_data.is_init);
     } else {
       isErrorShow.value = true;
