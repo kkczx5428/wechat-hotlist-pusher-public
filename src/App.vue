@@ -15,7 +15,7 @@ import CollapseOpenIcon from "@/assets/icon/CollapseOpenIcon.vue";
 import CollapseCloseIcon from "@/assets/icon/CollapseCloseIcon.vue";
 
 import {RouterLink, RouterView} from 'vue-router'
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, withCtx, watch} from 'vue'
 import router from "@/router";
 
 const isCollapse = ref(true);
@@ -24,10 +24,13 @@ const isDbInit = ref("f");
 onMounted(() => {
   // localStorage.setItem('isDbInit', "t");
   isDbInit.value = localStorage.getItem('isDbInit') || "f";
-  if(isDbInit.value != 't'){
+  if (isDbInit.value != 't') {
     router.push('/db_init');
   }
 })
+// watch(isDbInit, (val) => {
+//   localStorage.setItem('isDbInit', val);
+// })
 
 const handleOpen = (key: string, keyPath: string[]) => {
   // console.log(key, keyPath)
@@ -42,8 +45,7 @@ const handleClose = (key: string, keyPath: string[]) => {
     <el-container class="layout-container-demo" style="height: 100%;background:none;">
       <el-aside :width="isCollapse ? '64px' : '160px'">
         <el-container class="sidebar-container">
-          <el-menu default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen"
-                   @close="handleClose" :router='true'>
+          <el-menu default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse" :router='true'>
             <el-radio-group v-model="isCollapse"
                             style="margin-bottom: 20px;margin-top: 10px;margin-left: 10px;max-height: 30px">
               <el-radio-button :label="false" v-if="isCollapse">
