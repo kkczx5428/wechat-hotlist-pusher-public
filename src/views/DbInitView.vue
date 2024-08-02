@@ -41,11 +41,11 @@ const local_wxids = ref([]);
 const db_init = (init: boolean) => {
   if (init) {
     localStorage.setItem('isDbInit', "t");
+    router.push('/');
     ElMessage({
       type: 'success',
       message: '初始化成功！',
     })
-    router.push('/');
   }
 }
 

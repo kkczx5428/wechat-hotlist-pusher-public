@@ -32,7 +32,7 @@ const updateProgress = () => {
   if (percentage.value >= 99) {
     return;
   }
-  if (percentage.value >= 80) {
+  if (percentage.value >= 60) {
     timeout.value = timeout.value + 50;
   }
   percentage.value = percentage.value + 1;
