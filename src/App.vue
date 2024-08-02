@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import {RouterLink, RouterView} from 'vue-router'
-
-import {ref} from 'vue'
 import chatIcon from "@/assets/icon/ChatIcon.vue";
 import StatisticsIcon from "@/assets/icon/StatisticsIcon.vue";
 import CleanupIcon from "@/assets/icon/CleanupIcon.vue";
@@ -17,7 +14,21 @@ import FavoriteIcon from "@/assets/icon/FavoriteIcon.vue";
 import CollapseOpenIcon from "@/assets/icon/CollapseOpenIcon.vue";
 import CollapseCloseIcon from "@/assets/icon/CollapseCloseIcon.vue";
 
-const isCollapse = ref(true)
+import {RouterLink, RouterView} from 'vue-router'
+import {ref, onMounted} from 'vue'
+import router from "@/router";
+
+const isCollapse = ref(true);
+const isDbInit = ref("f");
+
+onMounted(() => {
+  // localStorage.setItem('isDbInit', "t");
+  isDbInit.value = localStorage.getItem('isDbInit') || "f";
+  if(isDbInit.value != 't'){
+    router.push('/db_init');
+  }
+})
+
 const handleOpen = (key: string, keyPath: string[]) => {
   // console.log(key, keyPath)
 }

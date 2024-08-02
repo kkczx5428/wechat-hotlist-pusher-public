@@ -9,6 +9,11 @@ const router = createRouter({
             component: () => import((`@/views/IndexView.vue`))
         },
         {
+            path: '/db_init',
+            name: 'db_init',
+            component: () => import((`@/views/DbInitView.vue`))
+        },
+        {
             path: '/home',
             name: 'home',
             component: () => import((`@/views/HomeView.vue`))
