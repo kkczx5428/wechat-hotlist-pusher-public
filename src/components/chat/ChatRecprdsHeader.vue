@@ -72,6 +72,7 @@ const req_user_info = async () => {
     return [];
   }
 }
+
 const req_msg_count = async () => {
   try {
     const body_data = await apiMsgCount([props.wxid]);
@@ -84,6 +85,7 @@ const req_msg_count = async () => {
 }
 
 onMounted(() => {
+  is_export.value = false;
   req_user_info();
   req_msg_count();
 });
