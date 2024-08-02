@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineEmits, defineProps, onMounted, ref} from 'vue';
+import {defineEmits, onMounted, ref} from 'vue';
 import http from '@/utils/axios.js';
 
 interface User {
@@ -9,6 +9,8 @@ interface User {
   account: string
   describe: string
   headImgUrl: string
+  ExtraBuf: string
+  LabelIDList: string[]
   LastReadedCreateTime: string
   LastReadedSvrId: number
 }
@@ -19,8 +21,7 @@ const userLabelDict = ref({});
 // 请求数据
 const req = async () => {
   try {
-    const body_data = await http.post('/api/recent_user_list', {});
-    return body_data;
+    return await http.post('/api/rs/user_session_list', {});
   } catch (error) {
     console.error('Error fetching data:', error);
     return [];
@@ -29,7 +30,7 @@ const req = async () => {
 
 const search_user = async (word: string = '') => {
   try {
-    return await http.post('/api/user_list', {
+    return await http.post('/api/rs/user_list', {
       'word': word,
     });
   } catch (error) {
@@ -40,7 +41,7 @@ const search_user = async (word: string = '') => {
 
 const get_user_label_dict = async () => {
   try {
-    return await http.post('/api/user_labels_dict', {});
+    return await http.post('/api/rs/user_labels_dict', {});
   } catch (error) {
     console.error('Error fetching data:', error);
     return [];
