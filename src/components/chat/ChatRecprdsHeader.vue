@@ -90,9 +90,9 @@ onMounted(() => {
 
 watch(() => props.wxid, async (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    req_user_info();
-    req_msg_count();
     is_export.value = false;
+    await req_user_info();
+    await req_msg_count();
   }
 });
 
