@@ -14,7 +14,11 @@ const handleChildData = (val: any) => {
 }
 
 onMounted(() => {
-  console.log(apiVersion());
+  apiVersion().then((data: string) => {
+    console.log("API version: " + data);
+  }).catch((error: string) => {
+    console.error('Error fetching API version:', error);
+  });
 })
 
 </script>
