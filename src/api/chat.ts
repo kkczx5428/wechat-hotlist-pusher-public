@@ -1,7 +1,7 @@
 import http from "@/utils/axios.js";
 
 // user list 部分
-export const apiUserList = (word: string = '', wxids: string = '', labels: string = '') => {
+export const apiUserList = (word: string = '', wxids: string[] = [], labels: string[] = []) => {
     return http.post('/api/rs/user_list', {
         'word': word,
         'wxids': wxids,
@@ -25,7 +25,20 @@ export const apiUserSessionList = () => {
         })
 }
 
-// 消息详情部分
+// 消息部分
+
+export const apiMsgCount = (wxids: string[]) => {
+    return http.post('/api/rs/msg_count', {
+        "wxids": wxids
+    }).then((res: any) => {
+        return res;
+    }).catch((err: any) => {
+        console.log(err);
+        return '';
+    })
+}
+
+
 export const apiMsgs = (msgid: string) => {
     return http.post('/api/rs/msg_detail', {
         'msgid': msgid

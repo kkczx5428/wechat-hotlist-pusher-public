@@ -4,6 +4,7 @@ import ChatRecordsMain from '@/components/chat/ChatRecordsMain.vue';
 import {ref, defineProps, nextTick, onMounted, watch} from 'vue';
 import http from "@/utils/axios.js";
 import ChatExportMain from "@/components/chatBackup/ChatExportMain.vue";
+import {apiMsgCount} from "@/api/chat";
 
 // start 关于滚动条的操作
 
@@ -76,14 +77,11 @@ const props = defineProps({
 });
 
 
-
 const msg_count = ref(0);
 // 请求数据 聊天记录数量
 const req_msg_count = async () => {
   try {
-    const body_data = await http.post('/api/rs/msg_count', {
-      'wxid': props.wxid,
-    });
+    const body_data = await apiMsgCount([props.wxid]);
     msg_count.value = body_data[props.wxid];
     return body_data;
   } catch (error) {
