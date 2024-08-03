@@ -82,7 +82,10 @@ const handleCurrentChange = (val: User | undefined) => {
   // 触发自定义事件，并传递数据
   if (val !== undefined) {
     // 处理user数据
-    emits('wxid', val.wxid);
+    // 判断val是否有wxid
+    if (val.wxid !== undefined) {
+      emits('wxid', val.wxid);
+    }
   }
 }
 // END 处理user数据 传递给父组件 END

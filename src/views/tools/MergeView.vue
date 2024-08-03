@@ -8,7 +8,7 @@ const Result = ref<string>('');
 
 const decrypt = async () => {
   try {
-    Result.value = await http.post('/api/merge', {
+    Result.value = await http.post('/api/ls/merge', {
       dbPath: dbPath.value,
       outPath: outPath.value
     });
@@ -35,7 +35,7 @@ const decrypt = async () => {
         <el-input placeholder="数据库路径（文件夹，并且确保文件夹下的db文件已经解密）：" v-model="dbPath" style="width: 80%;"></el-input>
         <br>
         <label>微信数据库路径: </label>
-        <el-input placeholder="输出文件夹" v-model="outPath" style="width: 80%;"></el-input>
+        <el-input placeholder="输出合并后的数据库路径" v-model="outPath" style="width: 80%;"></el-input>
         <br>
         <el-button style="margin-top: 10px;width: 50%;" type="success" @click="decrypt">合并</el-button>
         <!--    分割线    -->

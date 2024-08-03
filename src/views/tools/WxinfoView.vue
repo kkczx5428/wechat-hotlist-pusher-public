@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {defineComponent, reactive, ref, onMounted, toRefs} from 'vue'
-import {ElTable, ElTableColumn} from 'element-plus'
+import {ElNotification, ElTable, ElTableColumn} from 'element-plus'
 import http from '@/utils/axios.js';
 
 interface wxinfo {
@@ -19,7 +19,7 @@ const wxinfoData = ref<wxinfo[]>([]);
 
 const get_wxinfo = async () => {
   try {
-    wxinfoData.value = await http.post('/api/wxinfo');
+    wxinfoData.value = await http.post('/api/ls/wxinfo');
   } catch (error) {
     console.error('Error fetching data:', error);
     return [];
@@ -79,10 +79,10 @@ const downloadCSV = (csvContent: string, fileName: string) => {
           <el-table-column :min-width="40" prop="version" label="微信版本"></el-table-column>
           <el-table-column :min-width="40" prop="account" label="账号"></el-table-column>
           <el-table-column :min-width="45" prop="mobile" label="手机号"></el-table-column>
-          <el-table-column :min-width="40" prop="name" label="昵称"></el-table-column>
+          <el-table-column :min-width="40" prop="nickname" label="昵称"></el-table-column>
           <el-table-column :min-width="30" prop="mail" label="邮箱"></el-table-column>
           <el-table-column :min-width="50" prop="wxid" label="微信原始id"></el-table-column>
-          <el-table-column prop="filePath" label="微信文件夹路径"></el-table-column>
+          <el-table-column prop="wx_dir" label="微信文件夹路径"></el-table-column>
           <el-table-column prop="key" label="密钥(key)"></el-table-column>
         </el-table>
       </div>

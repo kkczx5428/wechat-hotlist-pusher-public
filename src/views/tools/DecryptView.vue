@@ -9,7 +9,7 @@ const decryptResult = ref<string>('');
 
 const decrypt = async () => {
   try {
-    decryptResult.value = await http.post('/api/decrypt', {
+    decryptResult.value = await http.post('/api/ls/decrypt', {
       wxdbPath: wxdbPath.value,
       key: key.value,
       outPath: outPath.value

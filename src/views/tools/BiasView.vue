@@ -17,7 +17,7 @@ const decrypt = async () => {
       result.value = 'key与wxdbPath必须填写一个';
       return;
     }
-    result.value = await http.post('/api/biasaddr', {
+    result.value = await http.post('/api/ls/biasaddr', {
       mobile: mobile.value,
       name: name.value,
       account: account.value,
