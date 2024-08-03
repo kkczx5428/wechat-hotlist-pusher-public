@@ -63,18 +63,18 @@ const handleClose = (key: string, keyPath: string[]) => {
               <template #title>聊天查看</template>
             </el-menu-item>
 
-            <el-menu-item index='/contacts'>
-              <contacts-icon></contacts-icon>
-              <template #title>好友管理</template>
-            </el-menu-item>
-            <el-menu-item index='/moments'>
-              <moments-icon></moments-icon>
-              <template #title>朋友圈</template>
-            </el-menu-item>
-            <el-menu-item index='/favorite'>
-              <favorite-icon></favorite-icon>
-              <template #title>收藏管理</template>
-            </el-menu-item>
+<!--            <el-menu-item index='/contacts'>-->
+<!--              <contacts-icon></contacts-icon>-->
+<!--              <template #title>好友管理</template>-->
+<!--            </el-menu-item>-->
+<!--            <el-menu-item index='/moments'>-->
+<!--              <moments-icon></moments-icon>-->
+<!--              <template #title>朋友圈</template>-->
+<!--            </el-menu-item>-->
+<!--            <el-menu-item index='/favorite'>-->
+<!--              <favorite-icon></favorite-icon>-->
+<!--              <template #title>收藏管理</template>-->
+<!--            </el-menu-item>-->
 
             <el-menu-item index='/statistics'>
               <statistics-icon></statistics-icon>

@@ -19,7 +19,7 @@ import {type Action, ElMessage, ElMessageBox} from "element-plus";
 const check_update = async () => {
   try {
 
-    const body_data = await http.post('/api/check_update');
+    const body_data = await http.post('/api/rs/check_update');
     const latest_version = body_data.latest_version;
     const msg = body_data.msg;
     const url = body_data.latest_url;
