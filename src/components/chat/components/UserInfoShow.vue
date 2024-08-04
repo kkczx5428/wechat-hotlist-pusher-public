@@ -43,11 +43,11 @@ const props = defineProps({
       <span>公司：{{ userinfo.ExtraBuf['公司名称'] }}<br></span>
       <span>企微：{{ userinfo.ExtraBuf['企微属性'] }}<br></span>
       <span>朋友圈背景：<br></span>
-      <img v-if="userinfo.ExtraBuf['朋友圈背景']" :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
-           style="width: 180px;max-height: 180px" alt="朋友圈背景"/>
+      <el-image v-if="userinfo.ExtraBuf['朋友圈背景']" :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
+                style="max-width: 200px;max-height: 200px" alt="朋友圈背景"/>
     </div>
   </div>
-  <div v-else>
+  <div v-else style="max-width: 560px">
     <span>wxid：{{ userinfo.wxid }}<br></span>
     <span>账号：{{ userinfo.account }}<br></span>
     <span>昵称：{{ userinfo.nickname }}<br></span>
@@ -67,8 +67,8 @@ const props = defineProps({
     <span v-if="userinfo.ExtraBuf['公司名称']">公司：{{ userinfo.ExtraBuf['公司名称'] }}<br></span>
     <span v-if="userinfo.ExtraBuf['企微属性']">企微：{{ userinfo.ExtraBuf['企微属性'] }}<br></span>
     <span v-if="userinfo.ExtraBuf['朋友圈背景']">朋友圈背景：<br></span>
-    <img v-if="userinfo.ExtraBuf['朋友圈背景']" :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
-         style="width: 180px;max-height: 180px" alt="朋友圈背景"/>
+    <el-image v-if="userinfo.ExtraBuf['朋友圈背景']" :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
+              style="max-width: 200px;max-height: 200px" alt="朋友圈背景"/>
   </div>
 </template>
 
