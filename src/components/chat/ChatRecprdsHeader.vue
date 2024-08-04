@@ -92,7 +92,7 @@ watch(() => props.wxid, async (newVal, oldVal) => {
 // 初始调用函数 END
 
 // 弹窗展示更多信息 START
-const is_show_userinfo_more = ref(false);
+const is_show_more = ref(false);
 // 获取实时消息 START
 
 const is_getting_real_time_msg = ref(false);
@@ -142,9 +142,7 @@ const export_button = (val: boolean) => {
       <el-text class="data_color mx-1" truncated :title="msg_count">{{ msg_count }}</el-text>
     </el-col>
     <el-col :span="2" style="white-space: nowrap;">
-      <el-text class="button_color mx-1 underline" truncated @click="is_show_userinfo_more=!is_show_userinfo_more">
-        更多信息
-      </el-text>
+      <el-text class="button_color mx-1 underline" truncated @click="is_show_more=!is_show_more"> 详细信息</el-text>
     </el-col>
     <el-col :span="2" style="white-space: nowrap;">
       <el-text v-if="!is_export" class="button_color mx-1 underline" truncated @click="export_button(true);">导出备份
@@ -159,7 +157,7 @@ const export_button = (val: boolean) => {
     </el-col>
   </el-row>
 
-  <el-dialog v-model="is_show_userinfo_more" title="更多信息" width="600" center>
+  <el-dialog v-model="is_show_more" title="详细信息" width="600" center>
     <user-info-show :userinfo="userinfo" :show_all="true"></user-info-show>
   </el-dialog>
 </template>

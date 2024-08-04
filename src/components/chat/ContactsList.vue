@@ -103,7 +103,7 @@ const handleCurrentChange = (val: User | undefined) => {
               <span v-if="row.nTime" style="color: #909399; font-size: 12px;">{{ row.nTime }}</span>
             </div>
             <template #content>
-              <user-info-show :userinfo="row" :show_all="false"></user-info-show>
+              <user-info-show :userinfo="row" :show_all="false" style="max-width: 600px"></user-info-show>
             </template>
           </el-tooltip>
         </template>

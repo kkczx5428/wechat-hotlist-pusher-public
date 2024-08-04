@@ -17,26 +17,35 @@ const props = defineProps({
 </script>
 
 <template>
-  <div v-if="show_all">
-    <span>wxid：{{ userinfo.wxid }}<br></span>
-    <span>账号：{{ userinfo.account }}<br></span>
-    <span>昵称：{{ userinfo.nickname }}<br></span>
-    <span>备注：{{ userinfo.remark }}<br></span>
-    <span>性别：{{
-        userinfo.ExtraBuf['性别[1男2女]'] == 1 ? '男' : userinfo.ExtraBuf['性别[1男2女]'] == 2 ? '女' : ''
-      }}<br></span>
-    <span>手机：{{ userinfo.ExtraBuf['手机号'] }}<br></span>
-    <span>标签：{{ userinfo.LabelIDList.join('/') }}<br></span>
-    <span>描述：{{ userinfo.describe }}<br></span>
-    <span>个签：{{ userinfo.ExtraBuf['个性签名'] }}<br></span>
-    <span>国家：{{ userinfo.ExtraBuf['国'] }}<br></span>
-    <span>省份：{{ userinfo.ExtraBuf['省'] }}<br></span>
-    <span>市名：{{ userinfo.ExtraBuf['市'] }}<br></span>
-    <span>公司：{{ userinfo.ExtraBuf['公司名称'] }}<br></span>
-    <span>企微：{{ userinfo.ExtraBuf['企微属性'] }}<br></span>
-    <span>朋友圈背景：<br></span>
-    <img v-if="userinfo.ExtraBuf['朋友圈背景']" :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
-         style="width: 180px;max-height: 180px" alt="朋友圈背景"/>
+  <div v-if="show_all" style="max-width: 560px">
+    <div>
+      <el-divider content-position="center">基本信息</el-divider>
+      <span>wxid：{{ userinfo.wxid }}<br></span>
+      <span>账号：{{ userinfo.account }}<br></span>
+      <span>昵称：{{ userinfo.nickname }}<br></span>
+      <span>备注：{{ userinfo.remark }}<br></span>
+    </div>
+    <div>
+      <el-divider content-position="center">个人信息</el-divider>
+      <span>性别：{{
+          userinfo.ExtraBuf['性别[1男2女]'] == 1 ? '男' : userinfo.ExtraBuf['性别[1男2女]'] == 2 ? '女' : ''
+        }}<br></span>
+      <span>手机：{{ userinfo.ExtraBuf['手机号'] }}<br></span>
+      <span>标签：{{ userinfo.LabelIDList.join('/') }}<br></span>
+      <span>描述：{{ userinfo.describe }}<br></span>
+      <span>个签：{{ userinfo.ExtraBuf['个性签名'] }}<br></span>
+      <span>国家：{{ userinfo.ExtraBuf['国'] }}<br></span>
+      <span>省份：{{ userinfo.ExtraBuf['省'] }}<br></span>
+      <span>市名：{{ userinfo.ExtraBuf['市'] }}<br></span>
+    </div>
+    <div>
+      <el-divider content-position="center">其他信息</el-divider>
+      <span>公司：{{ userinfo.ExtraBuf['公司名称'] }}<br></span>
+      <span>企微：{{ userinfo.ExtraBuf['企微属性'] }}<br></span>
+      <span>朋友圈背景：<br></span>
+      <img v-if="userinfo.ExtraBuf['朋友圈背景']" :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
+           style="width: 180px;max-height: 180px" alt="朋友圈背景"/>
+    </div>
   </div>
   <div v-else>
     <span>wxid：{{ userinfo.wxid }}<br></span>
