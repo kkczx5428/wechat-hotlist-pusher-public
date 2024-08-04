@@ -196,7 +196,7 @@ const get_head_url = (message: any) => {
           <!-- 视频消息 -->
           <MessageVideo v-else-if="message.type_name == '视频'" :is_sender="message.is_sender"
                         :direction="_direction(message)" :headUrl="get_head_url(message)"
-                        :src="api_img(message.src)"></MessageVideo>
+                        :src="'/api/rs/video/'+message.src"></MessageVideo>
           <!-- 文件消息 -->
           <MessageFile v-else-if="message.type_name == '文件'" :is_sender="message.is_sender"
                        :direction="_direction(message)" :headUrl="get_head_url(message)"
