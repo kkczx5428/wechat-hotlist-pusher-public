@@ -9,45 +9,8 @@ import MessageFile from '@/components/chat/message/MessageFile.vue';
 import MessageEmoji from '@/components/chat/message/MessageEmoji.vue'
 import MessageOther from "@/components/chat/message/MessageOther.vue";
 import {apiMsgCountSolo, apiMyWxid} from "@/api/chat";
+import type {msg, User, UserList} from "@/utils/common_utils";
 
-interface User {
-  wxid: string
-  nOrder: number
-  nUnReadCount: number
-  strNickName: string
-  nStatus: number
-  nIsSend: number
-  strContent: string
-  nMsgLocalID: number
-  nMsgStatus: number
-  nTime: string
-  nMsgType: number
-  nMsgSubType: number
-  nickname: string
-  remark: string
-  account: string
-  describe: string
-  headImgUrl: string
-  ExtraBuf: string
-  LabelIDList: string[]
-}
-
-interface UserList {
-  [key: string]: User
-}
-
-interface msg {
-  id: number
-  type_name: string
-  is_sender: number
-  talker: string
-  room_name: string
-  src: string
-  msg: string
-  CreateTime: string
-  MsgSvrID: string
-  extra: {}
-}
 
 // 这里的 props 是从父组件传递过来的
 const props = defineProps({

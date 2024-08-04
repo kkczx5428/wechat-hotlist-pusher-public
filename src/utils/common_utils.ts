@@ -39,6 +39,23 @@ export interface User {
     LabelIDList: string[]
 }
 
+export interface UserList {
+  [key: string]: User
+}
+
+export interface msg {
+  id: number
+  type_name: string
+  is_sender: number
+  talker: string
+  room_name: string
+  src: string
+  msg: string
+  CreateTime: string
+  MsgSvrID: string
+  extra: {}
+}
+
 const to_initview = () => {
     router.push({name: 'db_init'});
     ElMessage.error('请先初始化数据');

@@ -64,7 +64,7 @@ const onExport = (exporting: boolean) => {
 const init = () => {
   is_export.value = false;
   // 等待数据加载完成后，再滚动到底部
- nextTick(() => {
+  nextTick(() => {
     scrollToBottom();
   });
 }
@@ -92,8 +92,7 @@ onMounted(() => {
                          ref="chatRecordsMainRef"
                          :wxid="wxid"
                          :setScrollTop="scrollToBottom"
-                         :updateScrollTop="updateScrollTop"
-        />
+                         :updateScrollTop="updateScrollTop"/>
       </el-scrollbar>
     </el-main>
   </el-container>
