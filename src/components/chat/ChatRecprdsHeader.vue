@@ -93,11 +93,8 @@ watch(() => props.wxid, async (newVal, oldVal) => {
 
 // 弹窗展示更多信息 START
 const is_show_userinfo_more = ref(false);
-const show_more_info = () => {
-
-}
-
 // 获取实时消息 START
+
 const is_getting_real_time_msg = ref(false);
 const get_real_time_msg = async () => {
   if (is_getting_real_time_msg.value) {
