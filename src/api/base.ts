@@ -15,3 +15,7 @@ export const api_db_init = async () => {
     console.log("is_db_init", !!t);
     return !!t;
 }
+
+export const api_img = (url: string) => {
+    return `/api/rs/imgsrc/${url}`;
+}

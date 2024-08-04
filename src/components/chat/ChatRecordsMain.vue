@@ -8,8 +8,9 @@ import MessageAudio from '@/components/chat/message/MessageAudio.vue';
 import MessageFile from '@/components/chat/message/MessageFile.vue';
 import MessageEmoji from '@/components/chat/message/MessageEmoji.vue'
 import MessageOther from "@/components/chat/message/MessageOther.vue";
-import {apiMsgCountSolo, apiMyWxid} from "@/api/chat";
+import {apiMsgCountSolo, apiMsgs, apiMyWxid} from "@/api/chat";
 import type {msg, User, UserList} from "@/utils/common_utils";
+import {api_img} from "@/api/base";
 
 
 // 这里的 props 是从父组件传递过来的
@@ -55,11 +56,7 @@ const req_msgs = async (start: number, limit: number, wxid: string) => {
       start = 0;
     }
     // console.log('req_msgs', start, limit, wxid)
-    const body_data = await http.post('/api/rs/msg_list', {
-      'start': start,
-      'limit': limit,
-      'wxid': wxid,
-    });
+    const body_data = await apiMsgs(wxid, start, limit);
     messages.value = body_data.msg_list;
     userlist.value = Object.assign(userlist.value, body_data.user_list);
     msg_loading.value = false;
@@ -97,8 +94,7 @@ const fetchData = async () => {
 // END 获取聊天记录
 
 // 监听 userData 中 username 的变化
-watch(() => props.wxid, (newUsername, oldUsername) => {
-  console.log('username changed： ', oldUsername, newUsername)
+const init = () => {
   messages.value = [];
   userlist.value = {};
   hasScrolledToTop.value = false;
@@ -106,6 +102,13 @@ watch(() => props.wxid, (newUsername, oldUsername) => {
   start.value = 0;
 
   fetchData();
+};
+watch(() => props.wxid, (newUsername, oldUsername) => {
+  console.log('username changed： ', oldUsername, newUsername);
+  init();
+});
+onMounted(() => {
+  init();
 });
 
 //  循环请求获取全部数据
@@ -141,27 +144,16 @@ defineExpose({
 })
 
 // 这部分为构造消息的发送时间和头像
-const _direction = (msg: any) => {
+const _direction = (message: any) => {
 
-  if (msg.talker == '我') {
-    msg.talker = my_wxid.value;
+  if (message.talker == '我') {
+    message.talker = my_wxid.value;
   }
-  const sendname = (msg) => {
-    if (!userlist.value.hasOwnProperty(msg.talker)) {
-      return msg.talker;
-    }
-
-    if (userlist.value[msg.talker].remark) {
-      return userlist.value[msg.talker].remark;
-    } else if (userlist.value[msg.talker].nickname) {
-      return userlist.value[msg.talker].nickname;
-    } else if (userlist.value[msg.talker].account) {
-      return userlist.value[msg.talker].account;
-    } else {
-      return msg.talker;
-    }
+  const sendname = (message: msg) => {
+    const user = userlist.value[message.talker];
+    return user?.remark || user?.nickname || user?.account || message.talker;
   }
-  return `${sendname(msg)} [${msg.type_name}] ${msg.CreateTime}`;
+  return `${sendname(message)} [${message.type_name}] ${message.CreateTime}`;
 }
 
 const get_head_url = (message: any) => {
@@ -171,7 +163,7 @@ const get_head_url = (message: any) => {
   if (!userlist.value.hasOwnProperty(message.talker)) {
     return '';
   }
-  return "/api/rs/imgsrc/" + userlist.value[message.talker].headImgUrl;
+  return api_img(userlist.value[message.talker].headImgUrl);
 }
 // END 这部分为构造消息的发送时间和头像
 
@@ -196,15 +188,15 @@ const get_head_url = (message: any) => {
           <!-- 图片消息 -->
           <MessageImg v-else-if="message.type_name == '图片'" :is_sender="message.is_sender"
                       :direction="_direction(message)" :headUrl="get_head_url(message)"
-                      :src="'/api/rs/imgsrc/'+message.src"></MessageImg>
+                      :src="api_img(message.src)"></MessageImg>
           <!-- 表情消息 -->
           <MessageEmoji v-else-if="message.type_name == '动画表情'" :is_sender="message.is_sender"
                         :direction="_direction(message)" :headUrl="get_head_url(message)"
-                        :src="'/api/rs/imgsrc/'+message.src"></MessageEmoji>
+                        :src="api_img(message.src)"></MessageEmoji>
           <!-- 视频消息 -->
           <MessageVideo v-else-if="message.type_name == '视频'" :is_sender="message.is_sender"
                         :direction="_direction(message)" :headUrl="get_head_url(message)"
-                        :src="'/api/rs/video/'+message.src"></MessageVideo>
+                        :src="api_img(message.src)"></MessageVideo>
           <!-- 文件消息 -->
           <MessageFile v-else-if="message.type_name == '文件'" :is_sender="message.is_sender"
                        :direction="_direction(message)" :headUrl="get_head_url(message)"

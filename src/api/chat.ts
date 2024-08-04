@@ -77,11 +77,12 @@ export const apiMsgCountSolo = (wxid: string) => {
 }
 
 
-export const apiMsgs = (msgid: string) => {
-    return http.post('/api/rs/msg_detail', {
-        'msgid': msgid
+export const apiMsgs = (wxid: string, start: number, limit: number) => {
+    return http.post('/api/rs/msg_list', {
+        'start': start,
+        'limit': limit,
+        'wxid': wxid,
     }).then((res: any) => {
-        console.log(res);
         return res;
     }).catch((err: any) => {
         console.log(err);
