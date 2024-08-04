@@ -1,34 +1,64 @@
 <script setup lang="ts">
 
 const props = defineProps({
-  user: {
+  userinfo: {
     type: Object,
     default: () => {
       return {}
     }
+  },
+  show_all: {
+    type: Boolean,
+    default: true,
+    required: false
   }
 })
 
 </script>
 
 <template>
-  <div>
-    wxid：{{user.wxid}}<br>
-    账号：{{user.account}}<br>
-    昵称：{{user.nickname}}<br>
-    备注：{{user.remark}}<br>
-    性别：{{user.ExtraBuf['性别[1男2女]'] == 1 ? '男' : user.ExtraBuf['性别[1男2女]'] == 2 ? '女' : ""}}<br>
-    手机：{{user.ExtraBuf['手机号']}}<br>
-    标签：{{user.LabelIDList.join('/')}}<br>
-    描述：{{user.describe}}<br>
-    个签：{{user.ExtraBuf['个性签名']}}<br>
-    国家：{{user.ExtraBuf['国']}}<br>
-    省份：{{user.ExtraBuf['省']}}<br>
-    市名：{{user.ExtraBuf['市']}}<br>
-    公司：{{user.ExtraBuf['公司名称']}}<br>
-    企微：{{user.ExtraBuf['企微属性']}}<br>
-    朋友圈背景：<br>
-    <img v-if="user.ExtraBuf['朋友圈背景']" :src="'/api/rs/imgsrc/'+user.ExtraBuf['朋友圈背景']"
+  <div v-if="show_all">
+    <span>wxid：{{ userinfo.wxid }}<br></span>
+    <span>账号：{{ userinfo.account }}<br></span>
+    <span>昵称：{{ userinfo.nickname }}<br></span>
+    <span>备注：{{ userinfo.remark }}<br></span>
+    <span>性别：{{
+        userinfo.ExtraBuf['性别[1男2女]'] == 1 ? '男' : userinfo.ExtraBuf['性别[1男2女]'] == 2 ? '女' : ''
+      }}<br></span>
+    <span>手机：{{ userinfo.ExtraBuf['手机号'] }}<br></span>
+    <span>标签：{{ userinfo.LabelIDList.join('/') }}<br></span>
+    <span>描述：{{ userinfo.describe }}<br></span>
+    <span>个签：{{ userinfo.ExtraBuf['个性签名'] }}<br></span>
+    <span>国家：{{ userinfo.ExtraBuf['国'] }}<br></span>
+    <span>省份：{{ userinfo.ExtraBuf['省'] }}<br></span>
+    <span>市名：{{ userinfo.ExtraBuf['市'] }}<br></span>
+    <span>公司：{{ userinfo.ExtraBuf['公司名称'] }}<br></span>
+    <span>企微：{{ userinfo.ExtraBuf['企微属性'] }}<br></span>
+    <span>朋友圈背景：<br></span>
+    <img v-if="userinfo.ExtraBuf['朋友圈背景']" :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
+         style="width: 180px;max-height: 180px" alt="朋友圈背景"/>
+  </div>
+  <div v-else>
+    <span>wxid：{{ userinfo.wxid }}<br></span>
+    <span>账号：{{ userinfo.account }}<br></span>
+    <span>昵称：{{ userinfo.nickname }}<br></span>
+    <span v-if="userinfo.remark">备注：{{ userinfo.remark }}<br></span>
+    <span v-if="userinfo.ExtraBuf['性别[1男2女]']">性别：{{
+        userinfo.ExtraBuf['性别[1男2女]'] == 1 ? '男' : userinfo.ExtraBuf['性别[1男2女]'] == 2 ? '女' : ''
+      }}<br></span>
+    <span v-if="userinfo.ExtraBuf['手机号']">手机：{{ userinfo.ExtraBuf['手机号'] }}<br></span>
+    <span v-if="userinfo.LabelIDList&&userinfo.LabelIDList.length>0">标签：{{
+        userinfo.LabelIDList.join('/')
+      }}<br></span>
+    <span v-if="userinfo.describe">描述：{{ userinfo.describe }}<br></span>
+    <span v-if="userinfo.ExtraBuf['个性签名']">个签：{{ userinfo.ExtraBuf['个性签名'] }}<br></span>
+    <span v-if="userinfo.ExtraBuf['国']">国家：{{ userinfo.ExtraBuf['国'] }}<br></span>
+    <span v-if="userinfo.ExtraBuf['省']">省份：{{ userinfo.ExtraBuf['省'] }}<br></span>
+    <span v-if="userinfo.ExtraBuf['市']">市名：{{ userinfo.ExtraBuf['市'] }}<br></span>
+    <span v-if="userinfo.ExtraBuf['公司名称']">公司：{{ userinfo.ExtraBuf['公司名称'] }}<br></span>
+    <span v-if="userinfo.ExtraBuf['企微属性']">企微：{{ userinfo.ExtraBuf['企微属性'] }}<br></span>
+    <span v-if="userinfo.ExtraBuf['朋友圈背景']">朋友圈背景：<br></span>
+    <img v-if="userinfo.ExtraBuf['朋友圈背景']" :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
          style="width: 180px;max-height: 180px" alt="朋友圈背景"/>
   </div>
 </template>

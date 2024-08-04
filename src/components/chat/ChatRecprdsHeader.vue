@@ -3,28 +3,8 @@ import {defineEmits, defineProps, nextTick, onMounted, ref, watch} from 'vue';
 import http from "@/utils/axios.js";
 import {ElTable, ElNotification, ElMessage, ElMessageBox} from "element-plus";
 import {apiMsgCount, apiMsgCountSolo, apiRealTime, apiUserList} from "@/api/chat";
-
-interface User {
-  wxid: string
-  nOrder: number
-  nUnReadCount: number
-  strNickName: string
-  nStatus: number
-  nIsSend: number
-  strContent: string
-  nMsgLocalID: number
-  nMsgStatus: number
-  nTime: string
-  nMsgType: number
-  nMsgSubType: number
-  nickname: string
-  remark: string
-  account: string
-  describe: string
-  headImgUrl: string
-  ExtraBuf: string
-  LabelIDList: string[]
-}
+import {gen_show_name, type User} from "@/utils/common_utils";
+import UserInfoShow from "@/components/chat/components/UserInfoShow.vue";
 
 const props = defineProps({
   wxid: {
@@ -33,6 +13,7 @@ const props = defineProps({
   }
 });
 
+const msg_count = ref<number>(0);
 const userinfo = ref<User>({
   wxid: '',
   nOrder: 0,
@@ -51,22 +32,29 @@ const userinfo = ref<User>({
   account: '',
   describe: '',
   headImgUrl: '',
-  ExtraBuf: '',
+  ExtraBuf: {
+    "个性签名": "",
+    "企微属性": "",
+    "公司名称": "",
+    "国": "",
+    "备注图片": "",
+    "备注图片2": "",
+    "市": "",
+    "性别[1男2女]": 0,
+    "手机号": "",
+    "朋友圈背景": "",
+    "省": ""
+  },
   LabelIDList: []
 });
-const msg_count = ref<number>(0);
 
 // 请求数据，赋值 START
 const req_user_info = async () => {
   // 请求数据 用户信息
   try {
     const body_data = await apiUserList("", [props.wxid]);
+    userinfo.value = body_data[props.wxid];
     userinfo.value.wxid = props.wxid;
-    userinfo.value.account = body_data[props.wxid].account;
-    userinfo.value.describe = body_data[props.wxid].describe;
-    userinfo.value.headImgUrl = body_data[props.wxid].headImgUrl;
-    userinfo.value.nickname = body_data[props.wxid].nickname;
-    userinfo.value.remark = body_data[props.wxid].remark;
     return body_data;
   } catch (error) {
     console.error('Error fetching data wxid2user :', error);
@@ -102,6 +90,12 @@ watch(() => props.wxid, async (newVal, oldVal) => {
   }
 });
 // 初始调用函数 END
+
+// 弹窗展示更多信息 START
+const is_show_userinfo_more = ref(false);
+const show_more_info = () => {
+
+}
 
 // 获取实时消息 START
 const is_getting_real_time_msg = ref(false);
@@ -143,41 +137,34 @@ const export_button = (val: boolean) => {
       <el-text class="data_color mx-1" truncated :title="userinfo.wxid">{{ userinfo.wxid }}</el-text>
     </el-col>
     <el-col :span="6" style="white-space: nowrap;">
-      <el-text class="label_color mx-1" truncated>账号:</el-text>&ensp;
-      <el-text class="data_color mx-1" truncated :title="userinfo.account">{{ userinfo.account }}</el-text>
+      <el-text class="label_color mx-1" truncated>名称:</el-text>&ensp;
+      <el-text class="data_color mx-1" truncated title="show_name">{{ gen_show_name(userinfo) }}</el-text>
     </el-col>
-    <el-col :span="6" style="white-space: nowrap;">
-      <el-text class="label_color mx-1" truncated>昵称:</el-text>&ensp;
-      <el-text class="data_color mx-1" truncated :title="userinfo.nickname">{{ userinfo.nickname }}</el-text>
-    </el-col>
-    <el-col :span="6" style="white-space: nowrap;">
-      <el-text class="label_color mx-1" truncated>备注:</el-text>&ensp;
-      <el-text class="data_color mx-1" truncated :title="userinfo.remark">{{ userinfo.remark }}</el-text>
-    </el-col>
-  </el-row>
-
-  <el-row :gutter="5" style="width: 100%;">
-    <el-col :span="3" style="white-space: nowrap;">
+    <el-col :span="5" style="white-space: nowrap;">
       <el-text class="label_color mx-1" truncated>数量:</el-text>&ensp;
       <el-text class="data_color mx-1" truncated :title="msg_count">{{ msg_count }}</el-text>
     </el-col>
-    <el-col :span="15" style="white-space: nowrap;">
-      <el-text class="label_color mx-1" truncated>描述:</el-text>&ensp;
-      <el-text class="data_color mx-1" truncated :title="userinfo.describe">{{ userinfo.describe }}</el-text>
-    </el-col>
-    <el-col :span="3" style="white-space: nowrap;">
-      <el-text class="button_color mx-1 underline" truncated @click="get_real_time_msg();">实时消息
-        <template v-if="is_getting_real_time_msg" style="color: #00bd7e">(获取中)</template>
+    <el-col :span="2" style="white-space: nowrap;">
+      <el-text class="button_color mx-1 underline" truncated @click="is_show_userinfo_more=!is_show_userinfo_more">
+        更多信息
       </el-text>
     </el-col>
-    <el-col :span="3" style="white-space: nowrap;">
+    <el-col :span="2" style="white-space: nowrap;">
       <el-text v-if="!is_export" class="button_color mx-1 underline" truncated @click="export_button(true);">导出备份
       </el-text>
       <el-text v-if="is_export" class="button_color mx-1 underline" truncated @click="export_button(false);">聊天查看
       </el-text>
     </el-col>
+    <el-col :span="3" style="white-space: nowrap;">
+      <el-text class="button_color mx-1 underline" truncated @click="get_real_time_msg();">实时消息
+        <template v-if="is_getting_real_time_msg" style="color: #00bd7e">...</template>
+      </el-text>
+    </el-col>
   </el-row>
 
+  <el-dialog v-model="is_show_userinfo_more" title="更多信息" width="600" center>
+    <user-info-show :userinfo="userinfo" :show_all="true"></user-info-show>
+  </el-dialog>
 </template>
 
 <style scoped>

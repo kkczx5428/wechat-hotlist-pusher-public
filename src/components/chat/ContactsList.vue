@@ -3,7 +3,7 @@ import {defineEmits, onMounted, ref} from 'vue';
 import http from '@/utils/axios.js';
 import {apiUserList, apiUserSessionList} from "@/api/chat";
 import UserInfoShow from "@/components/chat/components/UserInfoShow.vue";
-import type {User} from "@/utils/common_utils";
+import {gen_show_name, type User} from "@/utils/common_utils";
 
 // "wxid": strUsrName, "nOrder": nOrder, "nUnReadCount": nUnReadCount, "strNickName": strNickName,
 // "nStatus": nStatus, "nIsSend": nIsSend, "strContent": strContent, "nMsgLocalID": nMsgLocalID,
@@ -74,9 +74,7 @@ const handleCurrentChange = (val: User | undefined) => {
 
 
 // 生成显示的name
-const gen_show_name = (row: User) => {
-  return `${row.remark !== null && row.remark !== '' ? row.remark : row.nickname}`
-}
+
 
 </script>
 
@@ -105,7 +103,7 @@ const gen_show_name = (row: User) => {
               <span v-if="row.nTime" style="color: #909399; font-size: 12px;">{{ row.nTime }}</span>
             </div>
             <template #content>
-              <user-info-show :user="row"></user-info-show>
+              <user-info-show :userinfo="row" :show_all="false"></user-info-show>
             </template>
           </el-tooltip>
         </template>
