@@ -45,16 +45,20 @@ export interface UserList {
 
 export interface msg {
   id: number
+  MsgSvrID: string
   type_name: string
   is_sender: number
   talker: string
   room_name: string
-  src: string
   msg: string
+  src: string
   CreateTime: string
-  MsgSvrID: string
   extra: {}
 }
+
+// {"id": _id, "MsgSvrID": str(MsgSvrID), "type_name": type_name, "is_sender": IsSender,
+//                     "talker": talker, "room_name": StrTalker, "msg": msg, "src": src, "extra": {},
+//                     "CreateTime": CreateTime, }
 
 const to_initview = () => {
     router.push({name: 'db_init'});
