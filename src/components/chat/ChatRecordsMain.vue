@@ -173,7 +173,6 @@ const get_head_url = (message: any) => {
   }
   return "/api/rs/imgsrc/" + userlist.value[message.talker].headImgUrl;
 }
-
 // END 这部分为构造消息的发送时间和头像
 
 
@@ -191,28 +190,32 @@ const get_head_url = (message: any) => {
 
         <div class="message" v-for="(message,index) in messages" :key="index">
           <!-- 文字消息 -->
-          <MessageText v-if="message.type_name == '文本'" :is_sender="message.is_sender" :direction="_direction(message)"
-                       :headUrl="get_head_url(message)" :content="message.msg"></MessageText>
+          <MessageText v-if="message.type_name == '文本'" :is_sender="message.is_sender"
+                       :direction="_direction(message)" :headUrl="get_head_url(message)"
+                       :content="message.msg"></MessageText>
           <!-- 图片消息 -->
-          <MessageImg v-else-if="message.type_name == '图片'" :is_sender="message.is_sender" :direction="_direction(message)"
-                      :headUrl="get_head_url(message)" :src="'/api/rs/imgsrc/'+message.src"></MessageImg>
+          <MessageImg v-else-if="message.type_name == '图片'" :is_sender="message.is_sender"
+                      :direction="_direction(message)" :headUrl="get_head_url(message)"
+                      :src="'/api/rs/imgsrc/'+message.src"></MessageImg>
           <!-- 表情消息 -->
-          <MessageEmoji v-else-if="message.type_name == '动画表情'" :is_sender="message.is_sender" :direction="_direction(message)"
-                        :headUrl="get_head_url(message)" :src="'/api/rs/imgsrc/'+message.src"></MessageEmoji>
+          <MessageEmoji v-else-if="message.type_name == '动画表情'" :is_sender="message.is_sender"
+                        :direction="_direction(message)" :headUrl="get_head_url(message)"
+                        :src="'/api/rs/imgsrc/'+message.src"></MessageEmoji>
           <!-- 视频消息 -->
-          <MessageVideo v-else-if="message.type_name == '视频'" :is_sender="message.is_sender" :direction="_direction(message)"
-                        :headUrl="get_head_url(message)" :src="'/api/rs/video/'+message.src"></MessageVideo>
+          <MessageVideo v-else-if="message.type_name == '视频'" :is_sender="message.is_sender"
+                        :direction="_direction(message)" :headUrl="get_head_url(message)"
+                        :src="'/api/rs/video/'+message.src"></MessageVideo>
           <!-- 文件消息 -->
-          <MessageFile v-else-if="message.type_name == '文件'" :is_sender="message.is_sender" :direction="_direction(message)"
-                       :headUrl="get_head_url(message)" :src="message.src"></MessageFile>
+          <MessageFile v-else-if="message.type_name == '文件'" :is_sender="message.is_sender"
+                       :direction="_direction(message)" :headUrl="get_head_url(message)"
+                       :src="message.src"></MessageFile>
           <!-- 语音消息 -->
-          <MessageAudio v-else-if="message.type_name == '语音'" :is_sender="message.is_sender" :direction="_direction(message)"
-                        :headUrl="get_head_url(message)" :src="'/api/rs/'+message.src"
+          <MessageAudio v-else-if="message.type_name == '语音'" :is_sender="message.is_sender"
+                        :direction="_direction(message)" :headUrl="get_head_url(message)" :src="'/api/rs/'+message.src"
                         :msg="message.msg"></MessageAudio>
           <!-- 其他消息 -->
-          <MessageOther v-else :is_sender="message.is_sender" :direction="_direction(message)" :headUrl="get_head_url(message)"
-                        :content="message.msg"></MessageOther>
-
+          <MessageOther v-else :is_sender="message.is_sender" :direction="_direction(message)"
+                        :headUrl="get_head_url(message)" :content="message.msg"></MessageOther>
         </div>
       </div>
     </div>
