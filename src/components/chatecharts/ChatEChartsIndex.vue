@@ -2,6 +2,8 @@
 import * as echarts from "echarts";
 import {onMounted} from "vue";
 
+// https://echarts.apache.org/examples/en/editor.html
+
 const dataCount = 5e5;
 
 //初始化函数
@@ -12,8 +14,8 @@ function init() {
   // 绘制图表
   let base = +new Date(1968, 9, 3);
   let oneDay = 24 * 3600 * 1000;
-  let date = [];
 
+  let date = [];
   let data = [Math.random() * 300];
 
   for (let i = 1; i < 20000; i++) {
@@ -31,7 +33,7 @@ function init() {
     },
     title: {
       left: 'center',
-      text: 'TEST'
+      text: '日聊天记录数量（不包括群聊）'
     },
     toolbox: {
       feature: {
@@ -103,7 +105,7 @@ onMounted(() => {
 
 <style scoped>
 #charts_main {
-  width: 90vw;
+  width: 100%;
   height: 80vh;
 }
 </style>

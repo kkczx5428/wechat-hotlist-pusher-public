@@ -44,8 +44,6 @@ const MeneSelect = (val: any) => {
         </el-main>
       </el-container>
     </el-container>
-
-
   </div>
 </template>
 
