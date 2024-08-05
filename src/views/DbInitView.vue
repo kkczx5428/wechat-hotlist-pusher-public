@@ -244,7 +244,7 @@ watch(init_type, (val) => {
 </script>
 
 <template>
-  <div style="background-color: #d2d2fa; height: 100vh; display: flex; justify-content: center; align-items: center;">
+  <div style="background-color: #d2d2fa; height: 100%; display: flex; justify-content: center; align-items: center;">
     <!-- 上次数据 -->
     <div v-if="init_type==='last'">
       <div

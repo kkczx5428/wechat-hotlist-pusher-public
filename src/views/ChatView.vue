@@ -4,6 +4,7 @@ import ChatRecords from '@/components/chat/ChatRecords.vue';
 import {onMounted, ref} from "vue";
 import IndexView from "@/views/IndexView.vue";
 import {apiVersion} from "@/api/base";
+import {is_db_init} from "@/utils/common_utils";
 
 const wxid = ref('');
 const handleChildData = (val: any) => {
@@ -16,6 +17,7 @@ onMounted(() => {
   }).catch((error: string) => {
     console.error('Error fetching API version:', error);
   });
+  is_db_init();
 })
 
 </script>
