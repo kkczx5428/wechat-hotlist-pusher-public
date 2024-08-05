@@ -206,7 +206,7 @@ const handleCurrentChange = (val: number) => {
 const scrollToId = (id: number) => {
   nextTick(() => {
     const element = document.getElementById(`message-${id}`);
-    console.log(element, `message-${id}`)
+    console.log(`scrollToId： message-${id}`)
     if (element) {
       element.scrollIntoView({
         behavior: 'instant',

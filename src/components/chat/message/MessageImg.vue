@@ -16,6 +16,7 @@
               :min-scale="0.2"
               :preview-src-list="[src]"
               :initial-index="4"
+              :hide-on-click-modal="true"
               fit="cover"
           />
         </div>
@@ -36,6 +37,7 @@
               :min-scale="0.2"
               :preview-src-list="[src]"
               :initial-index="4"
+              :hide-on-click-modal="true"
               fit="cover"
           />
         </div>
