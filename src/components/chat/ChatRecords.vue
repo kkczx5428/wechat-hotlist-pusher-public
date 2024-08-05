@@ -41,7 +41,7 @@ onMounted(() => {
     <el-header style="height: 40px; max-height: 40px; width: 100%;background-color: #d2d2fa;padding-top: 5px;">
       <ChatRecprdsHeader :wxid="wxid" @exporting="onExport"/>
     </el-header>
-    <el-main style="overflow-y: auto; height: calc(100vh - 65px);padding: 0">
+    <el-main style="height: calc(100vh - 40px);padding: 0;margin: 0;background-color: #f5f5f5;">
         <ChatExportMain v-if="is_export" :wxid="wxid"/>
         <ChatRecordsMain v-else :wxid="wxid"/>
     </el-main>

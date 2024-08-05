@@ -53,6 +53,7 @@ const sanitizeHTML = (html) => {
 
 .chat-content {
   width: 100%;
+  max-width: 100%;
   padding: 20px;
 
   .word {

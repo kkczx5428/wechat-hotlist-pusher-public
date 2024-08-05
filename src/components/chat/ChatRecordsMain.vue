@@ -11,8 +11,9 @@ import MessageOther from "@/components/chat/message/MessageOther.vue";
 import {apiMsgCountSolo, apiMsgs, apiMyWxid} from "@/api/chat";
 import type {msg, User, UserList} from "@/utils/common_utils";
 import {api_img} from "@/api/base";
-import InfiniteLoading from "v3-infinite-loading";  // v3 无限滚动
-import "v3-infinite-loading/lib/style.css"; // v3 无限滚动
+// v3 无限滚动 https://vue3-infinite-loading.netlify.app/api/props.html#distance
+import InfiniteLoading from "v3-infinite-loading";
+import "v3-infinite-loading/lib/style.css";
 
 // 这里的 props 是从父组件传递过来的
 const props = defineProps({
@@ -21,105 +22,16 @@ const props = defineProps({
     required: true,
   }
 });
-
 // 定义变量
 const messages = ref<msg[]>([]);
 const userlist = ref<UserList>({});
 const msg_loading = ref(false);
 const my_wxid = ref('');
 const start = ref(0);
-const limit = ref(100);
+const limit = ref(50);
+const min_id = ref(0);
+const max_id = ref(0);
 const msg_count = ref(0);
-
-// 获取聊天记录
-const fetchData = async (start: number, limit: number, wxid: string) => {
-  if (msg_loading.value) {
-    console.log("正在获取消息，请稍后再试!")
-    return;
-  }
-  if (wxid == '') {
-    console.log("wxid 为空, 请检查!")
-    return;
-  }
-  try {
-    msg_loading.value = true;
-    if (start < 0) {
-      start = 0;
-    }
-    console.log('fetchData', start, limit, wxid)
-    const body_data = await apiMsgs(wxid, start, limit);
-    messages.value = body_data.msg_list.concat(messages.value);
-    userlist.value = Object.assign(userlist.value, body_data.user_list);
-    msg_loading.value = false;
-    return body_data;
-  } catch (error) {
-    msg_loading.value = false;
-    console.error('Error fetching data:', error);
-    return [];
-  }
-};
-// 上述为网络请求部分
-
-// 初始加载数据
-
-// END 获取聊天记录
-
-// 监听 userData 中 username 的变化
-const init = async () => {
-  try {
-    messages.value = [];
-    userlist.value = {};
-    msg_count.value = 0;
-    start.value = 0;
-
-    my_wxid.value = await apiMyWxid();
-    msg_count.value = await apiMsgCountSolo(props.wxid);
-    start.value = msg_count.value - limit.value;
-    if (start.value < 0) {
-      start.value = 0;
-    }
-    await fetchData(start.value, limit.value, props.wxid);
-
-    window.scrollTo(0, document.body.scrollHeight);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return [];
-  }
-};
-watch(() => props.wxid, (newUsername, oldUsername) => {
-  console.log('username changed： ', oldUsername, newUsername);
-  init();
-});
-onMounted(() => {
-  init();
-});
-
-//  循环请求获取全部数据
-const loadMore = async () => {
-  my_wxid.value = await apiMyWxid();
-  msg_count.value = await apiMsgCountSolo(props.wxid);
-
-  let limit1 = limit.value;
-  let start1 = start.value - limit1;
-  if (start1 < 0) {
-    start1 = 0;
-  }
-  const body_data = await fetchData(start1, limit1, props.wxid);
-  start.value = start1;
-  // 排序
-  messages.value.sort((a, b) => {
-    return a.id - b.id;
-  });
-  // 去重
-  messages.value = messages.value.filter((item, index, array) => {
-    return index === 0 || item.id !== array[index - 1].id;
-  });
-  userlist.value = Object.assign(userlist.value, body_data.user_list);
-
-};
-defineExpose({
-  loadMore
-})
 
 // 这部分为构造消息的发送时间和头像
 const _direction = (message: any) => {
@@ -145,15 +57,187 @@ const get_head_url = (message: any) => {
 }
 // END 这部分为构造消息的发送时间和头像
 
+// 获取聊天记录
+const fetchData = async (scroll: String = '') => {
+  if (msg_loading.value) {
+    console.log("正在获取消息，请稍后再试!")
+    return;
+  }
+  if (props.wxid == '') {
+    console.log("wxid 为空, 请检查!")
+    return;
+  }
+  try {
+    msg_loading.value = true;
+    if (start.value < 0) {
+      start.value = 0;
+    }
+    console.log('fetchData', props.wxid, start.value, limit.value)
+    const body_data = await apiMsgs(props.wxid, start.value, limit.value);
+
+    // messages.value = [];
+    // messages.value = body_data.msg_list.concat(messages.value);
+    messages.value = body_data.msg_list
+    userlist.value = Object.assign(userlist.value, body_data.user_list);
+    // 去重
+    messages.value = messages.value.filter((item, index, array) => {
+      return index === 0 || item.id !== array[index - 1].id;
+    });
+    // 排序
+    messages.value.sort((a, b) => {
+      return a.id - b.id
+    });
+
+    min_id.value = messages.value[0].id;
+    max_id.value = messages.value[messages.value.length - 1].id;
+
+    if (scroll == "top") {
+      scrollToId(messages.value[0].id);
+    } else if (scroll == "bottom") {
+      scrollToId(messages.value[messages.value.length - 1].id);
+    }
+
+    msg_loading.value = false;
+    return body_data;
+  } catch (error) {
+    msg_loading.value = false;
+    console.error('Error fetching data:', error);
+    return [];
+  }
+};
+// 上述为网络请求部分
+
+// 初始加载数据
+
+// END 获取聊天记录
+
+// 监听 userData 中 username 的变化
+const init = async () => {
+  try {
+    messages.value = [];
+    userlist.value = {};
+    msg_loading.value = false;
+    start.value = 0;
+    limit.value = limit.value || 100;
+    min_id.value = 0;
+    max_id.value = 0;
+
+    my_wxid.value = await apiMyWxid();
+    msg_count.value = await apiMsgCountSolo(props.wxid);
+
+    // start.value = msg_count.value - limit.value;
+    // if (start.value < 0) {
+    //   start.value = 0;
+    // }
+    await fetchData();
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return [];
+  }
+};
+watch(() => props.wxid, (newUsername, oldUsername) => {
+  console.log('username changed： ', oldUsername, newUsername);
+  init();
+});
+watch(() => start.value, (newVal, oldVal) => {
+  console.log('msg start changed： ', oldVal, newVal);
+  if (newVal > oldVal) {
+    // 说明是向后滚动
+    fetchData("top");
+  } else {
+    fetchData("bottom");
+  }
+
+});
+
+onMounted(() => {
+  init();
+});
+
+//  移动到底部请求获取全部数据
+const loadMoreTop = async ($state: any) => {
+  try {
+    if (start.value == 0) {
+      $state.complete();
+      return;
+    }
+    start.value = start.value - limit.value;
+    if (start.value < 0) {
+      start.value = 0;
+    }
+    // await fetchData("bottom");
+    $state.loaded();
+  } catch (error) {
+    console.log("Error fetching Top data:", error)
+    $state.error();
+  }
+};
+
+const loadMoreBottom = async ($state: any) => {
+  try {
+    if (start.value + limit.value > msg_count.value) {
+      $state.complete();
+      return;
+    }
+    start.value = start.value + limit.value;
+    // await fetchData("top");
+    $state.loaded();
+  } catch (error) {
+    console.log("Error fetching data:", error)
+    $state.error();
+  }
+};
+// END 循环请求获取全部数据
+
+
+// 分页管理相关的变量
+const handleLimitChange = (val: number) => {
+  limit.value = val;
+  fetchData();
+};
+
+const handleCurrentChange = (val: number) => {
+  start.value = (val - 1) * limit.value;
+  // fetchData();
+};
+// END 分页管理相关的变量
+
+// 滚动到指定位置 id
+const scrollToId = (id: number) => {
+  nextTick(() => {
+    const element = document.getElementById(`message-${id}`);
+    console.log(element, `message-${id}`)
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'instant',
+        block: 'center'
+      });
+    }
+  })
+}
+// END 滚动到指定位置 id
 
 </script>
 
 <template>
   <div id="chat">
-    <div class="chat_body">
-      <div class="chat_window" ref="chatWindow">
-        <InfiniteLoading :on-infinite="loadMore" ref="infiniteLoading"/>
-        <div class="message" v-for="(message,index) in messages" :key="index">
+    <el-container class="chat-records-main-container">
+      <el-main class="chat-records-main-main">
+        <!--        <div class="infinite-container">-->
+        <!--          <InfiniteLoading @infinite="loadMoreTop" :top="true" :firstload="false">-->
+        <!--            <template #spinner>-->
+        <!--              <span class="spinner-text">加载中...</span>-->
+        <!--            </template>-->
+        <!--            <template #complete>-->
+        <!--              <span class="complete-text">没有更多啦</span>-->
+        <!--            </template>-->
+        <!--            <template #error="{ retry }">-->
+        <!--              <button @click="retry" class="retry-button">错误</button>-->
+        <!--            </template>-->
+        <!--          </InfiniteLoading>-->
+        <!--        </div>-->
+
+        <div class="message" v-for="(message,index) in messages" :key="index" :id="`message-${message.id}`">
           <!-- 文字消息 -->
           <MessageText v-if="message.type_name == '文本'" :is_sender="message.is_sender"
                        :direction="_direction(message)" :headUrl="get_head_url(message)"
@@ -176,15 +260,36 @@ const get_head_url = (message: any) => {
                        :src="message.src"></MessageFile>
           <!-- 语音消息 -->
           <MessageAudio v-else-if="message.type_name == '语音'" :is_sender="message.is_sender"
-                        :direction="_direction(message)" :headUrl="get_head_url(message)" :src="'/api/rs/'+message.src"
+                        :direction="_direction(message)" :headUrl="get_head_url(message)"
+                        :src="'/api/rs/'+message.src"
                         :msg="message.msg"></MessageAudio>
           <!-- 其他消息 -->
           <MessageOther v-else :is_sender="message.is_sender" :direction="_direction(message)"
                         :headUrl="get_head_url(message)" :content="message.msg"></MessageOther>
         </div>
-      </div>
-    </div>
+        <!--                <div class="infinite-container">-->
+        <!--                  <InfiniteLoading @infinite="loadMoreBottom" :top="false" :firstload="false">-->
+        <!--                    <template #spinner>-->
+        <!--                      <span class="spinner-text">加载中...</span>-->
+        <!--                    </template>-->
+        <!--                    <template #complete>-->
+        <!--                      <span class="complete-text">没有更多啦</span>-->
+        <!--                    </template>-->
+        <!--                    <template #error="{ retry }">-->
+        <!--                      <button @click="retry" class="retry-button">错误</button>-->
+        <!--                    </template>-->
+        <!--                  </InfiniteLoading>-->
+        <!--                </div>-->
+      </el-main>
+      <el-footer height="20px" class="chat-records-main-footer">
+        <el-pagination background small layout="sizes, prev, pager, next, jumper" :total="msg_count"
+                       :page-size="limit" :page-sizes="[50,100, 200, 300, 500]" @size-change="handleLimitChange"
+                       :current-page="Math.floor(start / limit + 1)" @current-change="handleCurrentChange"
+        />
+      </el-footer>
+    </el-container>
   </div>
+
 </template>
 
 <style scoped>
@@ -192,27 +297,44 @@ const get_head_url = (message: any) => {
 #chat {
   position: relative;
   width: 100%;
-  height: 100%;
-  background-color: #f5f5f5;
+  height: calc(100% - 15px);
   display: flex;
   flex-direction: column;
 
-  .chat_body {
-    flex: 1;
-    overflow-y: hidden;
-    overflow-x: hidden;
+  .chat-records-main-container {
+    height: calc(100% - 15px);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 
-    .chat_window {
-      height: 100%;
-      overflow-y: scroll;
-      width: calc(100% + 17px);
-      padding: 0px;
-      margin: 0px;
+    .chat-records-main-main {
+      padding: 0;
+      margin: 0;
 
-      > .message:last-of-type {
-        margin-bottom: 8px;
+      .message:last-of-type {
+        margin-bottom: 0px;
       }
     }
+
+    .chat-records-main-footer {
+      display: grid;
+      place-items: center; /* 居中对齐 */
+      padding: 0;
+      margin: 0;
+    }
   }
+}
+
+
+.infinite-container {
+  display: grid;
+  place-items: center; /* 居中对齐 */
+}
+
+.spinner-text,
+.complete-text,
+.retry-button {
+  font-size: 16px;
+  color: #9d09f3;
 }
 </style>
