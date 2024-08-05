@@ -85,6 +85,10 @@ const sanitizeHTML = (html) => {
         position: relative;
         margin-top: 8px;
         display: inline-block;
+
+        word-break: break-word;
+        white-space: pre-wrap;
+        overflow: hidden;
       }
 
       //小三角形
@@ -137,6 +141,11 @@ const sanitizeHTML = (html) => {
         background: #95EC69;
         text-align: left;
         display: inline-block;
+
+
+        word-break: break-word;
+        white-space: pre-wrap;
+        overflow: hidden;
       }
 
       //小三角形
