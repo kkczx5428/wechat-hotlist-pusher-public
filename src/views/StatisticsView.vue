@@ -24,7 +24,7 @@ const MeneSelect = (val: string) => {
                  class="el-menu-vertical-demo"
                  @select="MeneSelect"
         >
-          <el-menu-item index="test">
+          <el-menu-item index="date_chat_count">
             <span>日聊天记录</span>
           </el-menu-item>
         </el-menu>

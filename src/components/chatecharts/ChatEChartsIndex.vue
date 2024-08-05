@@ -23,7 +23,6 @@ const init = async () => {
 
   const body_data = await apiDateCount(word.value);
   // {"2024-12-20":23,...}
-
   date.value = Object.keys(body_data);
   data.value = Object.values(body_data);
 
@@ -31,7 +30,7 @@ const init = async () => {
     tooltip: {
       trigger: 'axis',
       position: function (pt: any) {
-        return [pt[0], '100%'];
+        return [pt[0], '90%'];
       }
     },
     title: {
@@ -60,11 +59,11 @@ const init = async () => {
       {
         type: 'inside',
         start: 0,
-        end: 10
+        end: 100
       },
       {
         start: 0,
-        end: 10
+        end: 100
       }
     ],
     series: [
