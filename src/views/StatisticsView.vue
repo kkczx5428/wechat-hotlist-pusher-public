@@ -18,19 +18,19 @@ const MeneSelect = (val: string) => {
   <!--    </h3>-->
   <div class="common-layout" style="height: 100vh;width: 100%;background-color: #d2d2fa;">
     <el-container style="height: calc(100vh);width: 100%;">
-      <el-aside width="100px" style="height: 100%;">
+      <el-aside width="120px" style="height: 100%;">
         <el-menu style="height: 100%;background-color: #F7F7F7;color:#262626;"
                  default-active="2"
                  class="el-menu-vertical-demo"
                  @select="MeneSelect"
         >
           <el-menu-item index="test">
-            <span>test</span>
+            <span>日聊天记录</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
 
-      <el-main style="height: 100%;max-height: 100%;width: 100%;margin: 0;padding: 0;">
+      <el-main style="height: 100%;width: 100%;margin: 0;padding: 0;">
         <ChatEChartsIndex/>
       </el-main>
     </el-container>

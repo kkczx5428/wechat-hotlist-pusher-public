@@ -1,39 +1,42 @@
 <script setup lang="ts">
 import * as echarts from "echarts";
-import {onMounted} from "vue";
-
+import {onMounted, ref} from "vue";
+import {apiDateCount} from "@/api/stat";
+import {apiUserList} from "@/api/chat";
+import {gen_show_name, type User} from "@/utils/common_utils";
 // https://echarts.apache.org/examples/en/editor.html
 
-const dataCount = 5e5;
+
+const date = ref<String[]>([]);
+const data = ref<number[]>([]);
+const word = ref("");
+const loading = ref(false);
+const user_options = ref<User[]>([]);
 
 //初始化函数
-function init() {
+const init = async () => {
+
+  // 清空图表
+
   // 基于准备好的dom，初始化echarts实例
   let Chart = echarts.init(document.getElementById("charts_main"));
 
-  // 绘制图表
-  let base = +new Date(1968, 9, 3);
-  let oneDay = 24 * 3600 * 1000;
+  const body_data = await apiDateCount(word.value);
+  // {"2024-12-20":23,...}
 
-  let date = [];
-  let data = [Math.random() * 300];
-
-  for (let i = 1; i < 20000; i++) {
-    var now = new Date((base += oneDay));
-    date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
-    data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
-  }
+  date.value = Object.keys(body_data);
+  data.value = Object.values(body_data);
 
   let option = {
     tooltip: {
       trigger: 'axis',
-      position: function (pt) {
-        return [pt[0], '10%'];
+      position: function (pt: any) {
+        return [pt[0], '100%'];
       }
     },
     title: {
       left: 'center',
-      text: '日聊天记录数量（不包括群聊）'
+      text: '日聊天记录（不包括群聊）'
     },
     toolbox: {
       feature: {
@@ -47,7 +50,7 @@ function init() {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: date
+      data: date.value
     },
     yAxis: {
       type: 'value',
@@ -66,7 +69,7 @@ function init() {
     ],
     series: [
       {
-        name: 'Fake Data',
+        name: '日聊天记录数量',
         type: 'line',
         symbol: 'none',
         sampling: 'lttb',
@@ -85,7 +88,7 @@ function init() {
             }
           ])
         },
-        data: data
+        data: data.value
       }
     ]
   };
@@ -97,15 +100,69 @@ onMounted(() => {
   init();
 });
 
+const search_user = async (query: string) => {
+  try {
+    loading.value = true;
+    const body_data = await apiUserList(query);
+    loading.value = false;
+    user_options.value = Object.values(body_data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return [];
+  }
+}
+
+// 监测搜索框变化
+
+
+const search_change = async () => {
+  try {
+    console.log('search_change:', word.value);
+    await init();
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return [];
+  }
+}
+
 </script>
 
 <template>
-  <div id="charts_main"></div>
+  <div class="common-layout" style="background-color: #d2d2fa;height: 100%;width: 100%;">
+    <el-container style="height: 100%;width: 100%;">
+      <el-header :height="'80px'" style="width: 100%;">
+        <el-select
+            v-model="word"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="输入想查看的联系人"
+            remote-show-suffix
+            clearable
+            :remote-method="search_user"
+            :loading="loading"
+            style="width: 240px"
+        >
+          <el-option
+              v-for="item in user_options"
+              :key="item.wxid"
+              :label="gen_show_name(item)"
+              :value="item.wxid"
+          />
+        </el-select>
+        <el-button type="primary" @click="search_change">查看</el-button>
+      </el-header>
+
+      <el-main style="height: calc(100% - 80px);width: 100%;">
+        <div id="charts_main"></div>
+      </el-main>
+    </el-container>
+  </div>
 </template>
 
 <style scoped>
 #charts_main {
   width: 100%;
-  height: 80vh;
+  height: calc(100% - 80px);
 }
 </style>
