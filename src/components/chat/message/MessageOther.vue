@@ -41,7 +41,7 @@ const props = defineProps({
     default: ''
   }
 })
-const sanitizeHTML = (html) => {
+const sanitizeHTML = (html: any) => {
   // Use DOMParser to parse the HTML and then serialize it to a trusted HTML string
   html = html.replace(/\n/g, '<br>');
   const doc = new DOMParser().parseFromString(html, 'text/html');

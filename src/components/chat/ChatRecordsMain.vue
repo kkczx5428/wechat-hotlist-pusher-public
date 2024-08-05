@@ -329,12 +329,13 @@ const scrollToId = (id: number) => {
 .infinite-container {
   display: grid;
   place-items: center; /* 居中对齐 */
+
+  .spinner-text,
+  .complete-text,
+  .retry-button {
+    font-size: 16px;
+    color: #9d09f3;
+  }
 }
 
-.spinner-text,
-.complete-text,
-.retry-button {
-  font-size: 16px;
-  color: #9d09f3;
-}
 </style>
