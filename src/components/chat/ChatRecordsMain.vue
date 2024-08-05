@@ -11,24 +11,16 @@ import MessageOther from "@/components/chat/message/MessageOther.vue";
 import {apiMsgCountSolo, apiMsgs, apiMyWxid} from "@/api/chat";
 import type {msg, User, UserList} from "@/utils/common_utils";
 import {api_img} from "@/api/base";
-
+import InfiniteLoading from "v3-infinite-loading";  // v3 无限滚动
+import "v3-infinite-loading/lib/style.css"; // v3 无限滚动
 
 // 这里的 props 是从父组件传递过来的
 const props = defineProps({
   wxid: {
     type: String,
     required: true,
-  },
-  setScrollTop: {
-    type: Function,
-    required: true,
-  },
-  updateScrollTop: {
-    type: Function,
-    required: true,
   }
 });
-
 
 // 定义变量
 const messages = ref<msg[]>([]);
@@ -38,10 +30,9 @@ const my_wxid = ref('');
 const start = ref(0);
 const limit = ref(100);
 const msg_count = ref(0);
-const hasScrolledToTop = ref(false);
 
 // 获取聊天记录
-const req_msgs = async (start: number, limit: number, wxid: string) => {
+const fetchData = async (start: number, limit: number, wxid: string) => {
   if (msg_loading.value) {
     console.log("正在获取消息，请稍后再试!")
     return;
@@ -55,9 +46,9 @@ const req_msgs = async (start: number, limit: number, wxid: string) => {
     if (start < 0) {
       start = 0;
     }
-    // console.log('req_msgs', start, limit, wxid)
+    console.log('fetchData', start, limit, wxid)
     const body_data = await apiMsgs(wxid, start, limit);
-    messages.value = body_data.msg_list;
+    messages.value = body_data.msg_list.concat(messages.value);
     userlist.value = Object.assign(userlist.value, body_data.user_list);
     msg_loading.value = false;
     return body_data;
@@ -66,42 +57,34 @@ const req_msgs = async (start: number, limit: number, wxid: string) => {
     console.error('Error fetching data:', error);
     return [];
   }
-}
+};
 // 上述为网络请求部分
 
 // 初始加载数据
-const fetchData = async () => {
+
+// END 获取聊天记录
+
+// 监听 userData 中 username 的变化
+const init = async () => {
   try {
+    messages.value = [];
+    userlist.value = {};
+    msg_count.value = 0;
+    start.value = 0;
+
     my_wxid.value = await apiMyWxid();
     msg_count.value = await apiMsgCountSolo(props.wxid);
     start.value = msg_count.value - limit.value;
     if (start.value < 0) {
       start.value = 0;
     }
-    await req_msgs(start.value, limit.value, props.wxid);
+    await fetchData(start.value, limit.value, props.wxid);
 
-    if (!hasScrolledToTop.value) {
-      await nextTick(() => {
-        props.setScrollTop();
-        hasScrolledToTop.value = false;
-      });
-    }
+    window.scrollTo(0, document.body.scrollHeight);
   } catch (error) {
     console.error('Error fetching data:', error);
     return [];
   }
-};
-// END 获取聊天记录
-
-// 监听 userData 中 username 的变化
-const init = () => {
-  messages.value = [];
-  userlist.value = {};
-  hasScrolledToTop.value = false;
-  msg_count.value = 0;
-  start.value = 0;
-
-  fetchData();
 };
 watch(() => props.wxid, (newUsername, oldUsername) => {
   console.log('username changed： ', oldUsername, newUsername);
@@ -121,10 +104,8 @@ const loadMore = async () => {
   if (start1 < 0) {
     start1 = 0;
   }
-  const body_data = await req_msgs(start1, limit1, props.wxid);
+  const body_data = await fetchData(start1, limit1, props.wxid);
   start.value = start1;
-  console.log('loadMore', start1, start.value, limit1, props.wxid)
-  messages.value = body_data.msg_list.concat(messages.value);
   // 排序
   messages.value.sort((a, b) => {
     return a.id - b.id;
@@ -135,9 +116,6 @@ const loadMore = async () => {
   });
   userlist.value = Object.assign(userlist.value, body_data.user_list);
 
-  await nextTick(() => {
-    props.updateScrollTop()
-  })
 };
 defineExpose({
   loadMore
@@ -174,12 +152,7 @@ const get_head_url = (message: any) => {
   <div id="chat">
     <div class="chat_body">
       <div class="chat_window" ref="chatWindow">
-        <!--    加载更多    -->
-        <div class="load_more" v-if="messages.length<msg_count"
-             style="display: flex; justify-content: center; margin-top: 10px;margin-bottom: 10px;">
-          <el-button type="primary" @click="loadMore">查看更多消息</el-button>
-        </div>
-
+        <InfiniteLoading :on-infinite="loadMore" ref="infiniteLoading"/>
         <div class="message" v-for="(message,index) in messages" :key="index">
           <!-- 文字消息 -->
           <MessageText v-if="message.type_name == '文本'" :is_sender="message.is_sender"
