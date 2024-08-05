@@ -11,7 +11,7 @@ const MeneSelect = (val: any) => {
 </script>
 
 <template>
-  <div class="common-layout" style="height: 100vh;width: 100%;">
+  <div class="common-layout" style="height: 100vh;width: 100%;background-color: #F7F7F7;">
     <el-container>
       <el-header style="height: 35px; max-height: 35px; width: 100%;">
         <h2 style="text-align: center">欢迎使用<a
@@ -21,8 +21,8 @@ const MeneSelect = (val: any) => {
       </el-header>
       <el-container style="height: calc(100vh - 35px);width: 100%;">
 
-        <el-aside width="200px" style="height: 100%">
-          <el-menu style="height: 100%"
+        <el-aside width="200px" style="height: 100%;">
+          <el-menu style="height: 100%;background-color: #F7F7F7;color:#262626;"
                    default-active="2"
                    class="el-menu-vertical-demo"
                    @select="MeneSelect"
