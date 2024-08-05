@@ -146,7 +146,7 @@ const get_data = async () => {
   chart_option.value.series[1].data = sender_count.value;
   chart_option.value.series[2].data = receiver_count.value;
 
-  console.log(date.value.length, total_count.value.length, receiver_count.value.length, sender_count.value.length);
+  // console.log(date.value.length, total_count.value.length, receiver_count.value.length, sender_count.value.length);
 }
 
 //初始化函数
