@@ -126,7 +126,6 @@ const get_date_count_data = async () => {
   console.log("datetime:", datetime.value);
   // {"2024-12-20":{ "sender_count": sender_count,  "receiver_count": receiver_count, "total_count": total_count  },....}
   date_count_data.value = await apiDateCount(word.value, datetime.value[0] / 1000, datetime.value[1] / 1000);
-
   // refreshData();
   chart_option.value.xAxis.data = Object.keys(date_count_data.value);
   chart_option.value.series[0].data = Object.values(date_count_data.value).map((item: any) => item.total_count);
@@ -137,7 +136,6 @@ const get_date_count_data = async () => {
 const get_top_user_count = async () => {
   // {"wxid":{ "sender_count": sender_count,  "receiver_count": receiver_count, "total_count": total_count  },....}
   const body_data = await apiTalkerCount();
-
   top_user.value = await apiUserList("", Object.keys(body_data));
   top_user_count.value = body_data;
 }
