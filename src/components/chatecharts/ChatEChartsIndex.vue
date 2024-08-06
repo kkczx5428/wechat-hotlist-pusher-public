@@ -5,6 +5,7 @@ import {apiDateCount, apiTalkerCount} from "@/api/stat";
 import {apiUserList} from "@/api/chat";
 import {gen_show_name, type User} from "@/utils/common_utils";
 import DateTimeSelect from "@/components/utils/DateTimeSelect.vue";
+import ColorSelect from "@/components/utils/ColorSelect.vue";
 
 // https://echarts.apache.org/examples/en/editor.html
 
@@ -25,30 +26,25 @@ const top_user = ref<{ [key: string]: User }>({});
 const top_user_count = ref<{ [key: string]: CountData }>({});
 
 const Chart = shallowRef<any>(null)
-// const colors = {
-//   primary: '#3BD418',
-//   primary_0: 'rgba(59,212,24,0.4)',
-//   primary_1: 'rgba(59,212,24,0)',
-//   secondary: '#FF524B',
-//   secondary_0: 'rgba(255,82,75,0.4)',
-//   secondary_1: 'rgba(255,82,75,0)',
-//   tertiary: '#00E8F4',
-//   tertiary_0: 'rgba(0,232,244,0.4)',
-//   tertiary_1: 'rgba(0,232,244,0)',
-//   a: '#ea5455'
-// };
-const colors = {
-  primary: '#ffeab6',
-  primary_0: '',
-  primary_1: '',
-  secondary: '#c0ffc2',
-  secondary_0: '',
-  secondary_1: '',
-  tertiary: '#a1d9ff',
-  tertiary_0: '',
-  tertiary_1: '',
-  bg:''
-};
+const colors = [
+  {
+    "color": '#ffeab6',
+    "areaStyle": new echarts.graphic.LinearGradient(0, 0, 0, 1,
+        [{offset: 0, color: "rgba(255,234,182,0)"},
+          {offset: 1, color: "rgba(255,234,182,0)"}])
+  }, {
+    "color": '#c0ffc2',
+    "areaStyle": new echarts.graphic.LinearGradient(0, 0, 0, 1,
+        [{offset: 0, color: "rgba(192,255,194,0)"},
+          {offset: 1, color: "rgba(192,255,194,0)"}])
+  }, {
+    "color": '#a1d9ff',
+    "areaStyle": new echarts.graphic.LinearGradient(0, 0, 0, 1,
+        [{offset: 0, color: "rgba(161,217,255,0)"},
+          {offset: 1, color: "rgba(161,217,255,0)"}])
+  }
+];
+const bg_color = ref("");
 
 const chart_option = ref({
   tooltip: {
@@ -71,15 +67,8 @@ const chart_option = ref({
     }
   },
   dataZoom: [
-    {
-      type: 'inside',
-      start: 0,
-      end: 100
-    },
-    {
-      start: 0,
-      end: 100
-    }
+    {type: 'inside', start: 0, end: 100},
+    {start: 0, end: 100}
   ],
   legend: {
     right: '5%', // 设置图例位于右侧，距离右边边缘 5%
@@ -87,15 +76,13 @@ const chart_option = ref({
     orient: 'vertical' // 设置图例为垂直排列
   },
   xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    data: <any>[]
+    type: 'category', // x 轴类型为分类
+    boundaryGap: false, // x 轴两端不留空白间隙
+    data: <any>[], // x 轴的数据，这里使用了 TypeScript 的泛型表示尚未填充数据
   },
   yAxis: {
-    type: 'value',
-    boundaryGap: [0, '100%'],
-    min: 'dataMin',
-    max: 'dataMax',
+    type: 'value', // y 轴类型为数值
+    boundaryGap: [0, '10%'], // y 轴两端留白,下端留白0，上端留白10%
   },
   series: [
     {
@@ -103,68 +90,37 @@ const chart_option = ref({
       type: 'line',
       symbol: 'none',
       sampling: 'lttb',
-      itemStyle: {
-        color: colors.primary
-      },
-      // areaStyle: {
-      //   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-      //     {
-      //       offset: 0,
-      //       color: colors.primary_0 // 修改颜色和透明度
-      //     },
-      //     {
-      //       offset: 1,
-      //       color: colors.primary_1 // 设置底部透明
-      //     }
-      //   ])
-      // },
+      itemStyle: {color: colors[0].color},
+      areaStyle: {color: colors[0].areaStyle},
       data: <any>[]
     }, {
       name: '日发送聊天记录数量',
       type: 'line',
       symbol: 'none',
       sampling: 'lttb',
-      itemStyle: {
-        color: colors.secondary
-      },
-      // areaStyle: {
-      //   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-      //     {
-      //       offset: 0,
-      //       color: colors.secondary_0 // 修改颜色和透明度
-      //     },
-      //     {
-      //       offset: 1,
-      //       color: colors.secondary_1 // 设置底部透明
-      //     }
-      //   ])
-      // },
+      itemStyle: {color: colors[1].color},
+      areaStyle: {color: colors[1].areaStyle},
       data: <any>[]
     }, {
       name: '日接收聊天记录数量',
       type: 'line',
       symbol: 'none',
       sampling: 'lttb',
-      itemStyle: {
-        color: colors.tertiary
-      },
-      // areaStyle: {
-      //   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-      //     {
-      //       offset: 0,
-      //       color: colors.tertiary_0 // 修改颜色和透明度
-      //     },
-      //     {
-      //       offset: 1,
-      //       color: colors.tertiary_1 // 设置底部透明
-      //     }
-      //   ])
-      // },
+      itemStyle: {color: colors[2].color},
+      areaStyle: {color: colors[2].areaStyle},
       data: <any>[]
     }
   ]
 });
 
+const update_chart_option = () => {
+  chart_option.value.series[0].itemStyle.color = colors[0].color;
+  chart_option.value.series[0].areaStyle.color = colors[0].areaStyle;
+  chart_option.value.series[1].itemStyle.color = colors[1].color;
+  chart_option.value.series[1].areaStyle.color = colors[1].areaStyle;
+  chart_option.value.series[2].itemStyle.color = colors[2].color;
+  chart_option.value.series[2].areaStyle.color = colors[2].areaStyle;
+}
 
 const get_date_count_data = async () => {
   console.log("datetime:", datetime.value);
@@ -187,8 +143,11 @@ const get_top_user_count = async () => {
 }
 
 // 刷新图表 START
-const refreshChart = async () => {
-  await get_date_count_data();
+const refreshChart = async (is_get_data: boolean = true) => {
+  update_chart_option();
+  if (is_get_data) {
+    await get_date_count_data();
+  }
   // 渲染图表
   Chart.value.setOption(chart_option.value);
 }
@@ -269,26 +228,32 @@ const handDatetimeChildData = (val: any) => {
           <el-option v-for="item in user_options" :key="item.wxid" :label="gen_show_name(item)" :value="item.wxid"/>
         </el-select>&nbsp;
         <el-button type="primary" @click="search_change">查看</el-button>
+        &nbsp;
+        <strong>颜色设置：</strong>
+        bg:
+        <color-select @updateColors="(val:any)=>{bg_color=val}"></color-select>
+        c1:
+        <color-select @updateColors="(val:any)=>{colors[0].color=val;refreshChart(false)}"></color-select>
+        c2:
+        <color-select @updateColors="(val:any)=>{colors[1].color=val;refreshChart(false)}"></color-select>
+        c3:
+        <color-select @updateColors="(val:any)=>{colors[2].color=val;refreshChart(false)}"></color-select>
         <br>
-        <!--        <strong>top10：</strong>-->
-        <!--        <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">-->
-        <!--          <el-button type="primary" plain @click="set_top_user(wxid)" size="small">-->
-        <!--            {{ gen_show_name(top_user[wxid]) }}({{ top_user_count[wxid]?.total_count }})-->
-        <!--          </el-button>-->
-        <!--        </template>-->
-
+        <strong>top10：</strong>
+        <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">
+          <el-button type="primary" plain @click="set_top_user(wxid)" size="small">
+            {{ gen_show_name(top_user[wxid]) }}({{ top_user_count[wxid]?.total_count }})
+          </el-button>
+        </template>
       </el-header>
 
-      <el-main style="height: calc(100% - 80px);width: 100%;">
-        <div id="charts_main" :style="'background-color:'+colors.bg "></div>
+      <el-main style="height: calc(100% - 100px);width: 100%;">
+        <div id="charts_main" :style="'width: 100%;height: calc(100% - 100px);background-color:'+bg_color "></div>
       </el-main>
     </el-container>
   </div>
 </template>
 
 <style scoped>
-#charts_main {
-  width: 100%;
-  height: calc(100% - 80px);
-}
+
 </style>

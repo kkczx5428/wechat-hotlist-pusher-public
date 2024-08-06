@@ -84,7 +84,6 @@ const emits = defineEmits(['datetime']);
 // 向父组件传递数据
 // 检测datetime的变化
 watch(() => datetime.value, (newVal: any, oldVal: any) => {
-  console.log('datetime', newVal, oldVal)
   let start;
   let end;
   if (newVal) {
