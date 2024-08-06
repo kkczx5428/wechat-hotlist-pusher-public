@@ -89,7 +89,7 @@ const handleClose = (key: string, keyPath: string[]) => {
             <el-sub-menu index='/tools'>
               <template #title>
                 <tools-icon></tools-icon>
-                <span>专业工具</span>
+                <span>实用工具</span>
               </template>
               <el-menu-item index='/wxinfo'>账号信息</el-menu-item>
               <el-menu-item index='/bias'>基址偏移</el-menu-item>

@@ -4,6 +4,7 @@ import {onMounted, ref, shallowRef} from "vue";
 import {apiDateCount, apiTalkerCount} from "@/api/stat";
 import {apiUserList} from "@/api/chat";
 import {gen_show_name, type User} from "@/utils/common_utils";
+import DateTimeSelect from "@/components/utils/DateTimeSelect.vue";
 
 // https://echarts.apache.org/examples/en/editor.html
 
@@ -15,6 +16,7 @@ interface CountData {
 
 const date_count_data = ref({});
 
+const datetime = ref([0, 0]);
 const word = ref("");
 const loading = ref(false);
 const user_options = ref<User[]>([]);
@@ -22,7 +24,32 @@ const user_options = ref<User[]>([]);
 const top_user = ref<{ [key: string]: User }>({});
 const top_user_count = ref<{ [key: string]: CountData }>({});
 
-const Chart = shallowRef<any>(null);
+const Chart = shallowRef<any>(null)
+// const colors = {
+//   primary: '#3BD418',
+//   primary_0: 'rgba(59,212,24,0.4)',
+//   primary_1: 'rgba(59,212,24,0)',
+//   secondary: '#FF524B',
+//   secondary_0: 'rgba(255,82,75,0.4)',
+//   secondary_1: 'rgba(255,82,75,0)',
+//   tertiary: '#00E8F4',
+//   tertiary_0: 'rgba(0,232,244,0.4)',
+//   tertiary_1: 'rgba(0,232,244,0)',
+//   a: '#ea5455'
+// };
+const colors = {
+  primary: '#ffeab6',
+  primary_0: '',
+  primary_1: '',
+  secondary: '#c0ffc2',
+  secondary_0: '',
+  secondary_1: '',
+  tertiary: '#a1d9ff',
+  tertiary_0: '',
+  tertiary_1: '',
+  bg:''
+};
+
 const chart_option = ref({
   tooltip: {
     trigger: 'axis',
@@ -46,11 +73,11 @@ const chart_option = ref({
   dataZoom: [
     {
       type: 'inside',
-      start: 90,
+      start: 0,
       end: 100
     },
     {
-      start: 90,
+      start: 0,
       end: 100
     }
   ],
@@ -77,20 +104,20 @@ const chart_option = ref({
       symbol: 'none',
       sampling: 'lttb',
       itemStyle: {
-        color: 'rgb(255, 70, 131)'
+        color: colors.primary
       },
-      areaStyle: {
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: 'rgba(255, 70, 131, 0.3)' // 修改颜色和透明度
-          },
-          {
-            offset: 1,
-            color: 'rgba(255, 70, 131, 0)' // 设置底部透明
-          }
-        ])
-      },
+      // areaStyle: {
+      //   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+      //     {
+      //       offset: 0,
+      //       color: colors.primary_0 // 修改颜色和透明度
+      //     },
+      //     {
+      //       offset: 1,
+      //       color: colors.primary_1 // 设置底部透明
+      //     }
+      //   ])
+      // },
       data: <any>[]
     }, {
       name: '日发送聊天记录数量',
@@ -98,20 +125,20 @@ const chart_option = ref({
       symbol: 'none',
       sampling: 'lttb',
       itemStyle: {
-        color: 'rgba(236,218,24,0.65)'
+        color: colors.secondary
       },
-      areaStyle: {
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: 'rgba(24,236,34, 0.3)' // 修改颜色和透明度
-          },
-          {
-            offset: 1,
-            color: 'rgba(24,236,34, 0)' // 设置底部透明
-          }
-        ])
-      },
+      // areaStyle: {
+      //   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+      //     {
+      //       offset: 0,
+      //       color: colors.secondary_0 // 修改颜色和透明度
+      //     },
+      //     {
+      //       offset: 1,
+      //       color: colors.secondary_1 // 设置底部透明
+      //     }
+      //   ])
+      // },
       data: <any>[]
     }, {
       name: '日接收聊天记录数量',
@@ -119,20 +146,20 @@ const chart_option = ref({
       symbol: 'none',
       sampling: 'lttb',
       itemStyle: {
-        color: 'rgba(4,94,229,0.62)'
+        color: colors.tertiary
       },
-      areaStyle: {
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: 'rgba(143,246,246, 0.3)' // 修改颜色和透明度
-          },
-          {
-            offset: 1,
-            color: 'rgba(143,246,246, 0)' // 设置底部透明
-          }
-        ])
-      },
+      // areaStyle: {
+      //   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+      //     {
+      //       offset: 0,
+      //       color: colors.tertiary_0 // 修改颜色和透明度
+      //     },
+      //     {
+      //       offset: 1,
+      //       color: colors.tertiary_1 // 设置底部透明
+      //     }
+      //   ])
+      // },
       data: <any>[]
     }
   ]
@@ -140,8 +167,9 @@ const chart_option = ref({
 
 
 const get_date_count_data = async () => {
+  console.log("datetime:", datetime.value);
   // {"2024-12-20":{ "sender_count": sender_count,  "receiver_count": receiver_count, "total_count": total_count  },....}
-  date_count_data.value = await apiDateCount(word.value);
+  date_count_data.value = await apiDateCount(word.value, datetime.value[0] / 1000, datetime.value[1] / 1000);
 
   // refreshData();
   chart_option.value.xAxis.data = Object.keys(date_count_data.value);
@@ -211,12 +239,21 @@ const set_top_user = async (wxid: string) => {
   }
 }
 // 搜索联系人相关 END
+
+// 处理时间选择器的数据
+const handDatetimeChildData = (val: any) => {
+  datetime.value = val;
+  console.log('handDatetimeChildData:', val);
+}
+
 </script>
 
 <template>
   <div class="common-layout" style="background-color: #d2d2fa;height: 100%;width: 100%;">
     <el-container style="height: 100%;width: 100%;">
       <el-header :height="'80px'" style="width: 100%;">
+        <strong>时间(默认全部)：</strong>
+        <DateTimeSelect @datetime="handDatetimeChildData"/> &nbsp;
         <el-select
             v-model="word"
             filterable
@@ -229,27 +266,21 @@ const set_top_user = async (wxid: string) => {
             :loading="loading"
             style="width: 240px"
         >
-          <el-option
-              v-for="item in user_options"
-              :key="item.wxid"
-              :label="gen_show_name(item)"
-              :value="item.wxid"
-          />
-
-        </el-select>
+          <el-option v-for="item in user_options" :key="item.wxid" :label="gen_show_name(item)" :value="item.wxid"/>
+        </el-select>&nbsp;
         <el-button type="primary" @click="search_change">查看</el-button>
-
-        top10：
-        <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">
-          <el-button type="primary" plain @click="set_top_user(wxid)">
-            {{ gen_show_name(top_user[wxid]) }}({{ top_user_count[wxid]?.total_count }})
-          </el-button>
-        </template>
+        <br>
+        <!--        <strong>top10：</strong>-->
+        <!--        <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">-->
+        <!--          <el-button type="primary" plain @click="set_top_user(wxid)" size="small">-->
+        <!--            {{ gen_show_name(top_user[wxid]) }}({{ top_user_count[wxid]?.total_count }})-->
+        <!--          </el-button>-->
+        <!--        </template>-->
 
       </el-header>
 
       <el-main style="height: calc(100% - 80px);width: 100%;">
-        <div id="charts_main"></div>
+        <div id="charts_main" :style="'background-color:'+colors.bg "></div>
       </el-main>
     </el-container>
   </div>
