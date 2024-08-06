@@ -77,7 +77,7 @@ const chart_option = ref({
   },
   xAxis: {
     type: 'category', // x 轴类型为分类
-    boundaryGap: false, // x 轴两端不留空白间隙
+    boundaryGap: ["5%", '5%'], // x 轴两端不留空白间隙
     data: <any>[], // x 轴的数据，这里使用了 TypeScript 的泛型表示尚未填充数据
   },
   yAxis: {
