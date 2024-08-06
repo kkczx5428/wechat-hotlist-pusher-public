@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import ChatEChartsIndex from "@/components/chatecharts/ChatEChartsIndex.vue";
+import ChatEChartsIndex from "@/components/stats/ChatEChartsIndex.vue";
 import {ref} from "vue";
 
 const mene_selected = ref("");
