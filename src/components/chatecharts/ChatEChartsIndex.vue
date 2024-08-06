@@ -199,12 +199,6 @@ const set_top_user = async (wxid: string) => {
 }
 // 搜索联系人相关 END
 
-// 处理时间选择器的数据
-const handDatetimeChildData = (val: any) => {
-  datetime.value = val;
-  console.log('handDatetimeChildData:', val);
-}
-
 </script>
 
 <template>
@@ -212,7 +206,7 @@ const handDatetimeChildData = (val: any) => {
     <el-container style="height: 100%;width: 100%;">
       <el-header :height="'80px'" style="width: 100%;">
         <strong>时间(默认全部)：</strong>
-        <DateTimeSelect @datetime="handDatetimeChildData"/> &nbsp;
+        <DateTimeSelect @datetime="(val: any) => {datetime = val;}"/> &nbsp;
         <el-select
             v-model="word"
             filterable
