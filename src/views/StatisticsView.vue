@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import ChatEChartsIndex from "@/components/stats/ChatEChartsIndex.vue";
+import ChatStats from "@/components/stats/ChatStats.vue";
 import {ref} from "vue";
 
 const mene_selected = ref("date_chat_count");
@@ -31,7 +31,7 @@ const MeneSelect = (val: string) => {
       </el-aside>
 
       <el-main style="height: 100%;width: 100%;margin: 0;padding: 0;">
-        <ChatEChartsIndex v-if="mene_selected=='date_chat_count'"/>
+        <chat-stats v-if="mene_selected=='date_chat_count'"/>
       </el-main>
     </el-container>
   </div>
