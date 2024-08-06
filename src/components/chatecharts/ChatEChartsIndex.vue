@@ -1,19 +1,27 @@
 <script setup lang="ts">
 import * as echarts from "echarts";
 import {onMounted, ref, shallowRef} from "vue";
-import {apiDateCount} from "@/api/stat";
+import {apiDateCount, apiTalkerCount} from "@/api/stat";
 import {apiUserList} from "@/api/chat";
 import {gen_show_name, type User} from "@/utils/common_utils";
+
 // https://echarts.apache.org/examples/en/editor.html
 
+interface CountData {
+  sender_count: number
+  receiver_count: number
+  total_count: number
+}
 
-const date = ref<String[]>([]);
-const total_count = ref<number[]>([]);
-const receiver_count = ref<number[]>([]);
-const sender_count = ref<number[]>([]);
+const date_count_data = ref({});
+
 const word = ref("");
 const loading = ref(false);
 const user_options = ref<User[]>([]);
+
+const top_user = ref<{ [key: string]: User }>({});
+const top_user_count = ref<{ [key: string]: CountData }>({});
+
 const Chart = shallowRef<any>(null);
 const chart_option = ref({
   tooltip: {
@@ -38,16 +46,15 @@ const chart_option = ref({
   dataZoom: [
     {
       type: 'inside',
-      start: 0,
+      start: 90,
       end: 100
     },
     {
-      start: 0,
+      start: 90,
       end: 100
     }
   ],
   legend: {
-    data: ['日聊天记录数量', '日发送聊天记录数量', '日接收聊天记录数量'],
     right: '5%', // 设置图例位于右侧，距离右边边缘 5%
     top: '5%', // 设置图例位于上方
     orient: 'vertical' // 设置图例为垂直排列
@@ -132,39 +139,43 @@ const chart_option = ref({
 });
 
 
-const get_data = async () => {
-  const body_data = await apiDateCount(word.value);
+const get_date_count_data = async () => {
   // {"2024-12-20":{ "sender_count": sender_count,  "receiver_count": receiver_count, "total_count": total_count  },....}
-  date.value = Object.keys(body_data);
-  total_count.value = Object.values(body_data).map((item: any) => item.total_count);
-  receiver_count.value = Object.values(body_data).map((item: any) => item.receiver_count);
-  sender_count.value = Object.values(body_data).map((item: any) => item.sender_count);
+  date_count_data.value = await apiDateCount(word.value);
 
   // refreshData();
-  chart_option.value.xAxis.data = date.value;
-  chart_option.value.series[0].data = total_count.value;
-  chart_option.value.series[1].data = sender_count.value;
-  chart_option.value.series[2].data = receiver_count.value;
-
-  // console.log(date.value.length, total_count.value.length, receiver_count.value.length, sender_count.value.length);
+  chart_option.value.xAxis.data = Object.keys(date_count_data.value);
+  chart_option.value.series[0].data = Object.values(date_count_data.value).map((item: any) => item.total_count);
+  chart_option.value.series[1].data = Object.values(date_count_data.value).map((item: any) => item.sender_count);
+  chart_option.value.series[2].data = Object.values(date_count_data.value).map((item: any) => item.receiver_count);
 }
 
-//初始化函数
+const get_top_user_count = async () => {
+  // {"wxid":{ "sender_count": sender_count,  "receiver_count": receiver_count, "total_count": total_count  },....}
+  const body_data = await apiTalkerCount();
+
+  top_user.value = await apiUserList("", Object.keys(body_data));
+  top_user_count.value = body_data;
+}
+
+// 刷新图表 START
 const refreshChart = async () => {
-  // 基于准备好的dom，初始化echarts实例
-  await get_data();
+  await get_date_count_data();
   // 渲染图表
   Chart.value.setOption(chart_option.value);
 }
+// 刷新图表 END
 
 onMounted(() => {
   Chart.value = echarts.init(document.getElementById("charts_main"))
   refreshChart();
+  get_top_user_count();
 });
 
+
+// 搜索联系人相关 START
 const search_user = async (query: string) => {
   try {
-
     loading.value = true;
     if (query === '') {
       user_options.value = [];
@@ -190,6 +201,16 @@ const search_change = async () => {
   }
 }
 
+const set_top_user = async (wxid: string) => {
+  try {
+    word.value = wxid;
+    await search_change();
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return [];
+  }
+}
+// 搜索联系人相关 END
 </script>
 
 <template>
@@ -214,8 +235,17 @@ const search_change = async () => {
               :label="gen_show_name(item)"
               :value="item.wxid"
           />
+
         </el-select>
         <el-button type="primary" @click="search_change">查看</el-button>
+
+        top10：
+        <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">
+          <el-button type="primary" plain @click="set_top_user(wxid)">
+            {{ gen_show_name(top_user[wxid]) }}({{ top_user_count[wxid]?.total_count }})
+          </el-button>
+        </template>
+
       </el-header>
 
       <el-main style="height: calc(100% - 80px);width: 100%;">
