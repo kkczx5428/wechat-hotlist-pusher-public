@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
-import ChatStats from "@/components/stats/ChatStats.vue";
+import DateChatStats from "@/components/stats/DateChatStats.vue";
 import {ref} from "vue";
+import ContactStats from "@/components/stats/ContactStats.vue";
 
 const mene_selected = ref("date_chat_count");
 const MeneSelect = (val: string) => {
@@ -20,18 +21,22 @@ const MeneSelect = (val: string) => {
     <el-container style="height: calc(100vh);width: 100%;">
       <el-aside width="120px" style="height: 100%;">
         <el-menu style="height: 100%;background-color: #F7F7F7;color:#262626;"
-                 default-active="date_chat_count"
+                 :default-active="mene_selected"
                  class="el-menu-vertical-demo"
                  @select="MeneSelect"
         >
           <el-menu-item index="date_chat_count">
             <span>日聊天记录</span>
           </el-menu-item>
+          <el-menu-item index="contact_stats">
+            <span>联系人画像</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
 
       <el-main style="height: 100%;width: 100%;margin: 0;padding: 0;">
-        <chat-stats v-if="mene_selected=='date_chat_count'"/>
+        <date-chat-stats v-if="mene_selected=='date_chat_count'"/>
+        <contact-stats v-if="mene_selected=='contact_stats'"/>
       </el-main>
     </el-container>
   </div>

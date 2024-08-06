@@ -19,8 +19,6 @@ const date_count_data = ref({});
 
 const datetime = ref([0, 0]);
 const word = ref("");
-const loading = ref(false);
-const user_options = ref<User[]>([]);
 
 const top_user = ref<{ [key: string]: User }>({});
 const top_user_count = ref<{ [key: string]: CountData }>({});
@@ -49,10 +47,7 @@ const bg_color = ref("");
 const chart_option = ref({
   backgroundColor: bg_color.value,
   tooltip: {
-    trigger: 'axis',
-    position: function (pt: any) {
-      return [pt[0], '90%'];
-    }
+    trigger: 'item'
   },
   title: {
     left: 'center',
@@ -87,40 +82,41 @@ const chart_option = ref({
   },
   series: [
     {
-      name: '日聊天记录数量',
-      type: 'line',
-      symbol: 'none',
-      sampling: 'lttb',
-      itemStyle: {color: colors[0].color},
-      areaStyle: {color: colors[0].areaStyle},
-      data: <any>[]
-    }, {
-      name: '日发送聊天记录数量',
-      type: 'line',
-      symbol: 'none',
-      sampling: 'lttb',
-      itemStyle: {color: colors[1].color},
-      areaStyle: {color: colors[1].areaStyle},
-      data: <any>[]
-    }, {
-      name: '日接收聊天记录数量',
-      type: 'line',
-      symbol: 'none',
-      sampling: 'lttb',
-      itemStyle: {color: colors[2].color},
-      areaStyle: {color: colors[2].areaStyle},
-      data: <any>[]
+      name: 'Access From',
+      type: 'pie',
+      radius: ['40%', '70%'],
+      avoidLabelOverlap: false,
+      itemStyle: {
+        borderRadius: 10,
+        borderColor: '#fff',
+        borderWidth: 2
+      },
+      label: {
+        show: false,
+        position: 'center'
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: 40,
+          fontWeight: 'bold'
+        }
+      },
+      labelLine: {
+        show: false
+      },
+      data: [
+        { value: 1048, name: 'Search Engine' },
+        { value: 735, name: 'Direct' },
+        { value: 580, name: 'Email' },
+        { value: 484, name: 'Union Ads' },
+        { value: 300, name: 'Video Ads' }
+      ]
     }
   ]
 });
 
 const update_chart_option = () => {
-  chart_option.value.series[0].itemStyle.color = colors[0].color;
-  chart_option.value.series[0].areaStyle.color = colors[0].areaStyle;
-  chart_option.value.series[1].itemStyle.color = colors[1].color;
-  chart_option.value.series[1].areaStyle.color = colors[1].areaStyle;
-  chart_option.value.series[2].itemStyle.color = colors[2].color;
-  chart_option.value.series[2].areaStyle.color = colors[2].areaStyle;
   chart_option.value.backgroundColor = bg_color.value;
 }
 
@@ -160,43 +156,6 @@ onMounted(() => {
 });
 
 
-// 搜索联系人相关 START
-const search_user = async (query: string) => {
-  try {
-    loading.value = true;
-    if (query === '') {
-      user_options.value = [];
-      return;
-    }
-    const body_data = await apiUserList(query);
-    loading.value = false;
-    user_options.value = Object.values(body_data);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return [];
-  }
-}
-
-const search_change = async () => {
-  try {
-    console.log('search_change:', word.value);
-    // await get_data();
-    await refreshChart();
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return [];
-  }
-}
-
-const set_top_user = async (wxid: string) => {
-  try {
-    word.value = wxid;
-    await search_change();
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return [];
-  }
-}
 // 搜索联系人相关 END
 
 </script>
@@ -205,24 +164,6 @@ const set_top_user = async (wxid: string) => {
   <div class="common-layout" style="background-color: #d2d2fa;height: 100%;width: 100%;">
     <el-container style="height: 100%;width: 100%;">
       <el-header :height="'80px'" style="width: 100%;">
-        <strong>时间(默认全部)：</strong>
-        <DateTimeSelect @datetime="(val: any) => {datetime = val;}"/> &nbsp;
-        <el-select
-            v-model="word"
-            filterable
-            remote
-            reserve-keyword
-            placeholder="输入想查看的联系人"
-            remote-show-suffix
-            clearable
-            :remote-method="search_user"
-            :loading="loading"
-            style="width: 240px"
-        >
-          <el-option v-for="item in user_options" :key="item.wxid" :label="gen_show_name(item)" :value="item.wxid"/>
-        </el-select>&nbsp;
-        <el-button type="primary" @click="search_change">查看</el-button>
-        &nbsp;
         <strong>颜色设置：</strong>
         bg:
         <color-select @updateColors="(val:any)=>{val?bg_color=val:'';refreshChart(false)}"></color-select>
