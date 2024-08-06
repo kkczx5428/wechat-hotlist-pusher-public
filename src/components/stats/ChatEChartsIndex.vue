@@ -47,6 +47,7 @@ const colors = [
 const bg_color = ref("");
 
 const chart_option = ref({
+  backgroundColor: bg_color.value,
   tooltip: {
     trigger: 'axis',
     position: function (pt: any) {
@@ -77,7 +78,7 @@ const chart_option = ref({
   },
   xAxis: {
     type: 'category', // x 轴类型为分类
-    boundaryGap: ["5%", '5%'], // x 轴两端不留空白间隙
+    boundaryGap: false, // x 轴两端不留空白间隙
     data: <any>[], // x 轴的数据，这里使用了 TypeScript 的泛型表示尚未填充数据
   },
   yAxis: {
@@ -120,6 +121,7 @@ const update_chart_option = () => {
   chart_option.value.series[1].areaStyle.color = colors[1].areaStyle;
   chart_option.value.series[2].itemStyle.color = colors[2].color;
   chart_option.value.series[2].areaStyle.color = colors[2].areaStyle;
+  chart_option.value.backgroundColor = bg_color.value;
 }
 
 const get_date_count_data = async () => {
@@ -223,7 +225,7 @@ const set_top_user = async (wxid: string) => {
         &nbsp;
         <strong>颜色设置：</strong>
         bg:
-        <color-select @updateColors="(val:any)=>{bg_color=val}"></color-select>
+        <color-select @updateColors="(val:any)=>{val?bg_color=val:'';refreshChart(false)}"></color-select>
         c1:
         <color-select @updateColors="(val:any)=>{val?colors[0].color=val:'';refreshChart(false)}"></color-select>
         c2:
@@ -240,12 +242,15 @@ const set_top_user = async (wxid: string) => {
       </el-header>
 
       <el-main style="height: calc(100% - 100px);width: 100%;">
-        <div id="charts_main" :style="'width: 100%;height: calc(100% - 100px);background-color:'+bg_color "></div>
+        <div id="charts_main"></div>
       </el-main>
     </el-container>
   </div>
 </template>
 
 <style scoped>
-
+#charts_main {
+  width: 100%;
+  height: 100%;
+}
 </style>

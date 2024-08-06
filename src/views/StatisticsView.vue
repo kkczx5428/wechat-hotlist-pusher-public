@@ -3,7 +3,7 @@
 import ChatEChartsIndex from "@/components/stats/ChatEChartsIndex.vue";
 import {ref} from "vue";
 
-const mene_selected = ref("");
+const mene_selected = ref("date_chat_count");
 const MeneSelect = (val: string) => {
   mene_selected.value = val;
 }
@@ -20,7 +20,7 @@ const MeneSelect = (val: string) => {
     <el-container style="height: calc(100vh);width: 100%;">
       <el-aside width="120px" style="height: 100%;">
         <el-menu style="height: 100%;background-color: #F7F7F7;color:#262626;"
-                 default-active="2"
+                 default-active="date_chat_count"
                  class="el-menu-vertical-demo"
                  @select="MeneSelect"
         >
@@ -31,7 +31,7 @@ const MeneSelect = (val: string) => {
       </el-aside>
 
       <el-main style="height: 100%;width: 100%;margin: 0;padding: 0;">
-        <ChatEChartsIndex/>
+        <ChatEChartsIndex v-if="mene_selected=='date_chat_count'"/>
       </el-main>
     </el-container>
   </div>
