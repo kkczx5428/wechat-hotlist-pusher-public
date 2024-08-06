@@ -1,5 +1,6 @@
 // 创建一个 axios 实例
 import axios from 'axios'
+import { to_initview } from '@/utils/common_utils'
 // import {inject, onMounted} from 'vue';
 
 const params = process.env.NODE_ENV === 'development' ? {
@@ -39,6 +40,12 @@ http.interceptors.response.use(
       // 如果后端返回的状态码是0 ，说明接口请求成功
       // 这里直接返回后端返回的数据
       return response.data.body
+    } else if (response.data.code === 1001 && 'my_wxid is required' in response.data.body) {
+      // 如果后端返回的状态码是1001，说明用户未登录
+      // 这里直接返回后端返回的数据
+      // 跳转到登录页面
+      to_initview();
+      return Promise.reject(response.data)
     } else {
       // 如果不是 200，说明接口请求失败，弹出后端给的错误提示
       console.error('Error Message:', response.data)

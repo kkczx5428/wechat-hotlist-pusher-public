@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import DbInitView from "@/views/DbInitView.vue";
 import {ref} from "vue";
+import DbInitComponent from "@/components/utils/DbInitComponent.vue";
 
 const setting_selected = ref("")
 
@@ -40,7 +41,7 @@ const MeneSelect = (val: any) => {
         </el-aside>
 
         <el-main style="height: 100%;max-height: 100%;width: 100%;margin: 0;padding: 0;">
-          <db-init-view v-if="setting_selected=='db_init'"></db-init-view>
+          <db-init-component v-if="setting_selected=='db_init'"></db-init-component>
         </el-main>
       </el-container>
     </el-container>

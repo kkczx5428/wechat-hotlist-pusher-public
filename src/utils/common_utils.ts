@@ -60,7 +60,7 @@ export interface msg {
 //                     "talker": talker, "room_name": StrTalker, "msg": msg, "src": src, "extra": {},
 //                     "CreateTime": CreateTime, }
 
-const to_initview = () => {
+export const to_initview = () => {
     router.push({name: 'db_init'});
     ElMessage.error('请先初始化数据');
 }
