@@ -225,11 +225,11 @@ const set_top_user = async (wxid: string) => {
         bg:
         <color-select @updateColors="(val:any)=>{bg_color=val}"></color-select>
         c1:
-        <color-select @updateColors="(val:any)=>{colors[0].color=val;refreshChart(false)}"></color-select>
+        <color-select @updateColors="(val:any)=>{val?colors[0].color=val:'';refreshChart(false)}"></color-select>
         c2:
-        <color-select @updateColors="(val:any)=>{colors[1].color=val;refreshChart(false)}"></color-select>
+        <color-select @updateColors="(val:any)=>{val?colors[1].color=val:'';refreshChart(false)}"></color-select>
         c3:
-        <color-select @updateColors="(val:any)=>{colors[2].color=val;refreshChart(false)}"></color-select>
+        <color-select @updateColors="(val:any)=>{val?colors[2].color=val:'';refreshChart(false)}"></color-select>
         <br>
         <strong>top10：</strong>
         <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">
