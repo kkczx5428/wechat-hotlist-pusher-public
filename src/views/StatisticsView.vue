@@ -3,8 +3,9 @@
 import DateChatStats from "@/components/stats/DateChatStats.vue";
 import {ref} from "vue";
 import ContactStats from "@/components/stats/ContactStats.vue";
+import DateChatHeatmapStats from "@/components/stats/DateChatHeatmapStats.vue";
 
-const mene_selected = ref("date_chat_count");
+const mene_selected = ref("date_chat_heatmap");
 const MeneSelect = (val: string) => {
   mene_selected.value = val;
 }
@@ -26,7 +27,10 @@ const MeneSelect = (val: string) => {
                  @select="MeneSelect"
         >
           <el-menu-item index="date_chat_count">
-            <span>日聊天记录</span>
+            <span>日聊天数据</span>
+          </el-menu-item>
+          <el-menu-item index="date_chat_heatmap">
+            <span>聊天热力图</span>
           </el-menu-item>
           <el-menu-item index="contact_stats">
             <span>联系人画像</span>
@@ -36,6 +40,7 @@ const MeneSelect = (val: string) => {
 
       <el-main style="height: 100%;width: 100%;margin: 0;padding: 0;">
         <date-chat-stats v-if="mene_selected=='date_chat_count'"/>
+        <date-chat-heatmap-stats v-if="mene_selected=='date_chat_heatmap'"/>
         <contact-stats v-if="mene_selected=='contact_stats'"/>
       </el-main>
     </el-container>

@@ -140,10 +140,13 @@ const get_top_user_count = async () => {
   const body_data = await apiTalkerCount();
   top_user.value = await apiUserList("", Object.keys(body_data));
   top_user_count.value = body_data;
+  // 根据total_count排序
+  top_user_count.value = Object.fromEntries(Object.entries(top_user_count.value).sort((a, b) => b[1].total_count - a[1].total_count));
 }
 
 // 刷新图表 START
 const refreshChart = async (is_get_data: boolean = true) => {
+  Chart.value.clear();
   update_chart_option();
   if (is_get_data) {
     await get_date_count_data();
@@ -236,7 +239,9 @@ const set_top_user = async (wxid: string) => {
         <strong>top10：</strong>
         <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">
           <el-button type="primary" plain @click="set_top_user(wxid)" size="small">
-            {{ gen_show_name(top_user[wxid]) }}({{ top_user_count[wxid]?.total_count }})
+            {{ gen_show_name(top_user[wxid]) }} [{{ top_user_count[wxid]?.total_count }}({{
+              top_user_count[wxid]?.receiver_count
+            }}/{{ top_user_count[wxid]?.sender_count }})]
           </el-button>
         </template>
       </el-header>
