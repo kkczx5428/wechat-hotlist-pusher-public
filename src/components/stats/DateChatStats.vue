@@ -6,6 +6,7 @@ import {apiUserList} from "@/api/chat";
 import {gen_show_name, type User} from "@/utils/common_utils";
 import DateTimeSelect from "@/components/utils/DateTimeSelect.vue";
 import ColorSelect from "@/components/utils/ColorSelect.vue";
+import ChartInit from "@/components/stats/components/ChartInit.vue";
 
 // https://echarts.apache.org/examples/en/editor.html
 
@@ -25,7 +26,8 @@ const user_options = ref<User[]>([]);
 const top_user = ref<{ [key: string]: User }>({});
 const top_user_count = ref<{ [key: string]: CountData }>({});
 
-const Chart = shallowRef<any>(null)
+const is_update = ref(false);
+
 const colors = [
   {
     "color": '#ffeab6',
@@ -63,7 +65,6 @@ const chart_option = ref({
       dataZoom: {
         yAxisIndex: 'none'
       },
-      restore: {},
       saveAsImage: {}
     }
   },
@@ -125,14 +126,10 @@ const update_chart_option = () => {
 }
 
 const get_date_count_data = async () => {
-  console.log("datetime:", datetime.value);
   // {"2024-12-20":{ "sender_count": sender_count,  "receiver_count": receiver_count, "total_count": total_count  },....}
   date_count_data.value = await apiDateCount(word.value, datetime.value[0] / 1000, datetime.value[1] / 1000);
-  // refreshData();
-  chart_option.value.xAxis.data = Object.keys(date_count_data.value);
-  chart_option.value.series[0].data = Object.values(date_count_data.value).map((item: any) => item.total_count);
-  chart_option.value.series[1].data = Object.values(date_count_data.value).map((item: any) => item.sender_count);
-  chart_option.value.series[2].data = Object.values(date_count_data.value).map((item: any) => item.receiver_count);
+  // 根据key排序
+  date_count_data.value = Object.fromEntries(Object.entries(date_count_data.value).sort());
 }
 
 const get_top_user_count = async () => {
@@ -146,20 +143,22 @@ const get_top_user_count = async () => {
 
 // 刷新图表 START
 const refreshChart = async (is_get_data: boolean = true) => {
-  Chart.value.clear();
-  update_chart_option();
   if (is_get_data) {
     await get_date_count_data();
   }
+  // refreshData();
+  chart_option.value.xAxis.data = Object.keys(date_count_data.value);
+  chart_option.value.series[0].data = Object.values(date_count_data.value).map((item: any) => item.total_count);
+  chart_option.value.series[1].data = Object.values(date_count_data.value).map((item: any) => item.sender_count);
+  chart_option.value.series[2].data = Object.values(date_count_data.value).map((item: any) => item.receiver_count);
   // 渲染图表
-  Chart.value.setOption(chart_option.value);
+  is_update.value = !is_update.value;
 }
 // 刷新图表 END
 
 onMounted(() => {
-  Chart.value = echarts.init(document.getElementById("charts_main"))
-  refreshChart();
   get_top_user_count();
+  refreshChart();
 });
 
 
@@ -228,13 +227,14 @@ const set_top_user = async (wxid: string) => {
         &nbsp;
         <strong>颜色设置：</strong>
         bg:
-        <color-select @updateColors="(val:any)=>{val?bg_color=val:'';refreshChart(false)}"></color-select>
+        <color-select @updateColors="(val:any)=>{val?chart_option.backgroundColor=val:'';refreshChart(false)}"></color-select>
         c1:
-        <color-select @updateColors="(val:any)=>{val?colors[0].color=val:'';refreshChart(false)}"></color-select>
+        <color-select @updateColors="(val:any)=>{val?chart_option.series[0].itemStyle.color=val:'';refreshChart(false)}"></color-select>
         c2:
-        <color-select @updateColors="(val:any)=>{val?colors[1].color=val:'';refreshChart(false)}"></color-select>
+        <color-select @updateColors="(val:any)=>{val?chart_option.series[1].itemStyle.color=val:'';refreshChart(false)}"></color-select>
         c3:
-        <color-select @updateColors="(val:any)=>{val?colors[2].color=val:'';refreshChart(false)}"></color-select>
+        <color-select @updateColors="(val:any)=>{val?chart_option.series[2].itemStyle.color=val:'';refreshChart(false)}"></color-select>
+        <el-button @click="update_chart_option();refreshChart(false);">重置</el-button>
         <br>
         <strong>top10：</strong>
         <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">
@@ -247,15 +247,12 @@ const set_top_user = async (wxid: string) => {
       </el-header>
 
       <el-main style="height: calc(100% - 100px);width: 100%;">
-        <div id="charts_main"></div>
+        <chart-init :option="chart_option" :update="is_update" id="charts_main"/>
       </el-main>
     </el-container>
   </div>
 </template>
 
 <style scoped>
-#charts_main {
-  width: 100%;
-  height: 100%;
-}
+
 </style>

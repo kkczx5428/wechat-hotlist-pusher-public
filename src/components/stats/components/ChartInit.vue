@@ -15,7 +15,7 @@ const init = () => {
     chart_options.value = props.option;
     Chart.value = echarts.init(t);
     Chart.value.clear();
-    Chart.value.setOption(chart_options.value);
+    Chart.value.setOption(chart_options.value, true);
   } else {
     console.error('chart_main is not HTMLElement');
   }
@@ -28,7 +28,7 @@ onMounted(() => {
 watch(() => props.update, async (newVal, oldVal) => {
   chart_options.value = props.option;
   Chart.value.clear();
-  Chart.value.setOption(chart_options.value);
+  Chart.value.setOption(chart_options.value, true);
 });
 
 </script>

@@ -32,13 +32,13 @@ interface series_face {
   data: any[]
 }
 
-const date_count_data = ref<any>({});
 
 const datetime = ref([0, 0]);
 const word = ref("");
 const loading = ref(false);
 const user_options = ref<User[]>([]);
 
+const date_count_data = ref<any>({});
 const top_user = ref<{ [key: string]: User }>({});
 const top_user_count = ref<{ [key: string]: CountData }>({});
 
@@ -51,10 +51,6 @@ const chart_option = ref({
   },
   toolbox: {
     feature: {
-      dataZoom: {
-        yAxisIndex: 'none'
-      },
-      restore: {},
       saveAsImage: {}
     }
   },
@@ -216,8 +212,7 @@ const set_top_user = async (wxid: string) => {
       </el-header>
 
       <el-main style="height: calc(100% - 100px);width: 100%;">
-        <chart-init :option="chart_option" :update="is_update" id="charts_main"/>
-        <chart-init :option="chart_option" :update="is_update" id="charts_main"/>
+        <chart-init :option="chart_option" :update="is_update"/>
       </el-main>
     </el-container>
   </div>
