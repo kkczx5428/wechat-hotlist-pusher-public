@@ -27,7 +27,7 @@ const chart_option = ref({
   },
   title: {
     left: 'center',
-    text: '联系人画像(不好含未知)'
+    text: '联系人画像'
   },
   toolbox: {
     feature: {
