@@ -5,7 +5,7 @@ import {ref} from "vue";
 import ContactStats from "@/components/stats/ContactStats.vue";
 import DateChatHeatmapStats from "@/components/stats/DateChatHeatmapStats.vue";
 
-const mene_selected = ref("date_chat_heatmap");
+const mene_selected = ref("contact_stats");
 </script>
 
 <template>

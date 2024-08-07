@@ -205,7 +205,7 @@ const set_top_user = async (wxid: string) => {
         <number-input :n="chart_option.visualMap.max" :step="100"
                       @updateNumber="(val:any)=>{val?chart_option.visualMap.max=val:'';refreshChart(false)}"></number-input>
         <br>
-        <strong>top10：</strong>
+        <strong>top10[总:(收/发)]：</strong>
         <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">
           <el-button type="primary" plain @click="set_top_user(wxid)" size="small">
             {{ gen_show_name(top_user[wxid]) }} [{{ top_user_count[wxid]?.total_count }}({{

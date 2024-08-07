@@ -6,6 +6,7 @@ import {apiUserList} from "@/api/chat";
 import {gen_show_name, type User} from "@/utils/common_utils";
 import DateTimeSelect from "@/components/utils/DateTimeSelect.vue";
 import ColorSelect from "@/components/utils/ColorSelect.vue";
+import ChartInit from "@/components/stats/components/ChartInit.vue";
 
 // https://echarts.apache.org/examples/en/editor.html
 
@@ -23,29 +24,9 @@ const word = ref("");
 const top_user = ref<{ [key: string]: User }>({});
 const top_user_count = ref<{ [key: string]: CountData }>({});
 
-const Chart = shallowRef<any>(null)
-const colors = [
-  {
-    "color": '#ffeab6',
-    "areaStyle": new echarts.graphic.LinearGradient(0, 0, 0, 1,
-        [{offset: 0, color: "rgba(255,234,182,0)"},
-          {offset: 1, color: "rgba(255,234,182,0)"}])
-  }, {
-    "color": '#c0ffc2',
-    "areaStyle": new echarts.graphic.LinearGradient(0, 0, 0, 1,
-        [{offset: 0, color: "rgba(192,255,194,0)"},
-          {offset: 1, color: "rgba(192,255,194,0)"}])
-  }, {
-    "color": '#a1d9ff',
-    "areaStyle": new echarts.graphic.LinearGradient(0, 0, 0, 1,
-        [{offset: 0, color: "rgba(161,217,255,0)"},
-          {offset: 1, color: "rgba(161,217,255,0)"}])
-  }
-];
-const bg_color = ref("");
-
+const is_update = ref(false);
 const chart_option = ref({
-  backgroundColor: bg_color.value,
+  backgroundColor: "",
   tooltip: {
     trigger: 'item'
   },
@@ -106,19 +87,16 @@ const chart_option = ref({
         show: false
       },
       data: [
-        { value: 1048, name: 'Search Engine' },
-        { value: 735, name: 'Direct' },
-        { value: 580, name: 'Email' },
-        { value: 484, name: 'Union Ads' },
-        { value: 300, name: 'Video Ads' }
+        {value: 1048, name: 'Search Engine'},
+        {value: 735, name: 'Direct'},
+        {value: 580, name: 'Email'},
+        {value: 484, name: 'Union Ads'},
+        {value: 300, name: 'Video Ads'}
       ]
     }
   ]
 });
 
-const update_chart_option = () => {
-  chart_option.value.backgroundColor = bg_color.value;
-}
 
 const get_date_count_data = async () => {
   console.log("datetime:", datetime.value);
@@ -140,17 +118,15 @@ const get_top_user_count = async () => {
 
 // 刷新图表 START
 const refreshChart = async (is_get_data: boolean = true) => {
-  update_chart_option();
   if (is_get_data) {
     await get_date_count_data();
   }
   // 渲染图表
-  Chart.value.setOption(chart_option.value);
+  is_update.value = !is_update.value;
 }
 // 刷新图表 END
 
 onMounted(() => {
-  Chart.value = echarts.init(document.getElementById("charts_main"))
   refreshChart();
   get_top_user_count();
 });
@@ -166,7 +142,7 @@ onMounted(() => {
       <el-header :height="'80px'" style="width: 100%;">
         <strong>颜色设置：</strong>
         bg:
-        <color-select @updateColors="(val:any)=>{val?bg_color=val:'';refreshChart(false)}"></color-select>
+        <color-select @updateColors="(val:any)=>{val?chart_option.backgroundColor=val:'';refreshChart(false)}"></color-select>
         <br>
         <strong>top10：</strong>
         <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">
@@ -177,7 +153,7 @@ onMounted(() => {
       </el-header>
 
       <el-main style="height: calc(100% - 100px);width: 100%;">
-        <div id="charts_main"></div>
+        <chart-init :option="chart_option" :update="is_update"/>
       </el-main>
     </el-container>
   </div>

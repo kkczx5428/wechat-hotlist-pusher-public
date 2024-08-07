@@ -240,7 +240,7 @@ const set_top_user = async (wxid: string) => {
             @updateColors="(val:any)=>{val?chart_option.series[2].itemStyle.color=val:'';refreshChart(false)}"></color-select>
         <el-button @click="update_chart_option();refreshChart(false);" size="small">重置</el-button>
         <br>
-        <strong>top10：</strong>
+        <strong>top10[总:(收/发)]：</strong>
         <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">
           <el-button type="primary" plain @click="set_top_user(wxid)" size="small">
             {{ gen_show_name(top_user[wxid]) }} [{{ top_user_count[wxid]?.total_count }}({{
