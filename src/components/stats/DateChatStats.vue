@@ -227,14 +227,18 @@ const set_top_user = async (wxid: string) => {
         &nbsp;
         <strong>颜色设置：</strong>
         bg:
-        <color-select @updateColors="(val:any)=>{val?chart_option.backgroundColor=val:'';refreshChart(false)}"></color-select>
+        <color-select
+            @updateColors="(val:any)=>{val?chart_option.backgroundColor=val:'';refreshChart(false)}"></color-select>
         c1:
-        <color-select @updateColors="(val:any)=>{val?chart_option.series[0].itemStyle.color=val:'';refreshChart(false)}"></color-select>
+        <color-select
+            @updateColors="(val:any)=>{val?chart_option.series[0].itemStyle.color=val:'';refreshChart(false)}"></color-select>
         c2:
-        <color-select @updateColors="(val:any)=>{val?chart_option.series[1].itemStyle.color=val:'';refreshChart(false)}"></color-select>
+        <color-select
+            @updateColors="(val:any)=>{val?chart_option.series[1].itemStyle.color=val:'';refreshChart(false)}"></color-select>
         c3:
-        <color-select @updateColors="(val:any)=>{val?chart_option.series[2].itemStyle.color=val:'';refreshChart(false)}"></color-select>
-        <el-button @click="update_chart_option();refreshChart(false);">重置</el-button>
+        <color-select
+            @updateColors="(val:any)=>{val?chart_option.series[2].itemStyle.color=val:'';refreshChart(false)}"></color-select>
+        <el-button @click="update_chart_option();refreshChart(false);" size="small">重置</el-button>
         <br>
         <strong>top10：</strong>
         <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">

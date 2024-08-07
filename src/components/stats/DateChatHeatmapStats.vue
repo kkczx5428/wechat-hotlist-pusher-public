@@ -22,7 +22,9 @@ interface calendar_face {
   left: number
   orient: string
   range: string
-  dayLabel: { margin: number }
+  dayLabel: any
+  monthLabel: any
+  yearLabel: any
 }
 
 interface series_face {
@@ -50,15 +52,12 @@ const chart_option = ref({
     text: '聊天记录（不包括群聊）'
   },
   toolbox: {
-    feature: {
-      saveAsImage: {}
-    }
+    feature: {saveAsImage: {}}
   },
   tooltip: {
     position: 'top',
     formatter: function (p: any) {
-      const format = echarts.time.format(p.data[0], '{yyyy}-{MM}-{dd}', false);
-      return format + ': ' + p.data[1];
+      return p.data[0] + '<br>聊天数量：' + p.data[1];
     }
   },
   visualMap: {
@@ -69,9 +68,7 @@ const chart_option = ref({
     right: '0',
     top: 'center'
   },
-
   calendar: <calendar_face[]>[],
-
   series: <series_face[]>[],
 
 });
@@ -115,7 +112,14 @@ const refreshChart = async (is_get_data: boolean = true) => {
       left: 50 + 200 * (i - min_year),
       orient: 'vertical',
       range: i.toString(),
-      dayLabel: {margin: 5}
+      dayLabel: {
+        margin: 5, firstDay: 1, nameMap: ['日', '一', '二', '三', '四', '五', '六'],
+      },
+      monthLabel: {
+        margin: 5,
+        nameMap: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+      },
+      yearLabel: {"color": "#000"}
     });
     chart_option.value.series.push({
       type: 'heatmap', coordinateSystem: 'calendar', calendarIndex: i - min_year, data: []

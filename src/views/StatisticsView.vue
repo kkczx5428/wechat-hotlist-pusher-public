@@ -6,9 +6,6 @@ import ContactStats from "@/components/stats/ContactStats.vue";
 import DateChatHeatmapStats from "@/components/stats/DateChatHeatmapStats.vue";
 
 const mene_selected = ref("date_chat_heatmap");
-const MeneSelect = (val: string) => {
-  mene_selected.value = val;
-}
 </script>
 
 <template>
@@ -24,7 +21,7 @@ const MeneSelect = (val: string) => {
         <el-menu style="height: 100%;background-color: #F7F7F7;color:#262626;"
                  :default-active="mene_selected"
                  class="el-menu-vertical-demo"
-                 @select="MeneSelect"
+                 @select="(val: string)=>{mene_selected = val}"
         >
           <el-menu-item index="date_chat_count">
             <span>日聊天数据</span>
