@@ -40,20 +40,20 @@ export interface User {
 }
 
 export interface UserList {
-  [key: string]: User
+    [key: string]: User
 }
 
 export interface msg {
-  id: number
-  MsgSvrID: string
-  type_name: string
-  is_sender: number
-  talker: string
-  room_name: string
-  msg: string
-  src: string
-  CreateTime: string
-  extra: {}
+    id: number
+    MsgSvrID: string
+    type_name: string
+    is_sender: number
+    talker: string
+    room_name: string
+    msg: string
+    src: string
+    CreateTime: string
+    extra: {}
 }
 
 // {"id": _id, "MsgSvrID": str(MsgSvrID), "type_name": type_name, "is_sender": IsSender,
@@ -73,5 +73,5 @@ export const is_db_init = async () => {
 }
 
 export const gen_show_name = (userinfo: User) => {
-    return userinfo?.remark || userinfo?.nickname || userinfo?.account || userinfo?.wxid || '未知';
+    return userinfo?.remark || userinfo?.nickname || userinfo?.strNickName || userinfo?.account || userinfo?.wxid || '未知';
 }

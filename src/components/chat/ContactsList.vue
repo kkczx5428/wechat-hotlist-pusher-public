@@ -66,6 +66,7 @@ const handleCurrentChange = (val: User | undefined) => {
     // 处理user数据
     // 判断val是否有wxid
     if (val.wxid !== undefined) {
+      console.log('wxid:', val.wxid);
       emits('wxid', val.wxid);
     }
   }

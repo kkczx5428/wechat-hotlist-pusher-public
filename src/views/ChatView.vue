@@ -7,9 +7,6 @@ import {apiVersion} from "@/api/base";
 import {is_db_init} from "@/utils/common_utils";
 
 const wxid = ref('');
-const handleChildData = (val: any) => {
-  wxid.value = val;
-}
 
 onMounted(() => {
   apiVersion().then((data: string) => {
@@ -27,7 +24,7 @@ onMounted(() => {
       <el-container>
         <!--  这是左边的list    -->
         <el-aside width="auto" style="overflow-y: auto; height: calc(100vh);">
-          <ContactsList @wxid="handleChildData"/>
+          <ContactsList @wxid="(val: any) => {  wxid = val;}"/>
         </el-aside>
         <!-- END 这是左边的list -->
 

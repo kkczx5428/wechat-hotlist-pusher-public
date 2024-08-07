@@ -53,8 +53,14 @@ const req_user_info = async () => {
   // 请求数据 用户信息
   try {
     const body_data = await apiUserList("", [props.wxid]);
-    userinfo.value = body_data[props.wxid];
     userinfo.value.wxid = props.wxid;
+    userinfo.value.remark = body_data[props.wxid]?.remark;
+    userinfo.value.account = body_data[props.wxid]?.account;
+    userinfo.value.describe = body_data[props.wxid]?.describe;
+    userinfo.value.headImgUrl = body_data[props.wxid]?.headImgUrl;
+    userinfo.value.nickname = body_data[props.wxid]?.nickname;
+    userinfo.value.LabelIDList = body_data[props.wxid]?.LabelIDList;
+    userinfo.value.ExtraBuf = body_data[props.wxid]?.ExtraBuf;
     return body_data;
   } catch (error) {
     console.error('Error fetching data wxid2user :', error);
@@ -82,6 +88,7 @@ const init = () => {
   req_msg_count();
 }
 onMounted(() => {
+  console.log('ChatRecprdsHeader onMounted', props.wxid)
   init();
 });
 watch(() => props.wxid, async (newVal, oldVal) => {
@@ -131,7 +138,7 @@ const export_button = (val: boolean) => {
   <el-row :gutter="5" style="width: 100%;">
     <el-col :span="6" style="white-space: nowrap;">
       <el-text class="label_color mx-1" truncated>wxid:</el-text>&ensp;
-      <el-text class="data_color mx-1" truncated :title="userinfo.wxid">{{ userinfo.wxid }}</el-text>
+      <el-text class="data_color mx-1" truncated :title="userinfo?.wxid">{{ userinfo?.wxid }}</el-text>
     </el-col>
     <el-col :span="6" style="white-space: nowrap;">
       <el-text class="label_color mx-1" truncated>名称:</el-text>&ensp;
