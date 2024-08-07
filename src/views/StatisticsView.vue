@@ -1,11 +1,10 @@
 <script setup lang="ts">
-
 import DateChatStats from "@/components/stats/DateChatStats.vue";
 import {ref} from "vue";
 import ContactStats from "@/components/stats/ContactStats.vue";
 import DateChatHeatmapStats from "@/components/stats/DateChatHeatmapStats.vue";
 
-const mene_selected = ref("contact_stats");
+const mene_selected = ref("date_chat_count");
 </script>
 
 <template>

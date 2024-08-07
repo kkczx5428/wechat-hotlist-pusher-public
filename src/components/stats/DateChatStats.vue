@@ -16,7 +16,7 @@ interface CountData {
   total_count: number
 }
 
-const date_count_data = ref({});
+const date_count_data = ref<{ [key: string]: CountData }>({});
 
 const datetime = ref([0, 0]);
 const word = ref("");
@@ -44,6 +44,21 @@ const colors = [
     "areaStyle": new echarts.graphic.LinearGradient(0, 0, 0, 1,
         [{offset: 0, color: "rgba(161,217,255,0)"},
           {offset: 1, color: "rgba(161,217,255,0)"}])
+  }, {
+    "color": '#e5ffe5',
+    "areaStyle": new echarts.graphic.LinearGradient(0, 0, 0, 1,
+        [{offset: 0, color: "rgba(192,255,194,0)"},
+          {offset: 1, color: "rgba(192,255,194,0)"}])
+  }, {
+    "color": '#e4ecf6',
+    "areaStyle": new echarts.graphic.LinearGradient(0, 0, 0, 1,
+        [{offset: 0, color: "rgba(161,217,255,0)"},
+          {offset: 1, color: "rgba(161,217,255,0)"}])
+  }, {
+    "color": 'rgba(185,4,245,0.44)',
+    "areaStyle": new echarts.graphic.LinearGradient(0, 0, 0, 1,
+        [{offset: 0, color: "rgba(161,217,255,0)"},
+          {offset: 1, color: "rgba(161,217,255,0)"}])
   }
 ];
 const bg_color = ref("");
@@ -54,6 +69,19 @@ const chart_option = ref({
     trigger: 'axis',
     position: function (pt: any) {
       return [pt[0], '90%'];
+    },
+    formatter: function (params: any) {
+      let date = params[0].name;
+      // let total_count = params[0].value;
+      // let sender_count = params[1].value;
+      // let receiver_count = params[2].value;
+      let total_count = date_count_data.value[date].total_count;
+      let sender_count = date_count_data.value[date].sender_count;
+      let receiver_count = date_count_data.value[date].receiver_count;
+      return `${date}<br>
+          聊天记录数量：${total_count}<br>
+          发送数量：${sender_count}(${(sender_count / total_count * 100).toFixed(2)}%)<br>
+          接收数量：${receiver_count}(${(receiver_count / total_count * 100).toFixed(2)}%) `
     }
   },
   title: {
@@ -73,7 +101,7 @@ const chart_option = ref({
     {start: 0, end: 100}
   ],
   legend: {
-    right: '5%', // 设置图例位于右侧，距离右边边缘 5%
+    right: '1%', // 设置图例位于右侧，距离右边边缘 5%
     top: '5%', // 设置图例位于上方
     orient: 'vertical' // 设置图例为垂直排列
   },
@@ -82,46 +110,81 @@ const chart_option = ref({
     boundaryGap: false, // x 轴两端不留空白间隙
     data: <any>[], // x 轴的数据，这里使用了 TypeScript 的泛型表示尚未填充数据
   },
-  yAxis: {
-    type: 'value', // y 轴类型为数值
-    boundaryGap: [0, '10%'], // y 轴两端留白,下端留白0，上端留白10%
-  },
+  yAxis: [
+    {type: 'value', boundaryGap: ['100%', '10%'], name: '数量', axisLabel: {formatter: '{value}'}},
+    {
+      type: 'value', boundaryGap: [0, '100%'], name: '百分比', position: 'right', max: 200,
+      axisLabel: {formatter: '{value} %'}
+    }
+  ],
   series: [
     {
-      name: '日聊天记录数量',
+      name: '聊天记录数量',
       type: 'line',
       symbol: 'none',
       sampling: 'lttb',
+      yAxisIndex: 0,
       itemStyle: {color: colors[0].color},
       areaStyle: {color: colors[0].areaStyle},
       data: <any>[]
     }, {
-      name: '日发送聊天记录数量',
+      name: '发送数量',
       type: 'line',
+      showSymbol: false,
+      show: false,
       symbol: 'none',
       sampling: 'lttb',
+      yAxisIndex: 0,
       itemStyle: {color: colors[1].color},
       areaStyle: {color: colors[1].areaStyle},
       data: <any>[]
     }, {
-      name: '日接收聊天记录数量',
+      name: '接收数量',
+      type: 'line',
+      symbol: 'none',
+      show: false,
+      showSymbol: false,
+      sampling: 'lttb',
+      yAxisIndex: 0,
+      itemStyle: {color: colors[2].color},
+      areaStyle: {color: colors[2].areaStyle},
+      data: <any>[]
+    }, {
+      name: '发送数量bar',
+      type: 'bar',
+      stack: 'total',
+      barWidth: '50%',
+      yAxisIndex: 1,
+      itemStyle: {color: colors[3].color},
+      areaStyle: {color: colors[3].areaStyle},
+      data: <any>[]
+    }, {
+      name: '接收数量bar',
+      type: 'bar',
+      stack: 'total',
+      barWidth: '50%',
+      yAxisIndex: 1,
+      itemStyle: {color: colors[4].color},
+      areaStyle: {color: colors[4].areaStyle},
+      data: <any>[]
+    }, {
+      name: '分界线',
       type: 'line',
       symbol: 'none',
       sampling: 'lttb',
-      itemStyle: {color: colors[2].color},
-      areaStyle: {color: colors[2].areaStyle},
+      yAxisIndex: 1,
+      itemStyle: {color: colors[5].color},
+      areaStyle: {color: colors[5].areaStyle},
       data: <any>[]
     }
   ]
 });
 
 const update_chart_option = () => {
-  chart_option.value.series[0].itemStyle.color = colors[0].color;
-  chart_option.value.series[0].areaStyle.color = colors[0].areaStyle;
-  chart_option.value.series[1].itemStyle.color = colors[1].color;
-  chart_option.value.series[1].areaStyle.color = colors[1].areaStyle;
-  chart_option.value.series[2].itemStyle.color = colors[2].color;
-  chart_option.value.series[2].areaStyle.color = colors[2].areaStyle;
+  for (let i = 0; i < chart_option.value.series.length; i++) {
+    chart_option.value.series[i].itemStyle.color = colors[i].color;
+    chart_option.value.series[i].areaStyle.color = colors[i].areaStyle;
+  }
   chart_option.value.backgroundColor = bg_color.value;
 }
 
@@ -149,8 +212,11 @@ const refreshChart = async (is_get_data: boolean = true) => {
   // refreshData();
   chart_option.value.xAxis.data = Object.keys(date_count_data.value);
   chart_option.value.series[0].data = Object.values(date_count_data.value).map((item: any) => item.total_count);
-  chart_option.value.series[1].data = Object.values(date_count_data.value).map((item: any) => item.sender_count);
-  chart_option.value.series[2].data = Object.values(date_count_data.value).map((item: any) => item.receiver_count);
+  // chart_option.value.series[1].data = Object.values(date_count_data.value).map((item: any) => item.sender_count);
+  // chart_option.value.series[2].data = Object.values(date_count_data.value).map((item: any) => item.receiver_count);
+  chart_option.value.series[3].data = Object.values(date_count_data.value).map((item: any) => item.sender_count / item.total_count * 100);
+  chart_option.value.series[4].data = Object.values(date_count_data.value).map((item: any) => item.receiver_count / item.total_count * 100);
+  chart_option.value.series[5].data = Object.values(date_count_data.value).map((item: any) => 50);
   // 渲染图表
   is_update.value = !is_update.value;
 }
@@ -229,15 +295,13 @@ const set_top_user = async (wxid: string) => {
         bg:
         <color-select
             @updateColors="(val:any)=>{val?chart_option.backgroundColor=val:'';refreshChart(false)}"></color-select>
-        c1:
-        <color-select
-            @updateColors="(val:any)=>{val?chart_option.series[0].itemStyle.color=val:'';refreshChart(false)}"></color-select>
-        c2:
-        <color-select
-            @updateColors="(val:any)=>{val?chart_option.series[1].itemStyle.color=val:'';refreshChart(false)}"></color-select>
-        c3:
-        <color-select
-            @updateColors="(val:any)=>{val?chart_option.series[2].itemStyle.color=val:'';refreshChart(false)}"></color-select>
+
+        <template v-for="(color, index) in chart_option.series" :key="index">
+          c{{ index + 1 }}
+          <color-select
+              @updateColors="(val:any)=>{val?chart_option.series[index].itemStyle.color=val:'';refreshChart(false)}"
+          ></color-select>
+        </template>
         <el-button @click="update_chart_option();refreshChart(false);" size="small">重置</el-button>
         <br>
         <strong>top10[总:(收/发)]：</strong>
