@@ -73,5 +73,5 @@ export const is_db_init = async () => {
 }
 
 export const gen_show_name = (userinfo: User) => {
-    return userinfo.remark || userinfo.nickname || userinfo.account || userinfo.wxid;
+    return userinfo?.remark || userinfo?.nickname || userinfo?.account || userinfo?.wxid || '未知';
 }
