@@ -10,19 +10,14 @@ import ChartInit from "@/components/stats/components/ChartInit.vue";
 
 // https://echarts.apache.org/examples/en/editor.html
 
-interface CountData {
-  sender_count: number
-  receiver_count: number
-  total_count: number
+interface gender_face {
+  男: number
+  女: number
+  未知: number
 }
 
-const date_count_data = ref({});
-
-const datetime = ref([0, 0]);
-const word = ref("");
-
-const top_user = ref<{ [key: string]: User }>({});
-const top_user_count = ref<{ [key: string]: CountData }>({});
+const user = ref<{ [key: string]: User }>({});
+const gender_data = ref<gender_face>({});
 
 const is_update = ref(false);
 const chart_option = ref({
@@ -32,41 +27,24 @@ const chart_option = ref({
   },
   title: {
     left: 'center',
-    text: '日聊天记录（不包括群聊）'
+    text: '联系人画像(不好含未知)'
   },
   toolbox: {
     feature: {
-      dataZoom: {
-        yAxisIndex: 'none'
-      },
-      restore: {},
       saveAsImage: {}
     }
   },
-  dataZoom: [
-    {type: 'inside', start: 0, end: 100},
-    {start: 0, end: 100}
-  ],
   legend: {
     right: '5%', // 设置图例位于右侧，距离右边边缘 5%
     top: '5%', // 设置图例位于上方
     orient: 'vertical' // 设置图例为垂直排列
   },
-  xAxis: {
-    type: 'category', // x 轴类型为分类
-    boundaryGap: false, // x 轴两端不留空白间隙
-    data: <any>[], // x 轴的数据，这里使用了 TypeScript 的泛型表示尚未填充数据
-  },
-  yAxis: {
-    type: 'value', // y 轴类型为数值
-    boundaryGap: [0, '10%'], // y 轴两端留白,下端留白0，上端留白10%
-  },
   series: [
     {
-      name: 'Access From',
+      name: '性别',
       type: 'pie',
       radius: ['40%', '70%'],
-      avoidLabelOverlap: false,
+      avoidLabelOverlap: true,
       itemStyle: {
         borderRadius: 10,
         borderColor: '#fff',
@@ -84,51 +62,55 @@ const chart_option = ref({
         }
       },
       labelLine: {
-        show: false
+        show: true
       },
-      data: [
-        {value: 1048, name: 'Search Engine'},
-        {value: 735, name: 'Direct'},
-        {value: 580, name: 'Email'},
-        {value: 484, name: 'Union Ads'},
-        {value: 300, name: 'Video Ads'}
-      ]
+      data: <any>[]
     }
   ]
 });
 
 
-const get_date_count_data = async () => {
-  console.log("datetime:", datetime.value);
-  // {"2024-12-20":{ "sender_count": sender_count,  "receiver_count": receiver_count, "total_count": total_count  },....}
-  date_count_data.value = await apiDateCount(word.value, datetime.value[0] / 1000, datetime.value[1] / 1000);
-  // refreshData();
-  chart_option.value.xAxis.data = Object.keys(date_count_data.value);
-  chart_option.value.series[0].data = Object.values(date_count_data.value).map((item: any) => item.total_count);
-  chart_option.value.series[1].data = Object.values(date_count_data.value).map((item: any) => item.sender_count);
-  chart_option.value.series[2].data = Object.values(date_count_data.value).map((item: any) => item.receiver_count);
-}
-
-const get_top_user_count = async () => {
-  // {"wxid":{ "sender_count": sender_count,  "receiver_count": receiver_count, "total_count": total_count  },....}
-  const body_data = await apiTalkerCount();
-  top_user.value = await apiUserList("", Object.keys(body_data));
-  top_user_count.value = body_data;
+const get_data = async () => {
+  user.value = await apiUserList();
+  let gender_data1 = {'男': 0, '女': 0, '未知': 0};
+  let province_data: { [key: string]: number } = {};
+  let city_data: { [key: string]: number } = {};
+  let signature_data: { [key: string]: number } = {};
+  for (let key in user.value) {
+    let u = user.value[key];
+    let ExtraBuf = u.ExtraBuf;
+    if (ExtraBuf) {
+      if (ExtraBuf["性别[1男2女]"] == 1) {
+        gender_data1['男'] += 1;
+      } else if (ExtraBuf["性别[1男2女]"] == 2) {
+        gender_data1['女'] += 1
+      } else {
+        gender_data1['未知'] += 1
+      }
+    } else {
+      gender_data1['未知'] += 1
+    }
+  }
+  gender_data.value = gender_data1;
 }
 
 // 刷新图表 START
 const refreshChart = async (is_get_data: boolean = true) => {
   if (is_get_data) {
-    await get_date_count_data();
+    await get_data();
   }
   // 渲染图表
+  chart_option.value.series[0].data = [
+    {'value': gender_data.value["男"], 'name': '男'},
+    {'value': gender_data.value["女"], 'name': '女'}
+  ]
+  console.log("chart_option:", chart_option.value);
   is_update.value = !is_update.value;
 }
 // 刷新图表 END
 
 onMounted(() => {
   refreshChart();
-  get_top_user_count();
 });
 
 
@@ -142,14 +124,8 @@ onMounted(() => {
       <el-header :height="'80px'" style="width: 100%;">
         <strong>颜色设置：</strong>
         bg:
-        <color-select @updateColors="(val:any)=>{val?chart_option.backgroundColor=val:'';refreshChart(false)}"></color-select>
-        <br>
-        <strong>top10：</strong>
-        <template v-for="wxid in Object.keys(top_user_count)" :key="wxid">
-          <el-button type="primary" plain @click="set_top_user(wxid)" size="small">
-            {{ gen_show_name(top_user[wxid]) }}({{ top_user_count[wxid]?.total_count }})
-          </el-button>
-        </template>
+        <color-select
+            @updateColors="(val:any)=>{val?chart_option.backgroundColor=val:'';refreshChart(false)}"></color-select>
       </el-header>
 
       <el-main style="height: calc(100% - 100px);width: 100%;">
