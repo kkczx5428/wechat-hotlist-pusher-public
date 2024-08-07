@@ -78,6 +78,10 @@ const fetchData = async (scroll: String = '') => {
     // messages.value = [];
     // messages.value = body_data.msg_list.concat(messages.value);
     messages.value = body_data.msg_list
+    if (messages.value.length == 0) {
+      msg_loading.value = false;
+      return body_data;
+    }
     userlist.value = Object.assign(userlist.value, body_data.user_list);
     // 去重
     messages.value = messages.value.filter((item, index, array) => {
@@ -220,7 +224,7 @@ const scrollToId = (id: number) => {
 </script>
 
 <template>
-  <div id="chat">
+  <div id="chat" v-if="messages.length>0">
     <el-container class="chat-records-main-container">
       <el-main class="chat-records-main-main">
         <!--        <div class="infinite-container">-->
@@ -289,7 +293,7 @@ const scrollToId = (id: number) => {
       </el-footer>
     </el-container>
   </div>
-
+  <el-empty description="无记录" v-else/>
 </template>
 
 <style scoped>

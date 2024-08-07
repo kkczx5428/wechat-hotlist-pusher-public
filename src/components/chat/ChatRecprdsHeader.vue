@@ -72,7 +72,7 @@ const req_msg_count = async () => {
   try {
     msg_count.value = 0;
     const body_data = await apiMsgCountSolo(props.wxid);
-    msg_count.value = body_data;
+    msg_count.value = body_data || 0;
     return body_data;
   } catch (error) {
     console.error('Error fetching data msg_count:', error);
