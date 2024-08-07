@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import * as echarts from "echarts";
-import {onMounted, ref, shallowRef, watch,} from "vue";
+import {getCurrentInstance, onMounted, ref, shallowRef, watch,} from "vue";
 
 const props = defineProps<{
   option: any,
@@ -9,14 +9,19 @@ const props = defineProps<{
 }>();
 
 const Chart = shallowRef<any>(null)
-
+const init = () => {
+  let t = getCurrentInstance()?.proxy?.$refs.chart_main;
+  if (t instanceof HTMLElement) {
+    Chart.value = echarts.init(t);
+    Chart.value.clear();
+    Chart.value.setOption(props.option);
+  }else {
+    console.error('chart_main is not HTMLElement');
+  }
+}
 
 onMounted(() => {
-  const chartId = `${Date.now().toString(36)}-${Math.random().toString(36).substr(2, 5)}`
-  console.log('ChartInit onMounted', chartId)
-  Chart.value = echarts.init(document.getElementById('charts_main') as HTMLDivElement);
-  Chart.value.clear();
-  Chart.value.setOption(props.option);
+  init();
 })
 
 watch(() => props.update, async (newVal, oldVal) => {
@@ -27,7 +32,7 @@ watch(() => props.update, async (newVal, oldVal) => {
 </script>
 
 <template>
-  <div id="charts_main" class="chart-div"></div>
+  <div class="chart-div" ref="chart_main"></div>
 </template>
 
 <style scoped>
