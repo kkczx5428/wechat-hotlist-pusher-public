@@ -87,6 +87,24 @@ const get_date_count_data = async () => {
 
   // 根据key排序
   date_count_data.value = Object.fromEntries(Object.entries(date_count_data.value).sort());
+
+}
+
+const get_top_user_count = async () => {
+  // {"wxid":{ "sender_count": sender_count,  "receiver_count": receiver_count, "total_count": total_count  },....}
+  const body_data = await apiTalkerCount();
+  top_user.value = await apiUserList("", Object.keys(body_data));
+  top_user_count.value = body_data;
+  // 根据total_count排序
+  top_user_count.value = Object.fromEntries(Object.entries(top_user_count.value).sort((a, b) => b[1].total_count - a[1].total_count));
+}
+
+// 刷新图表 START
+const refreshChart = async (is_get_data: boolean = true) => {
+  if (is_get_data) {
+    await get_date_count_data();
+  }
+  // 渲染图表
   let min_date = Object.keys(date_count_data.value)[0];
   let max_date = Object.keys(date_count_data.value)[Object.keys(date_count_data.value).length - 1];
 
@@ -114,23 +132,6 @@ const get_date_count_data = async () => {
     let index = year - min_year;
     chart_option.value.series[index].data.push([date, date_count_data.value[date].total_count]);
   });
-}
-
-const get_top_user_count = async () => {
-  // {"wxid":{ "sender_count": sender_count,  "receiver_count": receiver_count, "total_count": total_count  },....}
-  const body_data = await apiTalkerCount();
-  top_user.value = await apiUserList("", Object.keys(body_data));
-  top_user_count.value = body_data;
-  // 根据total_count排序
-  top_user_count.value = Object.fromEntries(Object.entries(top_user_count.value).sort((a, b) => b[1].total_count - a[1].total_count));
-}
-
-// 刷新图表 START
-const refreshChart = async (is_get_data: boolean = true) => {
-  if (is_get_data) {
-    await get_date_count_data();
-  }
-  // 渲染图表
   is_update.value = !is_update.value;
 }
 // 刷新图表 END
