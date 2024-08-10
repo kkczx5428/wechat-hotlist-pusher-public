@@ -45,7 +45,7 @@ const colors = [
         [{offset: 0, color: "rgba(161,217,255,0)"},
           {offset: 1, color: "rgba(161,217,255,0)"}])
   }, {
-    "color": '#e5ffe5',
+    "color": '#D37373',
     "areaStyle": new echarts.graphic.LinearGradient(0, 0, 0, 1,
         [{offset: 0, color: "rgba(192,255,194,0)"},
           {offset: 1, color: "rgba(192,255,194,0)"}])
