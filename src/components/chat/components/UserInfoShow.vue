@@ -1,5 +1,7 @@
 <script setup lang="ts">
 
+import {api_img} from "@/api/base";
+
 const props = defineProps({
   userinfo: {
     type: Object,
@@ -43,8 +45,9 @@ const props = defineProps({
       <span>公司：{{ userinfo.ExtraBuf['公司名称'] }}<br></span>
       <span>企微：{{ userinfo.ExtraBuf['企微属性'] }}<br></span>
       <span>朋友圈背景：<br></span>
-      <el-image v-if="userinfo.ExtraBuf['朋友圈背景']" :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
-                style="max-width: 200px;max-height: 200px" alt="朋友圈背景"/>
+      <el-image v-if="userinfo.ExtraBuf['朋友圈背景']" :src="api_img(userinfo.ExtraBuf['朋友圈背景'])" alt="朋友圈背景"
+                style="max-width: 200px;max-height: 200px"
+                :preview-src-list="[api_img(userinfo.ExtraBuf['朋友圈背景'])]" :hide-on-click-modal="true"/>
     </div>
   </div>
   <div v-else style="max-width: 560px">
@@ -67,7 +70,8 @@ const props = defineProps({
     <span v-if="userinfo.ExtraBuf && userinfo.ExtraBuf['公司名称']">公司：{{ userinfo.ExtraBuf['公司名称'] }}<br></span>
     <span v-if="userinfo.ExtraBuf && userinfo.ExtraBuf['企微属性']">企微：{{ userinfo.ExtraBuf['企微属性'] }}<br></span>
     <span v-if="userinfo.ExtraBuf && userinfo.ExtraBuf['朋友圈背景']">朋友圈背景：<br></span>
-    <el-image v-if="userinfo.ExtraBuf && userinfo.ExtraBuf['朋友圈背景']" :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
+    <el-image v-if="userinfo.ExtraBuf && userinfo.ExtraBuf['朋友圈背景']"
+              :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
               style="max-width: 200px;max-height: 200px" alt="朋友圈背景"/>
   </div>
 </template>

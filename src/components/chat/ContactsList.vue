@@ -4,6 +4,7 @@ import http from '@/utils/axios.js';
 import {apiUserList, apiUserSessionList} from "@/api/chat";
 import UserInfoShow from "@/components/chat/components/UserInfoShow.vue";
 import {gen_show_name, type User} from "@/utils/common_utils";
+import {api_img} from "@/api/base";
 
 // "wxid": strUsrName, "nOrder": nOrder, "nUnReadCount": nUnReadCount, "strNickName": strNickName,
 // "nStatus": nStatus, "nIsSend": nIsSend, "strContent": strContent, "nMsgLocalID": nMsgLocalID,
@@ -88,12 +89,12 @@ const handleCurrentChange = (val: User | undefined) => {
       <el-button type="primary" @click="search" style="width: 50px;">搜索</el-button>
     </div>
     <!--  这是联系人的list    -->
-    <el-table :data="tableData" stripe style="width: 100%" max-height="100%" height="100%" highlight-current-row
+    <el-table :data="tableData" stripe style="width: 100%" max-height="100%" height="100%" highlight-current-row loading="lazy"
               @current-change="handleCurrentChange">
       <el-table-column width="57">
         <template v-slot="{ row }">
-          <el-avatar :size="33" :src="'/api/rs/imgsrc/'+row.headImgUrl" v-if="row.headImgUrl!==''"></el-avatar>
-          <el-avatar :size="33" v-else> 群</el-avatar>
+          <el-avatar :size="33" :src="api_img(row.headImgUrl)" v-if="row.headImgUrl!==''"></el-avatar>
+          <el-avatar :size="33" v-else>群</el-avatar>
         </template>
       </el-table-column>
       <el-table-column width="190">
