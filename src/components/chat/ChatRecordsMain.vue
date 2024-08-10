@@ -222,85 +222,77 @@ const scrollToId = (id: number) => {
 </script>
 
 <template>
-  <template v-if="msg_loading">
-    <el-skeleton :loading="true" animation="wave">
-      <el-skeleton-item slot="avatar" avatar shape="circle" :size="80"></el-skeleton-item>
-      <el-skeleton-item slot="title" :width="150"></el-skeleton-item>
-      <el-skeleton-item slot="content" :width="300"></el-skeleton-item>
-    </el-skeleton>
-  </template>
-  <template v-else>
-    <div id="chat" v-if="messages.length>0">
-      <el-container class="chat-records-main-container">
-        <el-main class="chat-records-main-main">
-          <!--        <div class="infinite-container">-->
-          <!--          <InfiniteLoading @infinite="loadMoreTop" :top="true" :firstload="false">-->
-          <!--            <template #spinner>-->
-          <!--              <span class="spinner-text">加载中...</span>-->
-          <!--            </template>-->
-          <!--            <template #complete>-->
-          <!--              <span class="complete-text">没有更多啦</span>-->
-          <!--            </template>-->
-          <!--            <template #error="{ retry }">-->
-          <!--              <button @click="retry" class="retry-button">错误</button>-->
-          <!--            </template>-->
-          <!--          </InfiniteLoading>-->
-          <!--        </div>-->
+  <div id="chat" v-if="messages.length>0 && msg_count>0">
+    <el-container class="chat-records-main-container">
+      <el-main class="chat-records-main-main">
+        <!--        <div class="infinite-container">-->
+        <!--          <InfiniteLoading @infinite="loadMoreTop" :top="true" :firstload="false">-->
+        <!--            <template #spinner>-->
+        <!--              <span class="spinner-text">加载中...</span>-->
+        <!--            </template>-->
+        <!--            <template #complete>-->
+        <!--              <span class="complete-text">没有更多啦</span>-->
+        <!--            </template>-->
+        <!--            <template #error="{ retry }">-->
+        <!--              <button @click="retry" class="retry-button">错误</button>-->
+        <!--            </template>-->
+        <!--          </InfiniteLoading>-->
+        <!--        </div>-->
 
-          <div class="message" v-for="(message,index) in messages" :key="index" :id="`message-${message.id}`">
-            <!-- 文字消息 -->
-            <MessageText v-if="message.type_name == '文本'" :is_sender="message.is_sender"
-                         :direction="_direction(message)" :headUrl="get_head_url(message)"
-                         :content="message.msg"></MessageText>
-            <!-- 图片消息 -->
-            <MessageImg v-else-if="message.type_name == '图片'" :is_sender="message.is_sender"
+        <div class="message" v-for="(message,index) in messages" :key="index" :id="`message-${message.id}`">
+          <!-- 文字消息 -->
+          <MessageText v-if="message.type_name == '文本'" :is_sender="message.is_sender"
+                       :direction="_direction(message)" :headUrl="get_head_url(message)"
+                       :content="message.msg"></MessageText>
+          <!-- 图片消息 -->
+          <MessageImg v-else-if="message.type_name == '图片'" :is_sender="message.is_sender"
+                      :direction="_direction(message)" :headUrl="get_head_url(message)"
+                      :src="api_img(message.src)"></MessageImg>
+          <!-- 表情消息 -->
+          <MessageEmoji v-else-if="message.type_name == '动画表情'" :is_sender="message.is_sender"
                         :direction="_direction(message)" :headUrl="get_head_url(message)"
-                        :src="api_img(message.src)"></MessageImg>
-            <!-- 表情消息 -->
-            <MessageEmoji v-else-if="message.type_name == '动画表情'" :is_sender="message.is_sender"
-                          :direction="_direction(message)" :headUrl="get_head_url(message)"
-                          :src="api_img(message.src)"></MessageEmoji>
-            <!-- 视频消息 -->
-            <MessageVideo v-else-if="message.type_name == '视频'" :is_sender="message.is_sender"
-                          :direction="_direction(message)" :headUrl="get_head_url(message)"
-                          :src="'/api/rs/video/'+message.src"></MessageVideo>
-            <!-- 文件消息 -->
-            <MessageFile v-else-if="message.type_name == '文件'" :is_sender="message.is_sender"
-                         :direction="_direction(message)" :headUrl="get_head_url(message)"
-                         :src="message.src"></MessageFile>
-            <!-- 语音消息 -->
-            <MessageAudio v-else-if="message.type_name == '语音'" :is_sender="message.is_sender"
-                          :direction="_direction(message)" :headUrl="get_head_url(message)"
-                          :src="'/api/rs/'+message.src"
-                          :msg="message.msg"></MessageAudio>
-            <!-- 其他消息 -->
-            <MessageOther v-else :is_sender="message.is_sender" :direction="_direction(message)"
-                          :headUrl="get_head_url(message)" :content="message.msg"></MessageOther>
-          </div>
-          <!--                <div class="infinite-container">-->
-          <!--                  <InfiniteLoading @infinite="loadMoreBottom" :top="false" :firstload="false">-->
-          <!--                    <template #spinner>-->
-          <!--                      <span class="spinner-text">加载中...</span>-->
-          <!--                    </template>-->
-          <!--                    <template #complete>-->
-          <!--                      <span class="complete-text">没有更多啦</span>-->
-          <!--                    </template>-->
-          <!--                    <template #error="{ retry }">-->
-          <!--                      <button @click="retry" class="retry-button">错误</button>-->
-          <!--                    </template>-->
-          <!--                  </InfiniteLoading>-->
-          <!--                </div>-->
-        </el-main>
-        <el-footer height="20px" class="chat-records-main-footer">
-          <el-pagination background small layout="sizes, prev, pager, next, jumper" :total="msg_count"
-                         :page-size="limit" :page-sizes="[50,100, 200, 300, 500]" @size-change="handleLimitChange"
-                         :current-page="Math.floor(start / limit + 1)" @current-change="handleCurrentChange"
-          />
-        </el-footer>
-      </el-container>
-    </div>
-    <el-empty description="无记录" v-else/>
-  </template>
+                        :src="api_img(message.src)"></MessageEmoji>
+          <!-- 视频消息 -->
+          <MessageVideo v-else-if="message.type_name == '视频'" :is_sender="message.is_sender"
+                        :direction="_direction(message)" :headUrl="get_head_url(message)"
+                        :src="'/api/rs/video/'+message.src"></MessageVideo>
+          <!-- 文件消息 -->
+          <MessageFile v-else-if="message.type_name == '文件'" :is_sender="message.is_sender"
+                       :direction="_direction(message)" :headUrl="get_head_url(message)"
+                       :src="message.src"></MessageFile>
+          <!-- 语音消息 -->
+          <MessageAudio v-else-if="message.type_name == '语音'" :is_sender="message.is_sender"
+                        :direction="_direction(message)" :headUrl="get_head_url(message)"
+                        :src="'/api/rs/'+message.src"
+                        :msg="message.msg"></MessageAudio>
+          <!-- 其他消息 -->
+          <MessageOther v-else :is_sender="message.is_sender" :direction="_direction(message)"
+                        :headUrl="get_head_url(message)" :content="message.msg"></MessageOther>
+        </div>
+        <!--                <div class="infinite-container">-->
+        <!--                  <InfiniteLoading @infinite="loadMoreBottom" :top="false" :firstload="false">-->
+        <!--                    <template #spinner>-->
+        <!--                      <span class="spinner-text">加载中...</span>-->
+        <!--                    </template>-->
+        <!--                    <template #complete>-->
+        <!--                      <span class="complete-text">没有更多啦</span>-->
+        <!--                    </template>-->
+        <!--                    <template #error="{ retry }">-->
+        <!--                      <button @click="retry" class="retry-button">错误</button>-->
+        <!--                    </template>-->
+        <!--                  </InfiniteLoading>-->
+        <!--                </div>-->
+      </el-main>
+      <el-footer height="20px" class="chat-records-main-footer">
+        <el-pagination background small layout="sizes, prev, pager, next, jumper" :total="msg_count"
+                       :page-size="limit" :page-sizes="[50,100, 200, 300, 500]" @size-change="handleLimitChange"
+                       :current-page="Math.floor(start / limit + 1)" @current-change="handleCurrentChange"
+        />
+      </el-footer>
+    </el-container>
+  </div>
+  <el-skeleton v-else-if="messages.length<=0 && msg_count>0" :rows="30" animated/>
+  <el-empty description="无记录" v-else/>
 </template>
 
 <style scoped>
