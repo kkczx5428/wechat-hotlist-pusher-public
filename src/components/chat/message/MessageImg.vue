@@ -14,8 +14,8 @@
               :zoom-rate="1.2"
               :max-scale="7"
               :min-scale="0.2"
-              :preview-src-list="[src]"
               :initial-index="4"
+              :preview-src-list="[src]"
               :hide-on-click-modal="true"
               fit="cover"
           />
@@ -35,8 +35,8 @@
               :zoom-rate="1.2"
               :max-scale="7"
               :min-scale="0.2"
-              :preview-src-list="[src]"
               :initial-index="4"
+              :preview-src-list="[src]"
               :hide-on-click-modal="true"
               fit="cover"
           />
