@@ -129,14 +129,14 @@ onMounted(() => {
       </el-header>
 
       <el-main style="height: calc(100% - 100px);width: 100%;">
-        <chart-init :option="chart_option" :update="is_update"/>
+        <chart-init :option="chart_option" :update="is_update" class="charts_main"/>
       </el-main>
     </el-container>
   </div>
 </template>
 
 <style scoped>
-#charts_main {
+.charts_main {
   width: 100%;
   height: 100%;
 }
