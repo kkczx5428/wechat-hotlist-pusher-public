@@ -4,7 +4,7 @@ import {ref} from "vue";
 import ContactStats from "@/components/stats/ContactStats.vue";
 import DateChatHeatmapStats from "@/components/stats/DateChatHeatmapStats.vue";
 
-const mene_selected = ref("date_chat_count");
+const mene_selected = ref("date_chat_heatmap");
 </script>
 
 <template>
@@ -22,11 +22,11 @@ const mene_selected = ref("date_chat_count");
                  class="el-menu-vertical-demo"
                  @select="(val: string)=>{mene_selected = val}"
         >
-          <el-menu-item index="date_chat_count">
-            <span>日聊天数据</span>
-          </el-menu-item>
           <el-menu-item index="date_chat_heatmap">
             <span>聊天热力图</span>
+          </el-menu-item>
+          <el-menu-item index="date_chat_count">
+            <span>日聊天数据</span>
           </el-menu-item>
           <el-menu-item index="contact_stats">
             <span>联系人画像</span>
