@@ -26,3 +26,15 @@ export const apiTalkerCount = (top: number = 10, start_time: number = 0, end_tim
         return '';
     })
 }
+
+export const apiWordcloud = (target: string = "") => {
+    return http.post('/api/rs/wordcloud', {
+        target: target,
+    }).then((res: any) => {
+        return res;
+    }).catch((err: any) => {
+        console.log(err);
+        return '';
+    })
+}
+

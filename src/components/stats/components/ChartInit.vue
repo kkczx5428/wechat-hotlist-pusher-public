@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import * as echarts from "echarts";
+import 'echarts-wordcloud';
 import {getCurrentInstance, onMounted, ref, shallowRef, watch,} from "vue";
 
 const props = defineProps<{

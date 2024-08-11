@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import * as echarts from "echarts";
 import {onMounted, ref, shallowRef} from "vue";
-import {apiDateCount, apiTalkerCount} from "@/api/stat";
+import {apiDateCount, apiTalkerCount, apiWordcloud} from "@/api/stat";
 import {apiUserList} from "@/api/chat";
 import {gen_show_name, type User} from "@/utils/common_utils";
 import DateTimeSelect from "@/components/utils/DateTimeSelect.vue";
 import ColorSelect from "@/components/utils/ColorSelect.vue";
 import ChartInit from "@/components/stats/components/ChartInit.vue";
+
 
 // https://echarts.apache.org/examples/en/editor.html
 
@@ -18,6 +19,7 @@ interface gender_face {
 
 const user = ref<{ [key: string]: User }>({});
 const gender_data = ref<gender_face>({});
+const signature_count_dict = ref<{ [key: string]: number }>({});
 
 const is_update = ref(false);
 const chart_option = ref({
@@ -34,16 +36,12 @@ const chart_option = ref({
       saveAsImage: {}
     }
   },
-  legend: {
-    right: '5%', // 设置图例位于右侧，距离右边边缘 5%
-    top: '5%', // 设置图例位于上方
-    orient: 'vertical' // 设置图例为垂直排列
-  },
   series: [
     {
       name: '性别',
       type: 'pie',
-      radius: ['40%', '70%'],
+      radius: ["10%", "20%"],
+      center: ['50%', '200px'],
       avoidLabelOverlap: true,
       itemStyle: {
         borderRadius: 10,
@@ -61,8 +59,35 @@ const chart_option = ref({
           fontWeight: 'bold'
         }
       },
-      labelLine: {
-        show: true
+      data: <any>[]
+    }, {
+      name: '个性签名词云',
+      type: 'wordCloud',
+      sizeRange: [15, 80],
+      rotationRange: [0, 0],
+      rotationStep: 45,
+      gridSize: 8,
+      shape: 'cardioid',
+      keepAspect: false,
+      width: '100%',
+      height: '100%',
+      drawOutOfBound: false,
+      textStyle: {
+        normal: {
+          color: function () {
+            return 'rgb(' + [
+              Math.round(Math.random() * 160),
+              Math.round(Math.random() * 160),
+              Math.round(Math.random() * 160)
+            ].join(',') + ')';
+          },
+          fontFamily: 'sans-serif',
+          fontWeight: 'normal'
+        },
+        emphasis: {
+          shadowBlur: 10,
+          shadowColor: '#333'
+        }
       },
       data: <any>[]
     }
@@ -72,6 +97,8 @@ const chart_option = ref({
 
 const get_data = async () => {
   user.value = await apiUserList();
+  signature_count_dict.value = await apiWordcloud("signature");
+
   let gender_data1 = {'男': 0, '女': 0, '未知': 0};
   let province_data: { [key: string]: number } = {};
   let city_data: { [key: string]: number } = {};
@@ -101,10 +128,13 @@ const refreshChart = async (is_get_data: boolean = true) => {
   }
   // 渲染图表
   chart_option.value.series[0].data = [
-    {'value': gender_data.value["男"], 'name': '男'},
-    {'value': gender_data.value["女"], 'name': '女'}
+    {'value': gender_data.value["男"], 'name': '男', itemStyle: {color: '#4F6FE8'}},
+    {'value': gender_data.value["女"], 'name': '女', itemStyle: {color: '#FF6347'}}
   ]
-  console.log("chart_option:", chart_option.value);
+
+  chart_option.value.series[1].data = Object.keys(signature_count_dict.value).map((key) => {
+    return {name: key, value: signature_count_dict.value[key]}
+  });
   is_update.value = !is_update.value;
 }
 // 刷新图表 END
