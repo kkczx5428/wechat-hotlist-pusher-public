@@ -1,5 +1,6 @@
 import http from "@/utils/axios.js";
-
+import {is_use_local_data} from "@/utils/common_utils";
+const is_local_data = is_use_local_data();
 export const apiVersion = () => {
     return http.get('/api/rs/version').then((res: any) => {
         // console.log(res);
@@ -17,5 +18,8 @@ export const api_db_init = async () => {
 }
 
 export const api_img = (url: string) => {
+    if (is_local_data) {
+        return `./imgsrc/${url}`;
+    }
     return `/api/rs/imgsrc/${url}`;
 }
