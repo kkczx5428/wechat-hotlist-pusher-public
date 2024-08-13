@@ -1,8 +1,18 @@
 import http from "@/utils/axios.js";
 import {ElNotification} from "element-plus";
+import {is_use_local_data} from "@/utils/common_utils";
+
+const is_local_data = is_use_local_data();
+const l_msg_count = local_msg_count
+const l_user_list = local_user_list
+const l_msg_list = local_msg_list
+const l_mywxid = local_mywxid
 
 // user list 部分
 export const apiUserList = (word: string = '', wxids: string[] = [], labels: string[] = []) => {
+    if (is_local_data) {
+        return l_user_list;
+    }
     return http.post('/api/rs/user_list', {
         'word': word,
         'wxids': wxids,
@@ -26,6 +36,9 @@ export const apiUserSessionList = () => {
         })
 }
 export const apiMyWxid = () => {
+    if (is_local_data) {
+        return l_mywxid;
+    }
     return http.get('/api/rs/mywxid').then((res: any) => {
         return res.my_wxid;
     }).catch((err: any) => {
@@ -68,6 +81,9 @@ export const apiMsgCount = (wxids: string[]) => {
     })
 }
 export const apiMsgCountSolo = (wxid: string) => {
+    if (is_local_data) {
+        return l_msg_count;
+    }
     return apiMsgCount([wxid]).then((res: any) => {
         return res[wxid] || 0;
     }).catch((err: any) => {
@@ -78,6 +94,12 @@ export const apiMsgCountSolo = (wxid: string) => {
 
 
 export const apiMsgs = (wxid: string, start: number, limit: number) => {
+    if (is_local_data) {
+        return {
+            'msg_list': l_msg_list || [],
+            'user_list': l_user_list || [],
+        }
+    }
     return http.post('/api/rs/msg_list', {
         'start': start,
         'limit': limit,

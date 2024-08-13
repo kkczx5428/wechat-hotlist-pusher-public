@@ -18,6 +18,7 @@ import {RouterLink, RouterView} from 'vue-router'
 import {ref, onMounted, withCtx, watch} from 'vue'
 import router from "@/router";
 import {is_db_init, is_use_local_data} from "@/utils/common_utils";
+import ChatRecordsMain from "@/components/chat/ChatRecordsMain.vue";
 
 const isCollapse = ref(true);
 
@@ -27,7 +28,7 @@ onMounted(() => {
   // localStorage.setItem('isDbInit', "t");
   is_db_init();
   is_local_data.value = is_use_local_data();
-  console.log("is_local_data", is_local_data.value)
+  console.log("is_local_data", is_local_data.value);
 })
 // watch(isDbInit, (val) => {
 //   localStorage.setItem('isDbInit', val);
@@ -42,12 +43,15 @@ const handleClose = (key: string, keyPath: string[]) => {
 </script>
 
 <template>
-  <div id="appbg">
+  <div class="export-main" v-if="is_local_data">
+    <chat-records-main wxid="wxid_test"/>
+  </div>
+  <div id="appbg" v-else>
     <el-container class="layout-container-demo" style="height: 100%;background:none;">
       <el-aside :width="isCollapse ? '64px' : '160px'">
         <el-container class="sidebar-container">
           <el-menu default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse" :router='true'
-          :collapse-transition="false" :show-timeout="0" :hide-timeout="0">
+                   :collapse-transition="false" :show-timeout="0" :hide-timeout="0">
 
             <el-radio-group v-model="isCollapse"
                             style="margin-bottom: 20px;margin-top: 10px;margin-left: 10px;max-height: 30px">
@@ -68,18 +72,18 @@ const handleClose = (key: string, keyPath: string[]) => {
               <template #title>聊天查看</template>
             </el-menu-item>
 
-<!--            <el-menu-item index='/contacts'>-->
-<!--              <contacts-icon></contacts-icon>-->
-<!--              <template #title>好友管理</template>-->
-<!--            </el-menu-item>-->
-<!--            <el-menu-item index='/moments'>-->
-<!--              <moments-icon></moments-icon>-->
-<!--              <template #title>朋友圈</template>-->
-<!--            </el-menu-item>-->
-<!--            <el-menu-item index='/favorite'>-->
-<!--              <favorite-icon></favorite-icon>-->
-<!--              <template #title>收藏管理</template>-->
-<!--            </el-menu-item>-->
+            <!--            <el-menu-item index='/contacts'>-->
+            <!--              <contacts-icon></contacts-icon>-->
+            <!--              <template #title>好友管理</template>-->
+            <!--            </el-menu-item>-->
+            <!--            <el-menu-item index='/moments'>-->
+            <!--              <moments-icon></moments-icon>-->
+            <!--              <template #title>朋友圈</template>-->
+            <!--            </el-menu-item>-->
+            <!--            <el-menu-item index='/favorite'>-->
+            <!--              <favorite-icon></favorite-icon>-->
+            <!--              <template #title>收藏管理</template>-->
+            <!--            </el-menu-item>-->
 
             <el-menu-item index='/statistics'>
               <statistics-icon></statistics-icon>
@@ -120,7 +124,7 @@ const handleClose = (key: string, keyPath: string[]) => {
       </el-aside>
 
       <el-main>
-          <RouterView/>
+        <RouterView/>
       </el-main>
 
     </el-container>
@@ -128,6 +132,14 @@ const handleClose = (key: string, keyPath: string[]) => {
 </template>
 
 <style scoped>
+
+.export-main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
 
 #appbg {
   position: absolute;
