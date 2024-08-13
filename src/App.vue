@@ -17,14 +17,17 @@ import CollapseCloseIcon from "@/assets/icon/CollapseCloseIcon.vue";
 import {RouterLink, RouterView} from 'vue-router'
 import {ref, onMounted, withCtx, watch} from 'vue'
 import router from "@/router";
-import {is_db_init} from "@/utils/common_utils";
+import {is_db_init, is_use_local_data} from "@/utils/common_utils";
 
 const isCollapse = ref(true);
-const isDbInit = ref("f");
+
+const is_local_data = ref(true);
 
 onMounted(() => {
   // localStorage.setItem('isDbInit', "t");
   is_db_init();
+  is_local_data.value = is_use_local_data();
+  console.log("is_local_data", is_local_data.value)
 })
 // watch(isDbInit, (val) => {
 //   localStorage.setItem('isDbInit', val);

@@ -72,6 +72,10 @@ export const is_db_init = async () => {
     return t;
 }
 
+export const is_use_local_data = () => {
+    return localStorage.getItem('isUseLocalData') === 't';
+}
+
 export const gen_show_name = (userinfo: User) => {
     return userinfo?.remark || userinfo?.nickname || userinfo?.strNickName || userinfo?.account || userinfo?.wxid || '未知';
 }
