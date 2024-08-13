@@ -45,7 +45,7 @@ const setting = {
     detail: "只包含文本，可用于数据分析，情感分析等方面。",
   },
   'html': {
-    brief: 'html-开发中',
+    brief: 'html-测试中',
     detail: "主要用于浏览器可视化查看。",
   },
   'pdf': {
