@@ -69,7 +69,7 @@ export const apiMsgCount = (wxids: string[]) => {
 }
 export const apiMsgCountSolo = (wxid: string) => {
     return apiMsgCount([wxid]).then((res: any) => {
-        return res[wxid];
+        return res[wxid] || 0;
     }).catch((err: any) => {
         console.log(err);
         return 0;

@@ -130,7 +130,8 @@ const init = async () => {
     msg_count.value = await apiMsgCountSolo(props.wxid);
 
     // 切换最后一页
-    start.value = Math.floor(msg_count.value / limit.value) * limit.value;
+    console.log('msg_count.value', msg_count.value, limit.value)
+    start.value = Math.floor(msg_count.value / limit.value) * limit.value || 0
     await fetchData("bottom");
   } catch (error) {
     console.error('Error fetching data:', error);
