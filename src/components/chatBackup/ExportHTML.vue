@@ -45,7 +45,8 @@ const handDatetimeChildData = (val: any) => {
 <!--      <strong>时间(默认全部)：</strong>-->
 <!--      <DateTimeSelect @datetime="handDatetimeChildData"/>-->
 <!--    </div>-->
-
+    <span>使用说明：（1）根据 https://blog.csdn.net/meser88/article/details/130229417 进行设置</span><br/>
+    <span>（2）打开导出的文件夹位置，使用第一步设置的浏览器打开 index.html 文件</span>
     <div style="position: relative;">
       <el-button type="primary" @click="requestExport()">导出</el-button>
     </div>
