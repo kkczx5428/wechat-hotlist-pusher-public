@@ -275,7 +275,7 @@ watch(init_type, (val) => {
       <div v-else
            style="background-color: #fff; width: 90%;min-width: 800px; height: 80%; border-radius: 10px; padding: 20px; overflow: auto;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="font-size: 20px; font-weight: bold;">选择要查看的微信</div>
+          <div style="font-size: 20px; font-weight: bold;">选择要查看的微信(会清空work下对应wxid数据)</div>
         </div>
         <div style="margin-top: 20px;">
           <el-table :data="wxinfoData" @current-change="selectWx" highlight-current-row style="width: 100%">
