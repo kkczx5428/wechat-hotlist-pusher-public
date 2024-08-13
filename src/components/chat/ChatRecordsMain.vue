@@ -128,7 +128,9 @@ const init = async () => {
 
     my_wxid.value = await apiMyWxid();
     msg_count.value = await apiMsgCountSolo(props.wxid);
-
+    if (msg_count.value <= 0) {
+      return;
+    }
     // 切换最后一页
     console.log('msg_count.value', msg_count.value, limit.value)
     start.value = Math.floor(msg_count.value / limit.value) * limit.value || 0
