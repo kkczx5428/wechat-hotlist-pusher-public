@@ -121,7 +121,6 @@ const init = async () => {
     messages.value = [];
     userlist.value = {};
     msg_loading.value = false;
-    start.value = 0;
     limit.value = limit.value || 100;
     min_id.value = 0;
     max_id.value = 0;
