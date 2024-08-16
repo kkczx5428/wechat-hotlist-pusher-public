@@ -26,7 +26,7 @@ const is_local_data = ref(true);
 
 onMounted(() => {
   // localStorage.setItem('isDbInit', "t");
-  is_local_data.value = is_use_local_data();
+  is_local_data.value = localStorage.getItem('isUseLocalData') === 't';
   console.log("is_local_data", is_local_data.value);
   if(!is_local_data.value) {
     is_db_init();

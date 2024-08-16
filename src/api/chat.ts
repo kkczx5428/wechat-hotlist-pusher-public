@@ -1,8 +1,7 @@
 import http from "@/utils/axios.js";
 import {ElNotification} from "element-plus";
-import {is_use_local_data} from "@/utils/common_utils";
 
-const is_local_data = is_use_local_data();
+const is_local_data  = localStorage.getItem('isUseLocalData') === 't';
 const l_msg_count = local_msg_count
 const l_user_list = local_user_list
 const l_msg_list = local_msg_list

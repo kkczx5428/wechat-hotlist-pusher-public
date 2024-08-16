@@ -1,7 +1,6 @@
 import http from "@/utils/axios.js";
-import {ElNotification} from "element-plus";
-import {is_use_local_data} from "@/utils/common_utils";
-const is_local_data = is_use_local_data();
+
+const is_local_data = localStorage.getItem('isUseLocalData') === 't';
 // user list 部分
 export const apiDateCount = (wxid: string = '', start_time: number = 0, end_time: number = 0) => {
     return http.post('/api/rs/date_count', {

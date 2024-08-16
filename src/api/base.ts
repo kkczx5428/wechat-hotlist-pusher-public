@@ -1,6 +1,9 @@
 import http from "@/utils/axios.js";
-import {is_use_local_data} from "@/utils/common_utils";
-const is_local_data = is_use_local_data();
+
+
+// const is_local_data  = false;
+const is_local_data = localStorage.getItem('isUseLocalData') === 't';
+
 export const apiVersion = () => {
     return http.get('/api/rs/version').then((res: any) => {
         // console.log(res);
