@@ -6,7 +6,6 @@ const is_local_data = localStorage.getItem('isUseLocalData') === 't';
 
 export const apiVersion = () => {
     return http.get('/api/rs/version').then((res: any) => {
-        // console.log(res);
         return res;
     }).catch((err: any) => {
         console.log(err);
