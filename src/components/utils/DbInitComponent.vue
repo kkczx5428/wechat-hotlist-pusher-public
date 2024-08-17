@@ -133,11 +133,10 @@ const get_init_last_local_wxid = async () => {
     local_wxids.value = body_data.local_wxids.map((item: string) => {
       return {wxid: item}
     });
-
     if (local_wxids.value.length === 1) {
-      my_wxid.value = local_wxids.value[0];
+      my_wxid.value = local_wxids.value[0].wxid;
       // console.log("init_last")
-      init_last();
+      await init_last();
     }
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -153,7 +152,6 @@ const init_last = async () => {
       "merge_path": merge_path.value,
       "my_wxid": my_wxid.value
     }
-    console.log(reqdata);
     const body_data = await http.post('/api/ls/init_last', reqdata);
     is_init.value = body_data.is_init;
     if (body_data.is_init) {
