@@ -1,7 +1,7 @@
 import http from "@/utils/axios.js";
 import {ElNotification} from "element-plus";
 
-const is_local_data  = localStorage.getItem('isUseLocalData') === 't';
+const is_local_data = localStorage.getItem('isUseLocalData') === 't';
 const l_msg_count = local_msg_count
 const l_user_list = local_user_list
 const l_msg_list = local_msg_list
@@ -103,6 +103,28 @@ export const apiMsgs = (wxid: string, start: number, limit: number) => {
         'start': start,
         'limit': limit,
         'wxid': wxid,
+    }).then((res: any) => {
+        return res;
+    }).catch((err: any) => {
+        console.log(err);
+        return '';
+    })
+}
+
+export const api_file = (url: string) => {
+    if (is_local_data) {
+        return `./file?src=${url}`;
+    }
+    return `/api/rs/file?src=${url}`;
+}
+
+// file_info
+export const api_file_info = (url: string) => {
+    if (is_local_data) {
+        return `./file_info?src=${url}`;
+    }
+    return http.post('/api/rs/file_info', {
+        'file_path': url,
     }).then((res: any) => {
         return res;
     }).catch((err: any) => {

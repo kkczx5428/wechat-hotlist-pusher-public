@@ -38,6 +38,7 @@
 <script setup lang="ts">
 import { defineProps, onMounted, reactive, ref } from "vue";
 import http from '@/utils/axios.js';
+import {api_file, api_file_info} from "@/api/chat";
 
 const props = defineProps({
     is_sender: {
@@ -69,7 +70,7 @@ const file_info = reactive({
 });
 onMounted(async () => {
     console.log('文件加载中')
-    const file_info_resp = await get_file_info(props.src);
+    const file_info_resp = await api_file_info(props.src);
     // console.log(file_info_resp)
     file_info.file_name = file_info_resp.file_name;
     file_info.file_size = Number(file_info_resp.file_size) / 1024;
@@ -82,22 +83,9 @@ onMounted(async () => {
     file_info.file_size = Number(file_info_resp.file_size) / 1024;
     // 字符串转float
     // var file_size = file_info_resp.file_size/1024;
-    videoSrc.value = `/api/file/${props.src}`;
+    videoSrc.value = api_file(props.src);
 
 });
-
-const get_file_info = async (src: string) => {
-
-    try {
-        const body_data = await http.post('/api/rs/file_info', {
-            'file_path': src,
-        });
-        return body_data;
-    } catch (error) {
-        console.error('Error fetching file_info:', error);
-        return "";
-    }
-}
 
 </script>
   

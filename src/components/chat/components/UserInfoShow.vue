@@ -71,7 +71,7 @@ const props = defineProps({
     <span v-if="userinfo.ExtraBuf && userinfo.ExtraBuf['企微属性']">企微：{{ userinfo.ExtraBuf['企微属性'] }}<br></span>
     <span v-if="userinfo.ExtraBuf && userinfo.ExtraBuf['朋友圈背景']">朋友圈背景：<br></span>
     <el-image v-if="userinfo.ExtraBuf && userinfo.ExtraBuf['朋友圈背景']"
-              :src="'/api/rs/imgsrc/'+userinfo.ExtraBuf['朋友圈背景']"
+              :src="api_img(userinfo.ExtraBuf['朋友圈背景'])"
               style="max-width: 200px;max-height: 200px" alt="朋友圈背景"/>
   </div>
 </template>

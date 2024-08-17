@@ -21,7 +21,20 @@ export const api_db_init = async () => {
 
 export const api_img = (url: string) => {
     if (is_local_data) {
-        return `./imgsrc/${url}`;
+        return `./imgsrc?src=${url}`;
     }
-    return `/api/rs/imgsrc/${url}`;
+    return `/api/rs/imgsrc?src=${url}`;
+}
+export const api_audio = (url: string) => {
+    if (is_local_data) {
+        return `./audio?src=${url}`;
+    }
+    return `/api/rs/audio?src=${url}`;
+}
+
+export const api_video = (url: string) => {
+    if (is_local_data) {
+        return `./video?src=${url}`;
+    }
+    return `/api/rs/video?src=${url}`;
 }

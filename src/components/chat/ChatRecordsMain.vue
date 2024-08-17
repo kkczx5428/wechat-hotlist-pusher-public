@@ -10,7 +10,7 @@ import MessageEmoji from '@/components/chat/message/MessageEmoji.vue'
 import MessageOther from "@/components/chat/message/MessageOther.vue";
 import {apiMsgCountSolo, apiMsgs, apiMyWxid} from "@/api/chat";
 import type {msg, User, UserList} from "@/utils/common_utils";
-import {api_img} from "@/api/base";
+import {api_audio, api_img, api_video} from "@/api/base";
 // v3 无限滚动 https://vue3-infinite-loading.netlify.app/api/props.html#distance
 import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css";
@@ -132,7 +132,7 @@ const init = async () => {
     }
     // 切换最后一页
     console.log('msg_count.value', msg_count.value, limit.value)
-    start.value = Math.floor(msg_count.value / limit.value) * limit.value || 0
+    start.value = Math.floor((msg_count.value - 1) / limit.value) * limit.value || 0
     await fetchData("bottom");
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -257,7 +257,7 @@ const scrollToId = (id: number) => {
           <!-- 视频消息 -->
           <MessageVideo v-else-if="message.type_name == '视频'" :is_sender="message.is_sender"
                         :direction="_direction(message)" :headUrl="get_head_url(message)"
-                        :src="'/api/rs/video/'+message.src"></MessageVideo>
+                        :src="api_video(message.src)"></MessageVideo>
           <!-- 文件消息 -->
           <MessageFile v-else-if="message.type_name == '文件'" :is_sender="message.is_sender"
                        :direction="_direction(message)" :headUrl="get_head_url(message)"
@@ -265,7 +265,7 @@ const scrollToId = (id: number) => {
           <!-- 语音消息 -->
           <MessageAudio v-else-if="message.type_name == '语音'" :is_sender="message.is_sender"
                         :direction="_direction(message)" :headUrl="get_head_url(message)"
-                        :src="'/api/rs/'+message.src"
+                        :src="api_audio(message.src)"
                         :msg="message.msg"></MessageAudio>
           <!-- 其他消息 -->
           <MessageOther v-else :is_sender="message.is_sender" :direction="_direction(message)"
