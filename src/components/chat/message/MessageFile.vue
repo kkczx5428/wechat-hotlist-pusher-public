@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { defineProps, onMounted, reactive, ref } from "vue";
 import http from '@/utils/axios.js';
-import {api_file, api_file_info} from "@/api/chat";
+import {api_file, api_file_info} from "@/api/base";
 
 const props = defineProps({
     is_sender: {

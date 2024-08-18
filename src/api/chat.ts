@@ -112,25 +112,3 @@ export const apiMsgs = (wxid: string, start: number, limit: number) => {
         return '';
     })
 }
-
-export const api_file = (url: string) => {
-    if (is_local_data) {
-        return `./file?src=${url}`;
-    }
-    return `/api/rs/file?src=${url}`;
-}
-
-// file_info
-export const api_file_info = (url: string) => {
-    if (is_local_data) {
-        return `./file_info?src=${url}`;
-    }
-    return http.post('/api/rs/file_info', {
-        'file_path': url,
-    }).then((res: any) => {
-        return res;
-    }).catch((err: any) => {
-        console.log(err);
-        return '';
-    })
-}
