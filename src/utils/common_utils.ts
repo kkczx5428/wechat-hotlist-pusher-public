@@ -36,7 +36,8 @@ export interface User {
     describe: string
     headImgUrl: string
     ExtraBuf: ExtraBuf
-    LabelIDList: string[]
+    LabelIDList: string[],
+    extra: object | null
 }
 
 export interface UserList {

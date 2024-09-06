@@ -45,7 +45,8 @@ const userinfo = ref<User>({
     "朋友圈背景": "",
     "省": ""
   },
-  LabelIDList: []
+  LabelIDList: [],
+  extra: null
 });
 
 // 请求数据，赋值 START
@@ -61,6 +62,7 @@ const req_user_info = async () => {
     userinfo.value.nickname = body_data[props.wxid]?.nickname;
     userinfo.value.LabelIDList = body_data[props.wxid]?.LabelIDList;
     userinfo.value.ExtraBuf = body_data[props.wxid]?.ExtraBuf;
+    userinfo.value.extra = body_data[props.wxid]?.extra;
     return body_data;
   } catch (error) {
     console.error('Error fetching data wxid2user :', error);
