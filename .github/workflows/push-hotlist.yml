@@ -32,7 +32,7 @@ jobs:
         TIANAPI_URL: https://apis.tianapi.com/wxhottopic/index
         PUSH_HOUR: 9
         PUSH_MINUTE: 0
-        HOT_LIST_COUNT: 10
+        HOT_LIST_COUNT: 30
         
     - name: 推送结果通知
       if: always()
