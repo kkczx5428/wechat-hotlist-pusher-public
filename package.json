@@ -1,40 +1,28 @@
 {
-  "name": "wxdump_web",
-  "version": "2.4.10",
-  "private": true,
-  "type": "module",
+  "name": "wechat-hotlist-pusher",
+  "version": "1.0.0",
+  "description": "微信公众号热榜信息定时推送工具",
+  "main": "server.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build --force"
+    "start": "node server.js",
+    "dev": "nodemon index.js",
+    "web": "node server.js",
+    "test": "node index.js --test",
+    "build": "echo 'Build complete'"
   },
   "dependencies": {
-    "@types/axios": "^0.14.0",
-    "axios": "^1.6.3",
-    "cors": "^2.8.5",
-    "echarts": "^5.5.0",
-    "echarts-wordcloud": "^2.1.0",
-    "element-plus": "^2.4.4",
-    "markdown-it": "^14.0.0",
-    "v3-infinite-loading": "^1.3.1",
-    "vue": "^3.3.11",
-    "vue-echarts": "^6.6.9",
-    "vue-router": "^4.2.5",
-    "vue3-markdown-it": "^1.0.10"
+    "axios": "^1.6.0",
+    "node-cron": "^3.0.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
   },
   "devDependencies": {
-    "@tsconfig/node18": "^18.2.2",
-    "@types/markdown-it": "^13.0.7",
-    "@types/node": "^18.19.3",
-    "@vitejs/plugin-vue": "^4.5.2",
-    "@vitejs/plugin-vue-jsx": "^3.1.0",
-    "@vue/tsconfig": "^0.5.0",
-    "npm-run-all2": "^6.1.1",
-    "sass": "^1.69.7",
-    "typescript": "~5.3.0",
-    "vite": "^5.0.10",
-    "vue-tsc": "^1.8.25"
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["wechat", "hotlist", "push", "automation"],
+  "author": "Your Name",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.x"
   }
 }

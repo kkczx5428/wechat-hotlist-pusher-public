@@ -1,0 +1,44 @@
+name: 微信热搜榜定时推送
+
+on:
+  schedule:
+    # 每天北京时间上午9:00执行 (UTC时间1:00)
+    - cron: '0 1 * * *'
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  push-hotlist:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 设置Node.js环境
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 安装依赖
+      run: npm ci
+      
+    - name: 执行热搜推送
+      run: node index.js --test
+      env:
+        WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
+        WXPUSHER_UID: ${{ secrets.WXPUSHER_UID }}
+        TIANAPI_KEY: ${{ secrets.TIANAPI_KEY }}
+        TIANAPI_URL: https://apis.tianapi.com/wxhottopic/index
+        PUSH_HOUR: 9
+        PUSH_MINUTE: 0
+        HOT_LIST_COUNT: 30
+        
+    - name: 推送结果通知
+      if: always()
+      run: |
+        if [ $? -eq 0 ]; then
+          echo "✅ 热搜推送任务执行成功"
+        else
+          echo "❌ 热搜推送任务执行失败"
+        fi
